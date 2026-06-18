@@ -1,0 +1,42 @@
+%%  Trace — Entry Lifecycle State Diagram
+%%  Scope: the complete state machine for a single Entry document.
+%%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
+
+stateDiagram-v2
+
+    %% ── Draft ───────────────────────────────────────────────────────────────
+    [*] --> Draft : User starts typing
+
+    Draft --> Draft     : Shift+Enter — insert newline
+    Draft --> Committed : Enter — createdAt set (immutable)
+    Draft --> [*]       : Discard — draft text recoverable on restart
+
+    %% ── Committed ───────────────────────────────────────────────────────────
+    Committed --> Committed   : Edit body text — updatedAt refreshed
+    Committed --> Committed   : Adjust occurredAt — backdate event
+    Committed --> SoftDeleted : Soft-delete — deleted=true · hidden from timeline
+
+    %% ── SoftDeleted ─────────────────────────────────────────────────────────
+    SoftDeleted --> Committed : Restore — deleted=false · re-appears in timeline
+
+    %% ── Annotations ─────────────────────────────────────────────────────────
+    note right of Draft
+        Text is held as in-progress input.
+        Not yet written to the database.
+        Recoverable on app restart (NFR-2.2).
+    end note
+
+    note right of Committed
+        createdAt is set once on commit and never changes.
+        occurredAt is the primary analysis axis — editable.
+        updatedAt refreshes whenever body or occurredAt changes.
+        body is Markdown-friendly plain text.
+        tags are parsed from inline #hashtags.
+    end note
+
+    note right of SoftDeleted
+        The document persists in MongoDB (deleted=true).
+        Hidden from all timeline and search views.
+        Restorable at any time.
+        Hard delete is out of scope for V1 — no data is ever permanently erased.
+    end note

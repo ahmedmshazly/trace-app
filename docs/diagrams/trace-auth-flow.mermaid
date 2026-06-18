@@ -1,0 +1,68 @@
+%%  Trace — Authentication Sub-Flow
+%%  Scope: all auth paths — login, registration, and password reset.
+%%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
+
+flowchart TD
+
+    %% ── Entry point ─────────────────────────────────────────────────────────
+    UNAUTH([Unauthenticated user]) --> ACTION{First step}
+
+    ACTION -->|Have an account| LOGINFORM
+    ACTION -->|New to Trace| REGFORM
+
+    %% ── Login path ──────────────────────────────────────────────────────────
+    LOGINFORM["Login
+    ─────────────────────────
+    Email + Password"]
+
+    LOGINFORM --> LOGINVAL{Credentials\nvalid?}
+
+    LOGINVAL -->|"Yes"| JWT_OK["JWT issued
+    Session started"]
+    JWT_OK --> APP
+
+    LOGINVAL -->|"Wrong password / email"| LOGINERR["Error: invalid credentials
+    Rate-limited after repeated failures"]
+    LOGINERR --> LOGINFORM
+
+    LOGINVAL -->|"Account not found"| NOTFOUND["Error: no account with that email"]
+    NOTFOUND --> ACTION
+
+    %% ── Forgot password path ────────────────────────────────────────────────
+    LOGINFORM -->|Forgot password| RESETREQ["Enter registered email"]
+
+    RESETREQ --> RESENTSENT{Email\nrecognised?}
+
+    RESENTSENT -->|Yes| RESETLINK["Reset link sent
+    Link expires after 1 hour"]
+    RESENTSENT -->|"No — always show same message\n(no enumeration)"| RESETLINK
+
+    RESETLINK -->|User clicks link in email| NEWPWFORM["Set new password
+    ─────────────────────────
+    New password + Confirm"]
+
+    NEWPWFORM --> NEWPWVAL{Password\nvalid?}
+    NEWPWVAL -->|Yes| PWUPDATED["Password updated
+    Old sessions invalidated"]
+    PWUPDATED --> LOGINFORM
+    NEWPWVAL -->|"Too weak / mismatch"| NEWPWFORM
+
+    %% ── Registration path ───────────────────────────────────────────────────
+    REGFORM["Register
+    ─────────────────────────
+    Email + Password + Confirm password"]
+
+    REGFORM --> REGVAL{Inputs\nvalid?}
+
+    REGVAL -->|"Email taken"| EMAILTAKEN["Error: email already registered
+    Log in or reset your password"]
+    EMAILTAKEN --> ACTION
+
+    REGVAL -->|"Validation fails\n(weak password, mismatch)"| REGFORM
+
+    REGVAL -->|"Email free + inputs valid"| REGDONE["Account created
+    JWT issued · Session started"]
+    REGDONE --> APP
+
+    %% ── Success terminus ────────────────────────────────────────────────────
+    APP(["Authenticated — Capture + Timeline"])

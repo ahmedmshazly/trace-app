@@ -1,0 +1,88 @@
+%%  Trace — V1 User Flow
+%%  Scope: every user journey from browser open to session end.
+%%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
+
+flowchart TD
+
+    %% ── Entry point ─────────────────────────────────────────────────────────
+    START([Open Trace in browser]) --> SESS{Active\nsession?}
+
+    SESS -->|Yes| HOME
+    SESS -->|No| LOGIN
+
+    %% ── Authentication zone ─────────────────────────────────────────────────
+    subgraph AUTHZONE[" Authentication "]
+        direction LR
+        LOGIN[Login]
+        REGISTER[Register]
+        RESETPW[Reset Password]
+
+        LOGIN     -->|New account| REGISTER
+        REGISTER  -->|Account created| LOGIN
+        LOGIN     -->|Forgot password| RESETPW
+        RESETPW   -->|Reset link sent| LOGIN
+    end
+
+    LOGIN -->|Authenticated · JWT issued| HOME
+
+    %% ── Core screen ─────────────────────────────────────────────────────────
+    HOME["● Capture + Timeline
+    ─────────────────────────
+    Capture input auto-focused on load
+    Entries grouped by day · newest first"]
+
+    %% ── Core capture loop ───────────────────────────────────────────────────
+    subgraph CORELOOP[" Core capture loop "]
+        direction LR
+        TYPE["Write a moment"]
+        COMMIT["Entry saved
+        auto-timestamped"]
+        TYPE   -->|"Enter"| COMMIT
+        COMMIT -->|"Cursor returns to input"| TYPE
+    end
+
+    HOME --> TYPE
+
+    %% ── Entry actions ───────────────────────────────────────────────────────
+    HOME -->|Select an entry| EACT{Entry\nactions}
+
+    EACT -->|Edit body text| HOME
+    EACT -->|Adjust occurrence time| HOME
+    EACT -->|Soft-delete| SDCFM{Confirm\ndelete?}
+
+    SDCFM -->|"Yes — hidden, recoverable"| HOME
+    SDCFM -->|Cancel| EACT
+
+    %% ── Search & filter ─────────────────────────────────────────────────────
+    HOME -->|"⌘K  open search"| SEARCH["Search + Filter
+    ─────────────────────────
+    Full-text query
+    #tag filter · Date range"]
+
+    SEARCH -->|Select result| HOME
+    SEARCH -->|Dismiss| HOME
+
+    %% ── Tag index ───────────────────────────────────────────────────────────
+    HOME -->|Tag index| TAGIDX["Tag Index
+    ─────────────────────────
+    All #tags · entry count per tag"]
+
+    TAGIDX -->|"Select tag → filtered view"| SEARCH
+    TAGIDX -->|Back| HOME
+
+    %% ── Settings + export ───────────────────────────────────────────────────
+    HOME -->|Settings| SETT["Settings + Export
+    ─────────────────────────
+    Export · Theme · Account"]
+
+    SETT -->|"Export corpus → Markdown or JSON"| SETT
+    SETT -->|Toggle light / dark theme| SETT
+    SETT -->|Delete account + all data| DELCFM{"Permanent delete?
+    No undo."}
+
+    DELCFM -->|"Yes — all data erased"| END
+    DELCFM -->|Cancel| SETT
+    SETT -->|Log out| END
+
+    %% ── Terminus ────────────────────────────────────────────────────────────
+    END(["Session ended"])
