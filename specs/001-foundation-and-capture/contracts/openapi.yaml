@@ -1,0 +1,276 @@
+openapi: 3.1.0
+info:
+  title: Trace API — Foundation & Core Capture Loop
+  version: 0.1.0
+  description: >
+    REST contract for the V1 MVP slice of Trace: authentication, the capture
+    loop, the day-grouped timeline, and recoverable entry management. Every
+    /entries operation is scoped to the authenticated user; cross-user access is
+    impossible by construction (Constitution V).
+  license:
+    name: Proprietary
+servers:
+  - url: http://localhost:4000/api
+    description: Local development
+  - url: https://api.trace.example/api
+    description: Hosted (placeholder)
+
+tags:
+  - name: Health
+  - name: Auth
+  - name: Entries
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness/readiness probe
+      security: []
+      responses:
+        "200":
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  uptime: { type: number, example: 1234.5 }
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Credentials" }
+      responses:
+        "201":
+          description: Account created; session established
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthResult" }
+        "409": { $ref: "#/components/responses/EmailInUse" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate and start a session
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Credentials" }
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthResult" }
+        "401": { $ref: "#/components/responses/InvalidCredentials" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Invalidate the current session
+      responses:
+        "204": { description: Logged out }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Current authenticated user
+      responses:
+        "200":
+          description: The authenticated user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /entries:
+    get:
+      tags: [Entries]
+      summary: List the authenticated user's entries (timeline, cursor-paginated)
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+        - in: query
+          name: cursor
+          description: Opaque cursor from a previous page (keyset on occurredAt,_id)
+          schema: { type: string }
+        - in: query
+          name: includeDeleted
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          description: A page of entries, most-recent-first by occurredAt
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EntryPage" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Entries]
+      summary: Capture (create) an entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EntryCreate" }
+      responses:
+        "201":
+          description: Entry created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Entry" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /entries/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    patch:
+      tags: [Entries]
+      summary: Edit body and/or adjust occurredAt (backdate)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EntryUpdate" }
+      responses:
+        "200":
+          description: Entry updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Entry" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+    delete:
+      tags: [Entries]
+      summary: Soft-delete an entry (recoverable)
+      responses:
+        "204": { description: Soft-deleted }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /entries/{id}/restore:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Entries]
+      summary: Restore a soft-deleted entry
+      responses:
+        "200":
+          description: Entry restored
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Entry" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Credentials:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8, format: password }
+    AuthResult:
+      type: object
+      properties:
+        token: { type: string, description: JWT access token }
+        user: { $ref: "#/components/schemas/User" }
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        createdAt: { type: string, format: date-time }
+    EntryCreate:
+      type: object
+      required: [body]
+      properties:
+        body: { type: string, minLength: 1 }
+        occurredAt:
+          type: string
+          format: date-time
+          description: Optional; defaults to server time (now) if omitted
+    EntryUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        body: { type: string, minLength: 1 }
+        occurredAt: { type: string, format: date-time }
+    Entry:
+      type: object
+      properties:
+        id: { type: string }
+        body: { type: string }
+        occurredAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time, description: Immutable }
+        updatedAt: { type: string, format: date-time }
+        deleted: { type: boolean }
+        source: { type: string, example: manual }
+    EntryPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Entry" }
+        nextCursor:
+          type: string
+          nullable: true
+          description: Cursor for the next page, or null when exhausted
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    InvalidCredentials:
+      description: Email/password incorrect
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    EmailInUse:
+      description: Email already registered
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    NotFound:
+      description: Resource not found or not owned by the authenticated user
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    ValidationError:
+      description: Request failed validation
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    RateLimited:
+      description: Too many attempts
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+
+security:
+  - bearerAuth: []
