@@ -1,1 +1,79 @@
-# trace
+# Trace
+
+> A frictionless personal timeline where the unit of writing is a **moment**, not
+> a line — an effortless, plain-text-portable record of your days that you can
+> later mine for patterns.
+
+Trace is a personal, timestamped life-logging web application, delivered as a
+**hosted, multi-user MERN** app. Every entry is automatically anchored to *when*
+it happened; time is the primary key of your record. The governing principle is
+simple and ruthless: **capture friction must be near zero.**
+
+**Status:** Pre-implementation — fully specified and governed, ready to build.
+
+---
+
+## What's here
+
+This repository currently contains the **complete pre-development foundation**:
+enterprise documentation, flow diagrams, and a Spec-Driven Development setup. Application code
+(`backend/`, `frontend/`) is built next, feature by feature, against these specs.
+
+```
+.
+├── specs/           Feature specs (Spec-Driven Development)
+│   └── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
+├── docs/            Enterprise documentation (start at docs/README.md)
+│   ├── constitution.md   <- the project's supreme governing document
+│   ├── 00-overview · 01-requirements · 02-architecture
+│   ├── 03-project  · 04-engineering  · 05-operations
+│   ├── adr/         Architecture Decision Records
+│   └── diagrams/    Mermaid flow & lifecycle diagrams
+└── README.md        (this file)
+```
+
+## Start here
+
+| If you want… | Go to |
+|---|---|
+| The big picture | [docs/00-overview/vision.md](docs/00-overview/vision.md) |
+| The full doc map | [docs/README.md](docs/README.md) |
+| What V1 must do | [docs/01-requirements/srs.md](docs/01-requirements/srs.md) |
+| How it's built | [docs/02-architecture/architecture-overview.md](docs/02-architecture/architecture-overview.md) |
+| The governing rules | [docs/constitution.md](docs/constitution.md) |
+| The first feature | [specs/001-foundation-and-capture/](specs/001-foundation-and-capture/) |
+| The flow diagrams | [docs/diagrams/trace-diagrams.md](docs/diagrams/trace-diagrams.md) |
+
+## How we work — Spec-Driven Development
+
+Every Trace feature flows:
+
+**Constitution → Specify → Clarify → Plan → Tasks → Implement**
+
+No code without a spec; no spec without the Constitution. See
+[docs/04-engineering/development-workflow.md](docs/04-engineering/development-workflow.md).
+
+## Tech stack (V1)
+
+**MERN + TypeScript** — MongoDB · Express · React (Vite) · Node.js. Stateless JWT
+API, strict per-user data isolation, local-first development promoted to a host by
+configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
+[docs/02-architecture/tech-stack.md](docs/02-architecture/tech-stack.md).
+
+## Roadmap (stage-based)
+
+`Stage 0 Foundations (now)` → `001 Foundation & Capture (MVP)` →
+`002 Search & Tags` → `003 Export` → `004 Hardening & Deploy (V1 GA)` →
+`V2+ Analysis engine`. See [docs/03-project/roadmap.md](docs/03-project/roadmap.md).
+
+## Principles (the short version)
+
+1. **Capture friction is sacred** — logging is effortless or it's broken.
+2. **The corpus is the product** — you own it; export anytime.
+3. **Spec-Driven Development** — specs precede code, always.
+4. **Test-first & quality gates** — critical paths are proven, CI gates merges.
+5. **Security & privacy by default** — strict per-user isolation; no content telemetry.
+6. **Observability & operability** — runnable, recoverable, debuggable.
+7. **Simplicity & YAGNI** — build the smallest thing that satisfies the spec.
+
+Full text: [the Constitution](docs/constitution.md).
