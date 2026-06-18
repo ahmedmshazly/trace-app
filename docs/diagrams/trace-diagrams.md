@@ -46,7 +46,7 @@
 flowchart TD
 
     %% ── Entry point ─────────────────────────────────────────────────────────
-    START([Open Trace in browser]) --> SESS{Active\nsession?}
+    START([Open Trace in browser]) --> SESS{Active<br/>session?}
 
     SESS -->|Yes| HOME
     SESS -->|No| LOGIN

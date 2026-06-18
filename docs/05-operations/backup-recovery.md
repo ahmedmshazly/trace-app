@@ -65,9 +65,9 @@ These targets are revisited as the user base grows.
 
 ```mermaid
 flowchart TB
-    A["Soft-delete in app\n(user-recoverable)"] --> B["Managed DB replication\n(instance durability)"]
-    B --> C["Automated backups + PITR\n(point-in-time recovery)"]
-    C --> D["Periodic restore drills\n(proven recoverability)"]
+    A["Soft-delete in app<br/>(user-recoverable)"] --> B["Managed DB replication<br/>(instance durability)"]
+    B --> C["Automated backups + PITR<br/>(point-in-time recovery)"]
+    C --> D["Periodic restore drills<br/>(proven recoverability)"]
 ```
 
 ## Responsibilities

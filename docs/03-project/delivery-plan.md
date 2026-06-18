@@ -21,15 +21,15 @@ Every feature follows the same lifecycle (Constitution III):
 
 ```mermaid
 flowchart LR
-    A[Constitution] --> B[/Specify\nspec.md/]
+    A[Constitution] --> B["Specify<br/>spec.md"]
     B --> C{Ambiguous?}
-    C -- yes --> D[/Clarify/]
-    C -- no --> E[/Plan\nplan.md + research + data-model + contracts/]
+    C -- yes --> D["Clarify"]
+    C -- no --> E["Plan<br/>plan.md + research + data-model + contracts"]
     D --> E
-    E --> F[/Tasks\ntasks.md/]
-    F --> G[(optional)\nAnalyze\nChecklist]
-    G --> H[/Implement\ncode + tests/]
-    H --> I[PR → CI gates → review → merge]
+    E --> F["Tasks<br/>tasks.md"]
+    F --> G["(optional)<br/>Analyze · Checklist"]
+    G --> H["Implement<br/>code + tests"]
+    H --> I["PR → CI gates → review → merge"]
 ```
 
 ## Definition of Ready (a feature may start when…)

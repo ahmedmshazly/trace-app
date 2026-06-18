@@ -56,12 +56,12 @@ or invalid ([R-10](../../specs/001-foundation-and-capture/research.md)).
 
 ```mermaid
 flowchart LR
-    Build[Build once\nimmutable artifacts] --> Local
+    Build[Build once<br/>immutable artifacts] --> Local
     Build --> Staging
     Build --> Prod
-    Local[local\n.env dev values] -.config.-> Build
-    Staging[staging\nsecret store] -.config.-> Build
-    Prod[production\nsecret store] -.config.-> Build
+    Local[local<br/>.env dev values] -.config.-> Build
+    Staging[staging<br/>secret store] -.config.-> Build
+    Prod[production<br/>secret store] -.config.-> Build
 ```
 
 Same artifacts everywhere; behavior is steered by config alone. This is what makes

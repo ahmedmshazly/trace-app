@@ -17,15 +17,15 @@ governed by the [Constitution](../constitution.md).
 
 ```mermaid
 flowchart LR
-    C[Constitution\ndocs/constitution.md] --> S[Specify\nspec.md]
+    C["Constitution<br/>docs/constitution.md"] --> S["Specify<br/>spec.md"]
     S --> CL{Ambiguous?}
     CL -- yes --> Q[Clarify]
-    CL -- no --> P[Plan\nplan.md + research + data-model + contracts]
+    CL -- no --> P["Plan<br/>plan.md + research + data-model + contracts"]
     Q --> P
-    P --> T[Tasks\ntasks.md]
-    T --> A[(optional)\nAnalyze / Checklist]
-    A --> I[Implement\ncode + tests]
-    I --> PR[PR → CI → review → merge]
+    P --> T["Tasks<br/>tasks.md"]
+    T --> A["(optional)<br/>Analyze / Checklist"]
+    A --> I["Implement<br/>code + tests"]
+    I --> PR["PR → CI → review → merge"]
 ```
 
 ## Step-by-step: building a feature

@@ -46,7 +46,7 @@ flowchart TB
     end
 
     user -->|HTTPS/JSON| spa
-    spa -->|HTTPS/JSON (Bearer JWT)| api
+    spa -->|"HTTPS/JSON (Bearer JWT)"| api
     api -->|Mongoose driver| db
 ```
 

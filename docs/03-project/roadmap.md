@@ -15,11 +15,11 @@ working. Stages map to features under [`specs/`](../../specs/).
 
 ```mermaid
 flowchart LR
-    F0["Stage 0\nFoundations & docs\n(this work)"] --> F1["Stage 1\nFeature 001\nFoundation + Capture (MVP)"]
-    F1 --> F2["Stage 2\nFeature 002\nSearch + Tags"]
-    F2 --> F3["Stage 3\nFeature 003\nExport / portability"]
-    F3 --> F4["Stage 4\nFeature 004\nHardening + Deploy (V1 GA)"]
-    F4 --> V2["V2+\nAnalysis engine\n(separate initiative)"]
+    F0["Stage 0<br/>Foundations & docs<br/>(this work)"] --> F1["Stage 1<br/>Feature 001<br/>Foundation + Capture (MVP)"]
+    F1 --> F2["Stage 2<br/>Feature 002<br/>Search + Tags"]
+    F2 --> F3["Stage 3<br/>Feature 003<br/>Export / portability"]
+    F3 --> F4["Stage 4<br/>Feature 004<br/>Hardening + Deploy (V1 GA)"]
+    F4 --> V2["V2+<br/>Analysis engine<br/>(separate initiative)"]
 ```
 
 ---

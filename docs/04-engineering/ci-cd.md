@@ -23,9 +23,9 @@ flowchart LR
     B --> C[Lint + Format check]
     C --> D[Typecheck]
     D --> E[Unit tests]
-    E --> F[Integration tests\n(in-memory Mongo + isolation suite)]
+    E --> F["Integration tests<br/>(in-memory Mongo + isolation suite)"]
     F --> G[Build client + server]
-    G --> H[E2E (Playwright)\nfor UI-affecting changes]
+    G --> H["E2E (Playwright)<br/>for UI-affecting changes"]
     H --> I{All green?}
     I -- yes --> J[Mergeable]
     I -- no --> K[Blocked]

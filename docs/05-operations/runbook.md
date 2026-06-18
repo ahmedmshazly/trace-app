@@ -47,10 +47,10 @@ artifact; verify health + smoke.
 
 ```mermaid
 flowchart LR
-    D[Detect\nhealth/logs/report] --> A[Assess\nscope + severity]
-    A --> M[Mitigate\nrollback / scale / failover]
-    M --> R[Resolve\nroot cause fix]
-    R --> P[Postmortem\nblameless + action items]
+    D[Detect<br/>health/logs/report] --> A[Assess<br/>scope + severity]
+    A --> M[Mitigate<br/>rollback / scale / failover]
+    M --> R[Resolve<br/>root cause fix]
+    R --> P[Postmortem<br/>blameless + action items]
 ```
 
 ### Severity levels

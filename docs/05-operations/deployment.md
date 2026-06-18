@@ -13,10 +13,10 @@ rolling redeploys without sticky sessions.
 
 ```mermaid
 flowchart LR
-    User((User)) -->|HTTPS| Edge["TLS termination /\nreverse proxy"]
-    Edge --> Static["Static client bundle\n(React build)"]
-    Edge --> API["Express API process\n(stateless, N instances)"]
-    API --> Mongo[("Managed MongoDB\n(backups, encryption at rest)")]
+    User((User)) -->|HTTPS| Edge["TLS termination /<br/>reverse proxy"]
+    Edge --> Static["Static client bundle<br/>(React build)"]
+    Edge --> API["Express API process<br/>(stateless, N instances)"]
+    API --> Mongo[("Managed MongoDB<br/>(backups, encryption at rest)")]
 ```
 
 - **Client**: built static assets (`vite build`) served by the edge/CDN or the API host.
