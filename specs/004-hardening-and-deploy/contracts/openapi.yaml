@@ -1,0 +1,213 @@
+openapi: 3.1.0
+info:
+  title: Trace API — Hardening, Settings & Deploy (delta)
+  version: 0.4.0
+  description: >
+    API delta for feature 004 (V1 GA). Adds password reset (request + complete),
+    account settings (change password / email), account & data deletion, and a
+    Trash listing. Reset is non-enumerating and rate-limited; reset and account
+    deletion invalidate prior sessions. Every authed operation is scoped to the
+    user (Constitution V). Operational gates (health, logging, rate limits,
+    backups) are verified per docs/05-operations and docs/04-engineering.
+  license:
+    name: Proprietary
+servers:
+  - url: http://localhost:4000/api
+    description: Local development
+  - url: https://api.trace.example/api
+    description: Hosted (placeholder)
+
+tags:
+  - name: Auth
+  - name: Account
+
+paths:
+  /auth/reset/request:
+    post:
+      tags: [Auth]
+      summary: Request a password reset link (non-enumerating, rate-limited)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "202":
+          description: >
+            Accepted. The response is identical whether or not the email is
+            registered (no account enumeration — NFR-4.4).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: "If an account exists, a reset link is on its way." }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/reset/complete:
+    post:
+      tags: [Auth]
+      summary: Complete a password reset with a valid token (invalidates prior sessions)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token: { type: string, description: Raw token from the emailed link }
+                password: { type: string, minLength: 8, format: password }
+      responses:
+        "204": { description: Password updated; prior sessions invalidated }
+        "410": { $ref: "#/components/responses/TokenExpiredOrUsed" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/password:
+    patch:
+      tags: [Account]
+      summary: Change password (current + new)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string, format: password }
+                newPassword: { type: string, minLength: 8, format: password }
+      responses:
+        "204": { description: Password changed }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /auth/email:
+    patch:
+      tags: [Account]
+      summary: Change account email (to an unused, valid address)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200":
+          description: Email updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/EmailInUse" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /entries/trash:
+    get:
+      tags: [Account]
+      summary: List the authenticated user's soft-deleted (Trash) entries
+      responses:
+        "200":
+          description: Soft-deleted entries (browse/restore surface)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/Entry" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /entries/all:
+    delete:
+      tags: [Account]
+      summary: Permanently delete ALL of the user's entries (typed-confirmation gated in UI)
+      parameters:
+        - in: header
+          name: X-Confirm
+          required: true
+          description: Typed confirmation phrase echoed by the client
+          schema: { type: string }
+      responses:
+        "204": { description: All of the user's entries deleted }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /account:
+    delete:
+      tags: [Account]
+      summary: Permanently delete the account and entire corpus; invalidate sessions
+      parameters:
+        - in: header
+          name: X-Confirm
+          required: true
+          description: Typed confirmation phrase echoed by the client
+          schema: { type: string }
+      responses:
+        "204": { description: Account and all data deleted; session invalidated }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        createdAt: { type: string, format: date-time }
+    Entry:
+      type: object
+      properties:
+        id: { type: string }
+        body: { type: string }
+        tags: { type: array, items: { type: string } }
+        occurredAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        deleted: { type: boolean }
+        source: { type: string }
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    EmailInUse:
+      description: Email already registered (non-enumerating message)
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    TokenExpiredOrUsed:
+      description: Reset token is expired, used, or invalid (non-enumerating)
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    ValidationError:
+      description: Request failed validation
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    RateLimited:
+      description: Too many attempts
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+
+security:
+  - bearerAuth: []
