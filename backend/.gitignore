@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment & secrets (never commit real values)
+.env
+.env.*
+!.env.example
+
+# Test & coverage artifacts
+coverage/
+.vitest/
+
+# Logs
+*.log
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
