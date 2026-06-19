@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: Trace API — Export & Portability (delta)
+  version: 0.3.0
+  description: >
+    API delta for feature 003 (Export & Portability). Adds streaming corpus export
+    (Markdown + JSON), a pre-commit size estimate, and an optional JSON import
+    (FR-6.4). Scope reuses feature-002 filter params (tag / q / before / after).
+    Every operation is scoped to the authenticated user; soft-deleted entries are
+    never exported (Constitution II/V; FR-004/020).
+  license:
+    name: Proprietary
+servers:
+  - url: http://localhost:4000/api
+    description: Local development
+  - url: https://api.trace.example/api
+    description: Hosted (placeholder)
+
+tags:
+  - name: Export
+
+paths:
+  /export:
+    get:
+      tags: [Export]
+      summary: Stream the authenticated user's corpus as Markdown or JSON, optionally scoped
+      parameters:
+        - in: query
+          name: format
+          required: true
+          schema: { type: string, enum: [json, md] }
+        - in: query
+          name: tag
+          description: Scope to a single tag (current-filter scope)
+          schema: { type: string }
+        - in: query
+          name: q
+          description: Scope to a full-text query (current-filter scope)
+          schema: { type: string }
+        - in: query
+          name: after
+          description: Inclusive lower bound on occurredAt (date-range scope)
+          schema: { type: string, format: date-time }
+        - in: query
+          name: before
+          description: Inclusive upper bound on occurredAt (date-range scope)
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: >
+            The export document, streamed as a file download. JSON for format=json,
+            Markdown for format=md. Excludes soft-deleted entries.
+          headers:
+            Content-Disposition:
+              description: attachment; filename="trace-export-YYYYMMDD.json|.md"
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ExportDocument" }
+            text/markdown:
+              schema: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /export/estimate:
+    get:
+      tags: [Export]
+      summary: Estimate the size of an export for the selected scope (before committing)
+      parameters:
+        - in: query
+          name: tag
+          schema: { type: string }
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: after
+          schema: { type: string, format: date-time }
+        - in: query
+          name: before
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Count and approximate byte size for the scope
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ExportEstimate" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /import:
+    post:
+      tags: [Export]
+      summary: Import previously exported JSON into the user's corpus (optional, FR-6.4)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ExportDocument" }
+      responses:
+        "200":
+          description: Import result summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ImportResult" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ExportDocument:
+      type: object
+      properties:
+        trace:
+          type: object
+          properties:
+            version: { type: integer, example: 1 }
+            exportedAt: { type: string, format: date-time }
+            count: { type: integer }
+        entries:
+          type: array
+          items: { $ref: "#/components/schemas/ExportedEntry" }
+    ExportedEntry:
+      type: object
+      required: [body, occurredAt]
+      properties:
+        id: { type: string }
+        body: { type: string }
+        occurredAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        tags:
+          type: array
+          items: { type: string }
+        source: { type: string, example: manual }
+    ExportEstimate:
+      type: object
+      properties:
+        count: { type: integer, example: 1284 }
+        approxBytes: { type: integer, example: 2202010 }
+    ImportResult:
+      type: object
+      properties:
+        imported: { type: integer, description: Entries created }
+        skipped: { type: integer, description: Duplicates skipped per the de-dup rule }
+        total: { type: integer, description: Entries in the file }
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    ValidationError:
+      description: Request (or import payload) failed validation
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+
+security:
+  - bearerAuth: []
