@@ -33,6 +33,7 @@ edited; a new ADR supersedes an old one.
 | [0003](./0003-jwt-authentication.md) | JWT bearer auth with bcrypt password hashing | Accepted |
 | [0004](./0004-soft-delete.md) | Soft-delete only (no hard delete) in V1 | Accepted |
 | [0005](./0005-utc-storage-local-display.md) | Store timestamps in UTC, display/group in local time | Accepted |
+| [0006](./0006-design-tokens-and-theming.md) | Dark-first, two-theme semantic design-token system | Accepted |
 
 ## Template
 
