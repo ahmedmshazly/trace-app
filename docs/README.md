@@ -22,6 +22,7 @@ docs/
 ├── 03-project/       How it's delivered — roadmap, delivery plan, risks, RACI
 ├── 04-engineering/   How we work — workflow, git, standards, testing, CI/CD, envs
 ├── 05-operations/    How it's run — deployment, runbook, observability, backup
+├── 06-design/        How it looks & behaves — UI/UX spec, color system, components
 ├── adr/              Why we chose X — Architecture Decision Records
 └── diagrams/         Flow & lifecycle diagrams (Mermaid)
 ```
@@ -35,7 +36,7 @@ docs/
 | **Engineer (building)** | [Constitution](constitution.md) → [Development Workflow](04-engineering/development-workflow.md) → [Architecture Overview](02-architecture/architecture-overview.md) → feature [`specs/001`](../specs/001-foundation-and-capture/) |
 | **Engineer (specific decision)** | [ADRs](adr/) |
 | **Operator** | [Deployment](05-operations/deployment.md) → [Runbook](05-operations/runbook.md) → [Backup & Recovery](05-operations/backup-recovery.md) |
-| **Designer** | [Flow Diagrams](diagrams/trace-diagrams.md) → [Vision](00-overview/vision.md) → [SRS](01-requirements/srs.md) |
+| **Designer** | [UI/UX Spec](06-design/ui-ux-spec.md) → [Color System](06-design/color-system.md) → [Flow Diagrams](diagrams/trace-diagrams.md) |
 
 ## Full index
 
@@ -80,8 +81,13 @@ docs/
 - [Observability](05-operations/observability.md)
 - [Backup & Recovery](05-operations/backup-recovery.md)
 
+### 06 · Design
+- [UI/UX Specification](06-design/ui-ux-spec.md) — screens, flows, keyboard map, responsive, accessibility, logo placeholder
+- [Color System](06-design/color-system.md) — dark-first two-theme tokens + WCAG contrast verification
+- [Component Inventory](06-design/component-inventory.md) — components mapped to features and tokens
+
 ### ADRs
-- [ADR Index](adr/README.md) — decisions 0001–0005
+- [ADR Index](adr/README.md) — decisions 0001–0006
 
 ### Diagrams
 - [Flow Diagrams](diagrams/trace-diagrams.md) — user flow, entry lifecycle, auth sub-flow

@@ -13,6 +13,14 @@
 > timestamped moment and seeing it on a day-grouped timeline. Search, tags, and
 > export are deferred to later features (002, 003). See `docs/03-project/roadmap.md`.
 
+> **Design reference**: the screens for this feature — the auth gateway, the
+> sticky capture bar, the day-grouped timeline, inline edit/backdate/soft-delete,
+> the draft-restore (Keep/Discard) banner, and the mobile bottom-sheet — are
+> specified in the [UI/UX spec](../../docs/06-design/ui-ux-spec.md) and the
+> [color system](../../docs/06-design/color-system.md) (dark-first, ADR-0006).
+> The logo is a text wordmark placeholder until a final mark is supplied
+> ([ui-ux-spec § Logo](../../docs/06-design/ui-ux-spec.md#logo-placeholder)).
+
 ---
 
 ## User Scenarios & Testing *(mandatory)*

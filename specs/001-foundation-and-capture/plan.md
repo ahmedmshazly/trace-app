@@ -21,6 +21,14 @@ authenticated `userId` enforced in middleware. Everything runs locally against a
 local MongoDB and promotes to a hosted environment via environment configuration
 only.
 
+**Design reference**: the client is built to the
+[UI/UX spec](../../docs/06-design/ui-ux-spec.md) and the
+[design-token color system](../../docs/06-design/color-system.md) (dark-first,
+ADR-0006). Components bind to semantic CSS custom-property tokens (not raw hex),
+and render the logo from a single placeholder wordmark component so the final mark
+is a one-place swap. The frames are structural; theme application lands with
+feature 004, but the token names are used from the first frontend commit.
+
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x on Node.js 22 LTS (server and client)

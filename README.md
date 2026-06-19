@@ -16,17 +16,24 @@ simple and ruthless: **capture friction must be near zero.**
 ## What's here
 
 This repository currently contains the **complete pre-development foundation**:
-enterprise documentation, flow diagrams, and a Spec-Driven Development setup. Application code
+enterprise documentation, flow diagrams, the V1 **UI/UX design layer** (wireframes
++ dark-first color system), and a Spec-Driven Development setup
+in which **all four V1
+features (001–004) are fully specified, planned, and tasked**. Application code
 (`backend/`, `frontend/`) is built next, feature by feature, against these specs.
 
 ```
 .
 ├── specs/           Feature specs (Spec-Driven Development)
-│   └── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
+│   ├── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
+│   ├── 002-search-and-tags/          ⌘K search, inline #tags, filters, tag index
+│   ├── 003-export-portability/       Markdown/JSON export, scope, round-trip import
+│   └── 004-hardening-and-deploy/     reset, settings, theme, danger zone, GA gates
 ├── docs/            Enterprise documentation (start at docs/README.md)
 │   ├── constitution.md   <- the project's supreme governing document
 │   ├── 00-overview · 01-requirements · 02-architecture
 │   ├── 03-project  · 04-engineering  · 05-operations
+│   ├── 06-design/   UI/UX spec · color system (dark-first) · component inventory
 │   ├── adr/         Architecture Decision Records
 │   └── diagrams/    Mermaid flow & lifecycle diagrams
 └── README.md        (this file)
@@ -42,6 +49,7 @@ enterprise documentation, flow diagrams, and a Spec-Driven Development setup. Ap
 | How it's built | [docs/02-architecture/architecture-overview.md](docs/02-architecture/architecture-overview.md) |
 | The governing rules | [docs/constitution.md](docs/constitution.md) |
 | The first feature | [specs/001-foundation-and-capture/](specs/001-foundation-and-capture/) |
+| The UI/UX design & color system | [docs/06-design/](docs/06-design/README.md) |
 | The flow diagrams | [docs/diagrams/trace-diagrams.md](docs/diagrams/trace-diagrams.md) |
 
 ## How we work — Spec-Driven Development

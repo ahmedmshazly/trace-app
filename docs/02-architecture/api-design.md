@@ -42,8 +42,14 @@ this document explains the conventions behind it (NFR-8.3).
 | DELETE | `/api/entries/:id` | Soft-delete | bearer |
 | POST | `/api/entries/:id/restore` | Restore soft-deleted | bearer |
 
-Later features add: search (`GET /api/entries?q=…`), tag index
-(`GET /api/tags`), and export (`GET /api/export?format=md|json`).
+Later features add (now fully specified, with their own OpenAPI deltas): search +
+tag index ([002](../../specs/002-search-and-tags/contracts/openapi.yaml) —
+`GET /api/entries?q=…&tag=…&before=…&after=…`, `GET /api/tags`), export + import
+([003](../../specs/003-export-portability/contracts/openapi.yaml) —
+`GET /api/export?format=md|json`, `GET /api/export/estimate`, `POST /api/import`),
+and recovery/settings/deletion
+([004](../../specs/004-hardening-and-deploy/contracts/openapi.yaml) —
+`/api/auth/reset/*`, `PATCH /api/auth/password|email`, `DELETE /api/account`).
 
 ## Pagination (timeline)
 

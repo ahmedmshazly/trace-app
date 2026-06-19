@@ -29,9 +29,14 @@ flowchart LR
 **Goal:** a fully specified, governed project ready to build.
 
 - Flow diagrams, enterprise documentation, SRS baseline.
-- Constitution ratified; feature 001 fully specified.
+- Constitution ratified; **all V1 features (001–004) fully
+  specified** (spec + plan + research + data-model + contracts + tasks).
+- **Design layer** (`docs/06-design/`): V1 wireframes captured as a UI/UX spec, the
+  dark-first two-theme color system + design tokens (ADR-0006), and a component
+  inventory.
 
-**Exit criteria:** docs reviewed; Constitution v1.0.0; `specs/001` spec+plan+tasks complete.
+**Exit criteria:** docs reviewed; Constitution v1.0.0; `specs/001`–`specs/004`
+spec+plan+tasks complete; design layer baselined.
 **Status:** ▣ in progress (this PR).
 
 ## Stage 1 — Feature 001: Foundation & Core Capture Loop *(the MVP)*
@@ -57,7 +62,8 @@ proven; entries survive reload/restart; CI green. See
 - Indexes: `{userId, tags}`, text/search strategy on `body`.
 
 **Exit criteria:** search < 300 ms at 50k entries (NFR-1.3); filters combine (FR-4.4).
-**Delivers:** SC-6 (search half). **Status:** ▢ planned.
+**Delivers:** SC-6 (search half). **Status:** ▢ specified — spec+plan+tasks ready
+([`specs/002`](../../specs/002-search-and-tags/)).
 
 ## Stage 3 — Feature 003: Export & Portability
 
@@ -67,7 +73,8 @@ proven; entries survive reload/restart; CI green. See
 - Round-trippable JSON; (import FR-6.4 optional).
 
 **Exit criteria:** full corpus exports to MD+JSON; round-trip verified (NFR-5.1/5.2).
-**Delivers:** SC-7. **Status:** ▢ planned.
+**Delivers:** SC-7. **Status:** ▢ specified — spec+plan+tasks ready
+([`specs/003`](../../specs/003-export-portability/)).
 
 ## Stage 4 — Feature 004: Hardening & Deploy (V1 GA)
 
@@ -78,7 +85,8 @@ proven; entries survive reload/restart; CI green. See
 - CI/CD pipeline, deployment, runbooks, backups, health/observability wired.
 
 **Exit criteria:** all release-blocking NFRs met; deployable via config; runbooks exist.
-**Delivers:** V1 General Availability. **Status:** ▢ planned.
+**Delivers:** V1 General Availability. **Status:** ▢ specified — spec+plan+tasks ready
+([`specs/004`](../../specs/004-hardening-and-deploy/)).
 
 ## V2+ — Analysis & insights *(separate initiative)*
 
