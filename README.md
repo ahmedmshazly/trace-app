@@ -9,21 +9,24 @@ Trace is a personal, timestamped life-logging web application, delivered as a
 it happened; time is the primary key of your record. The governing principle is
 simple and ruthless: **capture friction must be near zero.**
 
-**Status:** Pre-implementation — fully specified and governed, ready to build.
+**Status:** In development — V1 fully specified & governed; the **backend
+(feature 001)** is implemented and tested; the frontend is next.
 
 ---
 
 ## What's here
 
-This repository currently contains the **complete pre-development foundation**:
-enterprise documentation, flow diagrams, the V1 **UI/UX design layer** (wireframes
-+ dark-first color system), and a Spec-Driven Development setup
+This repository contains the governed foundation, the V1 **UI/UX design layer**
+(wireframes + dark-first color system), a Spec-Driven Development setup
 in which **all four V1
-features (001–004) are fully specified, planned, and tasked**. Application code
-(`backend/`, `frontend/`) is built next, feature by feature, against these specs.
+features (001–004) are fully specified, planned, and tasked**, and the
+**implemented backend** for feature 001 (stateless Express/MongoDB API with
+per-user isolation, the capture loop, the day-ordered timeline, and curation).
+The frontend (`frontend/`) is built next against these specs.
 
 ```
 .
+├── backend/         Implemented API (feature 001) — Express · Mongoose · TypeScript
 ├── specs/           Feature specs (Spec-Driven Development)
 │   ├── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
 │   ├── 002-search-and-tags/          ⌘K search, inline #tags, filters, tag index
@@ -36,6 +39,7 @@ features (001–004) are fully specified, planned, and tasked**. Application cod
 │   ├── 06-design/   UI/UX spec · color system (dark-first) · component inventory
 │   ├── adr/         Architecture Decision Records
 │   └── diagrams/    Mermaid flow & lifecycle diagrams
+├── .github/workflows/  CI (lint · format · typecheck · test · build)
 └── README.md        (this file)
 ```
 
@@ -49,6 +53,7 @@ features (001–004) are fully specified, planned, and tasked**. Application cod
 | How it's built | [docs/02-architecture/architecture-overview.md](docs/02-architecture/architecture-overview.md) |
 | The governing rules | [docs/constitution.md](docs/constitution.md) |
 | The first feature | [specs/001-foundation-and-capture/](specs/001-foundation-and-capture/) |
+| The implemented API | [backend/README.md](backend/README.md) |
 | The UI/UX design & color system | [docs/06-design/](docs/06-design/README.md) |
 | The flow diagrams | [docs/diagrams/trace-diagrams.md](docs/diagrams/trace-diagrams.md) |
 
@@ -70,7 +75,7 @@ configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
 
 ## Roadmap (stage-based)
 
-`Stage 0 Foundations (now)` → `001 Foundation & Capture (MVP)` →
+`Stage 0 Foundations ✓` → `001 Foundation & Capture (backend ✓ · frontend next)` →
 `002 Search & Tags` → `003 Export` → `004 Hardening & Deploy (V1 GA)` →
 `V2+ Analysis engine`. See [docs/03-project/roadmap.md](docs/03-project/roadmap.md).
 
