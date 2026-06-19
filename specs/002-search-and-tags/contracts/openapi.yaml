@@ -1,0 +1,155 @@
+openapi: 3.1.0
+info:
+  title: Trace API — Search & Tags (delta)
+  version: 0.2.0
+  description: >
+    API delta for feature 002 (Search & Tags). Extends the feature 001 contract
+    (specs/001-foundation-and-capture/contracts/openapi.yaml): adds search/filter
+    query parameters to GET /entries, a tags array to the Entry schema, and a new
+    GET /tags tag-index endpoint. Every operation is scoped to the authenticated
+    user; soft-deleted entries are excluded from search, filters, and counts
+    (Constitution V; FR-040/041).
+  license:
+    name: Proprietary
+servers:
+  - url: http://localhost:4000/api
+    description: Local development
+  - url: https://api.trace.example/api
+    description: Hosted (placeholder)
+
+tags:
+  - name: Entries
+  - name: Tags
+
+paths:
+  /entries:
+    get:
+      tags: [Entries]
+      summary: >
+        List / search / filter the authenticated user's entries. With `q`, results
+        are relevance-ranked; without `q`, results are reverse-chronological by
+        occurredAt. `tag` and `before`/`after` filters combine (conjunction).
+      parameters:
+        - in: query
+          name: q
+          description: Full-text query over entry bodies (relevance-ranked when present)
+          schema: { type: string, minLength: 1 }
+        - in: query
+          name: tag
+          description: Filter to entries carrying this (normalized, lowercased) tag
+          schema: { type: string }
+        - in: query
+          name: after
+          description: Inclusive lower bound on occurredAt (ISO-8601)
+          schema: { type: string, format: date-time }
+        - in: query
+          name: before
+          description: Inclusive upper bound on occurredAt (ISO-8601)
+          schema: { type: string, format: date-time }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+        - in: query
+          name: cursor
+          description: >
+            Opaque cursor from a previous page. Keyset on (occurredAt,_id) for
+            chronological results, or (textScore,_id) for relevance results.
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of entries matching the active filters
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EntryPage" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: Tag index — every tag in the user's corpus with its entry count
+      parameters:
+        - in: query
+          name: sort
+          description: Order of the returned tags
+          schema: { type: string, enum: [count, alpha], default: count }
+        - in: query
+          name: filter
+          description: Narrow to tags whose name contains this substring
+          schema: { type: string }
+      responses:
+        "200":
+          description: The user's tags with counts (excludes soft-deleted entries)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TagIndex" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Entry:
+      type: object
+      description: >
+        The feature 001 Entry, extended with the parsed `tags` array activated by
+        this feature. Other fields are unchanged.
+      properties:
+        id: { type: string }
+        body: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+          description: Distinct, normalized (lowercased) tags parsed from body
+          example: ["work", "health"]
+        occurredAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time, description: Immutable }
+        updatedAt: { type: string, format: date-time }
+        deleted: { type: boolean }
+        source: { type: string, example: manual }
+    EntryPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Entry" }
+        nextCursor:
+          type: string
+          nullable: true
+          description: Cursor for the next page, or null when exhausted
+    TagIndex:
+      type: object
+      properties:
+        tags:
+          type: array
+          items: { $ref: "#/components/schemas/TagCount" }
+        total:
+          type: integer
+          description: Number of distinct tags in the user's corpus
+    TagCount:
+      type: object
+      properties:
+        tag: { type: string, example: work }
+        count: { type: integer, example: 128 }
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    ValidationError:
+      description: Request failed validation
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+
+security:
+  - bearerAuth: []
