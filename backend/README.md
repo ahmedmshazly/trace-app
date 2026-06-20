@@ -23,17 +23,25 @@ express-rate-limit · pino (structured logs). Tests: Vitest + Supertest +
 
 ```bash
 cd backend
-cp .env.example .env           # adjust as needed (see the config contract)
+nvm use                        # Node 22 (see .nvmrc); or: nvm install 22
+cp .env.example .env           # then set a strong JWT_SECRET (>= 16 chars)
 npm install
 npm run dev                    # http://localhost:4000  (tsx watch)
 ```
 
 Requires a MongoDB reachable at `MONGODB_URI` (local install or Docker). The
-process **fails fast** if required configuration is missing or invalid.
+process **fails fast** if required configuration is missing or invalid. The
+`dev` and `start` scripts load `.env` via Node's `--env-file-if-exists`; the app
+code itself reads only `process.env` (12-factor — hosted envs inject config).
 
 ```bash
 curl -s http://localhost:4000/api/health        # { "status": "ok", ... }
 ```
+
+Full step-by-step setup, verification, troubleshooting, and a Docker stack:
+[`docs/05-operations/local-development.md`](../docs/05-operations/local-development.md).
+For a detailed, hands-on **run / test / deploy** walkthrough (with explanations),
+see [`docs/05-operations/run-test-deploy.md`](../docs/05-operations/run-test-deploy.md).
 
 ## Scripts
 
@@ -128,3 +136,28 @@ The integration/isolation suites run against an ephemeral `mongodb-memory-server
 (no external Mongo needed). The **isolation** and **persistence** suites protect
 the product's core promises and must always pass (Constitution IV). See the
 [testing strategy](../docs/04-engineering/testing-strategy.md).
+
+For **live API acceptance** against a running server, use the scripted smoke test
+and the editor request collection:
+
+```bash
+npm run dev                                              # in one shell
+BASE_URL=http://localhost:4000/api ./scripts/smoke-api.sh  # in another
+```
+
+`scripts/smoke-api.sh` covers auth, capture, timeline/pagination, curation,
+isolation, and rate limiting (42 checks). `api.http` is a REST Client/JetBrains
+collection. Details: [API testing](../docs/04-engineering/api-testing.md).
+
+## Container / deployment parity
+
+A multi-stage [`Dockerfile`](./Dockerfile) (non-root, healthcheck) and the root
+[`docker-compose.yml`](../docker-compose.yml) run the API against a MongoDB
+container, mirroring a hosted deploy:
+
+```bash
+# from the repo root
+JWT_SECRET=$(openssl rand -hex 32) docker compose up --build -d
+curl -s http://localhost:4000/api/health | jq
+docker compose down
+```

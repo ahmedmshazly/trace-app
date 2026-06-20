@@ -1,0 +1,49 @@
+# Trace — local "production-like" stack: the API container + a real MongoDB.
+#
+# This mirrors a hosted deployment (managed Mongo + stateless API steered purely
+# by environment) on your machine.
+#
+# Usage:
+#   docker compose up --build         # build the API image and start both services
+#   curl -s localhost:4000/api/health
+#   docker compose down               # stop (add -v to also drop the DB volume)
+#
+# Secrets: set JWT_SECRET in your shell or a root .env file. A dev default is
+# provided so the stack boots out of the box; OVERRIDE IT for anything real.
+
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    volumes:
+      - trace-mongo-data:/data/db
+    # Not published by default — only the API needs it. Uncomment to inspect with
+    # a local mongosh:
+    # ports:
+    #   - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      MONGODB_URI: mongodb://mongo:27017/trace
+      JWT_SECRET: ${JWT_SECRET:-dev-compose-secret-change-me-please}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "4000:4000"
+
+volumes:
+  trace-mongo-data:

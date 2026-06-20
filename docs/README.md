@@ -35,7 +35,7 @@ docs/
 | **Product / planning** | [SRS](01-requirements/srs.md) → [Roadmap](03-project/roadmap.md) → [Risk Register](03-project/risk-register.md) |
 | **Engineer (building)** | [Constitution](constitution.md) → [Development Workflow](04-engineering/development-workflow.md) → [Architecture Overview](02-architecture/architecture-overview.md) → feature [`specs/001`](../specs/001-foundation-and-capture/) |
 | **Engineer (specific decision)** | [ADRs](adr/) |
-| **Operator** | [Deployment](05-operations/deployment.md) → [Runbook](05-operations/runbook.md) → [Backup & Recovery](05-operations/backup-recovery.md) |
+| **Operator** | [Run, Test & Deploy](05-operations/run-test-deploy.md) → [Deployment](05-operations/deployment.md) → [Runbook](05-operations/runbook.md) → [Backup & Recovery](05-operations/backup-recovery.md) |
 | **Designer** | [UI/UX Spec](06-design/ui-ux-spec.md) → [Color System](06-design/color-system.md) → [Flow Diagrams](diagrams/trace-diagrams.md) |
 
 ## Full index
@@ -72,10 +72,13 @@ docs/
 - [Git Workflow](04-engineering/git-workflow.md)
 - [Coding Standards](04-engineering/coding-standards.md)
 - [Testing Strategy](04-engineering/testing-strategy.md)
+- [API Testing](04-engineering/api-testing.md) — automated suites + live acceptance (smoke) script
 - [CI/CD](04-engineering/ci-cd.md)
 - [Environments & Configuration](04-engineering/environments.md)
 
 ### 05 · Operations
+- [Run, Test & Deploy](05-operations/run-test-deploy.md) — hands-on, detailed guide (start here to learn the workflow)
+- [Local Development](05-operations/local-development.md) — run & verify the backend locally (real Mongo, tests, smoke, Docker)
 - [Deployment](05-operations/deployment.md)
 - [Runbook](05-operations/runbook.md)
 - [Observability](05-operations/observability.md)

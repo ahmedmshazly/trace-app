@@ -1,0 +1,84 @@
+### Trace API — manual request collection (feature 001)
+# Works with the VS Code "REST Client" extension or JetBrains HTTP client.
+# Run the requests top-to-bottom: register captures @token for the rest.
+
+@baseUrl = http://localhost:4000/api
+@email = you@example.com
+@password = correct horse battery staple
+
+### Health (no auth)
+GET {{baseUrl}}/health
+
+### Register -> { token, user }
+# @name register
+POST {{baseUrl}}/auth/register
+content-type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Capture the token from the register (or login) response
+@token = {{register.response.body.token}}
+
+### Login -> { token, user }
+# @name login
+POST {{baseUrl}}/auth/login
+content-type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Current user
+GET {{baseUrl}}/auth/me
+authorization: Bearer {{token}}
+
+### Create an entry (occurredAt defaults to now)
+# @name createEntry
+POST {{baseUrl}}/entries
+authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "body": "finished the OPNsense base config #network"
+}
+
+### Capture the created entry id
+@entryId = {{createEntry.response.body.id}}
+
+### Timeline (newest first)
+GET {{baseUrl}}/entries
+authorization: Bearer {{token}}
+
+### Timeline — first page of 1 (use nextCursor for the next page)
+GET {{baseUrl}}/entries?limit=1
+authorization: Bearer {{token}}
+
+### Timeline — include soft-deleted
+GET {{baseUrl}}/entries?includeDeleted=true
+authorization: Bearer {{token}}
+
+### Edit body / backdate occurredAt (createdAt is never mutated)
+PATCH {{baseUrl}}/entries/{{entryId}}
+authorization: Bearer {{token}}
+content-type: application/json
+
+{
+  "body": "edited body #network",
+  "occurredAt": "2020-01-01T00:00:00.000Z"
+}
+
+### Soft-delete (204)
+DELETE {{baseUrl}}/entries/{{entryId}}
+authorization: Bearer {{token}}
+
+### Restore
+POST {{baseUrl}}/entries/{{entryId}}/restore
+authorization: Bearer {{token}}
+
+### Logout (stateless, 204)
+POST {{baseUrl}}/auth/logout
+authorization: Bearer {{token}}
