@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
 
-# Realizes the documented pipeline (docs/04-engineering/ci-cd.md) for the backend
-# package. A frontend job is added to the matrix when that package lands.
+# Realizes the documented pipeline (docs/04-engineering/ci-cd.md) for the
+# backend and frontend packages, plus a monorepo build that mirrors Vercel.
 jobs:
   backend:
     name: backend · lint · typecheck · test · build
@@ -39,3 +39,40 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  frontend:
+    name: frontend · build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  vercel-build:
+    name: monorepo · vercel-build parity
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install (monorepo)
+        run: npm run install:all
+
+      - name: Build (monorepo)
+        run: npm run vercel-build

@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
-import { EntryModel, type EntryDocument } from '../models/entry';
+import { Types, type QueryFilter } from 'mongoose';
+import { EntryModel, type Entry, type EntryDocument } from '../models/entry';
 import { NotFoundError, ValidationError } from '../lib/errors';
 
 export interface EntryDTO {
@@ -31,10 +31,19 @@ export interface ListOptions {
   limit?: number;
   cursor?: string;
   includeDeleted?: boolean;
+  /** Case-insensitive substring match against the body (full-text search). */
+  q?: string;
+  /** Restrict to entries whose body contains this #tag. */
+  tag?: string;
 }
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
+
+/** Escapes a user-supplied string for safe use inside a RegExp. */
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function toEntryDTO(doc: EntryDocument): EntryDTO {
   return {
@@ -106,19 +115,20 @@ export async function createEntry(userId: string, input: CreateEntryInput): Prom
 export async function listEntries(userId: string, options: ListOptions = {}): Promise<EntryPage> {
   const limit = Math.min(Math.max(options.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
 
-  const query = EntryModel.find({ userId: new Types.ObjectId(userId) });
-  if (!options.includeDeleted) {
-    query.where('deleted').equals(false);
-  }
+  const filter = buildListFilter(userId, options);
   if (options.cursor) {
     const cursor = decodeCursor(options.cursor);
-    query.or([
-      { occurredAt: { $lt: cursor.occurredAt } },
-      { occurredAt: cursor.occurredAt, _id: { $lt: cursor.id } },
-    ]);
+    addAnd(filter, {
+      $or: [
+        { occurredAt: { $lt: cursor.occurredAt } },
+        { occurredAt: cursor.occurredAt, _id: { $lt: cursor.id } },
+      ],
+    });
   }
 
-  const docs = await query.sort({ occurredAt: -1, _id: -1 }).limit(limit + 1);
+  const docs = await EntryModel.find(filter)
+    .sort({ occurredAt: -1, _id: -1 })
+    .limit(limit + 1);
 
   const hasMore = docs.length > limit;
   const items = hasMore ? docs.slice(0, limit) : docs;
@@ -126,6 +136,57 @@ export async function listEntries(userId: string, options: ListOptions = {}): Pr
   const nextCursor = hasMore && last ? encodeCursor(last) : null;
 
   return { items: items.map(toEntryDTO), nextCursor };
+}
+
+type EntryFilter = QueryFilter<Entry>;
+
+function addAnd(filter: EntryFilter, clause: EntryFilter): void {
+  (filter.$and ??= []).push(clause);
+}
+
+/**
+ * Builds the scoped query for a user, applying optional search (`q`) and `tag`
+ * filters as ANDed body-regex clauses. userId scoping is always applied — the
+ * single place per-user isolation is enforced (R-03).
+ */
+function buildListFilter(userId: string, options: ListOptions): EntryFilter {
+  const filter: EntryFilter = { userId: new Types.ObjectId(userId) };
+  if (!options.includeDeleted) {
+    filter.deleted = false;
+  }
+  const q = options.q?.trim();
+  if (q) {
+    addAnd(filter, { body: { $regex: escapeRegex(q), $options: 'i' } });
+  }
+  const tag = options.tag?.trim().replace(/^#/, '');
+  if (tag) {
+    // Match "#tag" not followed by another tag-character, case-insensitively.
+    addAnd(filter, { body: { $regex: `#${escapeRegex(tag)}(?![\\w-])`, $options: 'i' } });
+  }
+  return filter;
+}
+
+/**
+ * Returns every entry the user owns, newest-first, with no pagination — the
+ * source for a full export. Excludes soft-deleted entries unless asked.
+ */
+export async function listAllEntries(
+  userId: string,
+  options: { includeDeleted?: boolean } = {},
+): Promise<EntryDTO[]> {
+  const filter = buildListFilter(userId, { includeDeleted: options.includeDeleted });
+  const docs = await EntryModel.find(filter).sort({ occurredAt: -1, _id: -1 });
+  return docs.map(toEntryDTO);
+}
+
+/**
+ * Permanently deletes ALL of the user's entries (hard delete). This is the
+ * irreversible "danger zone" bulk action, distinct from per-entry soft delete.
+ * Returns the number removed.
+ */
+export async function deleteAllEntries(userId: string): Promise<number> {
+  const result = await EntryModel.deleteMany({ userId: new Types.ObjectId(userId) });
+  return result.deletedCount ?? 0;
 }
 
 /**

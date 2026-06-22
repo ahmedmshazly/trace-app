@@ -1,0 +1,23 @@
+/* ============================================================
+   Trace — Webfonts
+   Tinos (transitional serif) carries the wordmark & display;
+   Roboto Slab carries the interface & entry bodies — a literary,
+   plain-text feel that fits a writing instrument. A monospace
+   stack handles timestamps and keyboard glyphs.
+
+   NOTE: these are the typefaces used in the source wireframes
+   and are loaded here from Google Fonts. If Trace has licensed
+   brand fonts, drop the binaries beside this file and replace
+   the @import with local @font-face rules.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Slab:wght@300;400;500;600;700&display=swap');
+
+/* Self-hosted monospace — timestamps, keyboard glyphs, code */
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  src: url("../fonts/DejaVuSansMono.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

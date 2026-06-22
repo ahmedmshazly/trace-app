@@ -81,6 +81,55 @@ Because artifacts are immutable and the API is stateless:
 - [ ] Logs flowing; no error spikes.
 - [ ] Backups confirmed running.
 
+## Vercel deployment
+
+Trace includes first-class Vercel support for a **same-origin** full-stack deploy:
+the Vite client (`frontend/dist`) is served as static assets and the Express API
+runs as a serverless function via [`api/index.js`](../../api/index.js).
+
+### Configuration
+
+| File | Purpose |
+|---|---|
+| [`vercel.json`](../../vercel.json) | Install/build commands, SPA rewrites, API routing, security headers |
+| [`api/index.js`](../../api/index.js) | Serverless entry — boots Express with a cached MongoDB connection |
+| [`.env.example`](../../.env.example) | Required environment variables for hosted deploy |
+
+### Required environment variables
+
+Set these in the Vercel project (Settings → Environment Variables):
+
+| Variable | Notes |
+|---|---|
+| `MONGODB_URI` | Managed MongoDB connection string (Atlas recommended) |
+| `JWT_SECRET` | Long random secret (`openssl rand -hex 32`) |
+| `ALLOWED_ORIGINS` | Production domain(s), comma-separated |
+| `NODE_ENV` | `production` |
+
+Preview deployments work without listing every preview URL — `VERCEL_URL` and
+`VERCEL_BRANCH_URL` are added to the CORS allowlist automatically.
+
+### Deploy
+
+```bash
+# From the repo root — mirrors what Vercel runs in CI
+npm run install:all
+npm run vercel-build
+
+# Or push to main with the repo connected to Vercel
+vercel --prod
+```
+
+The client uses `/api` as its base URL by default (same origin). No
+`VITE_API_BASE` override is needed on Vercel unless the API is hosted elsewhere.
+
+### MongoDB Atlas notes
+
+- Create a cluster and allow network access from anywhere (`0.0.0.0/0`) or use
+  Vercel's static IPs if on a Pro plan.
+- Use a dedicated database user with read/write on the `trace` database.
+- Enable automated backups before going live.
+
 ## Scaling path (when needed)
 
 - Add API instances (stateless → horizontal scale).

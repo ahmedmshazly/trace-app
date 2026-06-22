@@ -1,7 +1,15 @@
 import { UserModel, type UserDocument } from '../models/user';
+import { EntryModel } from '../models/entry';
+import { PasswordResetTokenModel } from '../models/password-reset-token';
 import { hashPassword, verifyPassword } from '../lib/password';
 import { signToken } from '../lib/token';
-import { EmailInUseError, InvalidCredentialsError, UnauthorizedError } from '../lib/errors';
+import { generateResetToken, hashResetToken, RESET_TOKEN_TTL_MS } from '../lib/reset-token';
+import {
+  EmailInUseError,
+  InvalidCredentialsError,
+  UnauthorizedError,
+  ValidationError,
+} from '../lib/errors';
 
 export interface PublicUser {
   id: string;
@@ -82,4 +90,67 @@ export async function getCurrentUser(userId: string): Promise<PublicUser> {
     throw new UnauthorizedError();
   }
   return toPublicUser(user);
+}
+
+/**
+ * Begins a password reset. Returns the raw token only when an account exists;
+ * the caller (route) must respond identically either way so the endpoint never
+ * reveals whether an email is registered (no account enumeration, FR-7.*).
+ * In production the token travels by email; with no mailer configured it is
+ * surfaced to the caller for non-production/testing use only.
+ */
+export async function requestPasswordReset(email: string): Promise<{ rawToken: string | null }> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await UserModel.findOne({ email: normalizedEmail });
+  if (!user) {
+    return { rawToken: null };
+  }
+
+  // One outstanding grant per user: drop any prior tokens before issuing a new one.
+  await PasswordResetTokenModel.deleteMany({ userId: user._id });
+
+  const { raw, hash } = generateResetToken();
+  await PasswordResetTokenModel.create({
+    userId: user._id,
+    tokenHash: hash,
+    expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+  });
+
+  return { rawToken: raw };
+}
+
+/**
+ * Completes a password reset: validates the (single-use) token, sets the new
+ * password, invalidates the token, and issues a fresh session (auto-login).
+ * @throws ValidationError when the token is unknown or expired.
+ */
+export async function resetPassword(rawToken: string, newPassword: string): Promise<AuthResult> {
+  const tokenHash = hashResetToken(rawToken);
+  const grant = await PasswordResetTokenModel.findOne({ tokenHash });
+  if (!grant || grant.expiresAt.getTime() <= Date.now()) {
+    if (grant) await PasswordResetTokenModel.deleteOne({ _id: grant._id });
+    throw new ValidationError('Invalid or expired reset token');
+  }
+
+  const user = await UserModel.findById(grant.userId);
+  if (!user) {
+    await PasswordResetTokenModel.deleteMany({ userId: grant.userId });
+    throw new ValidationError('Invalid or expired reset token');
+  }
+
+  user.passwordHash = await hashPassword(newPassword);
+  await user.save();
+  await PasswordResetTokenModel.deleteMany({ userId: user._id });
+
+  return { token: signToken(user._id.toString()), user: toPublicUser(user) };
+}
+
+/**
+ * Permanently deletes the account and everything it owns (entries + reset
+ * tokens). Irreversible — exposed only behind the client's typed confirmation.
+ */
+export async function deleteAccount(userId: string): Promise<void> {
+  await EntryModel.deleteMany({ userId });
+  await PasswordResetTokenModel.deleteMany({ userId });
+  await UserModel.deleteOne({ _id: userId });
 }

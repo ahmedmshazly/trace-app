@@ -1,0 +1,82 @@
+/* ============================================================
+   Trace — Color tokens
+   A quiet, two-theme palette for a keyboard-first life-logging
+   instrument. Few colors, each with a single job. Dark is the
+   lead surface (designed, not inverted); the teal accent is
+   rationed — it appears only where something matters right now.
+   Source: docs/06-design/color-system.md (ADR-0006).
+   Dark is the default theme; light is opt-in via [data-theme].
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  /* Backgrounds */
+  --color-base:        #15151f;  /* outermost app shell / page (deep navy, not black) */
+  --color-surface:     #1e1e2e;  /* cards, capture input, entry rows */
+  --color-elevated:    #292940;  /* ⌘K overlay, dropdowns, backdate, tooltips */
+
+  /* Text */
+  --color-text-primary:   #c9d1e4;  /* body text & entry bodies */
+  --color-text-secondary: #a6adc8;  /* timestamps, labels, metadata */
+  --color-text-muted:     #7a7f96;  /* placeholder, disabled, helper hints */
+  --color-text-on-accent: #0f1f1c;  /* text on the primary accent fill */
+
+  /* Accent (rationed) */
+  --color-accent-primary:   #74cabb;  /* commit, focus ring, primary CTA */
+  --color-accent-secondary: #8aa9e6;  /* #tags, links, interactive hover */
+
+  /* Structure */
+  --color-border:       #313146;  /* dividers, input outlines, separators */
+  --color-day-header:   #6c7086;  /* Today / Yesterday / date headers — recedes */
+  --color-tag-pill-bg:  #29304a;  /* background of inline #tag chips */
+
+  /* States */
+  --color-state-success: #88c9a1;  /* entry committed confirmation */
+  --color-state-warning: #e5c890;  /* draft preserved / connectivity */
+  --color-state-error:   #eb8a9c;  /* destructive actions, form errors */
+  --color-state-info:    #8aa9e6;  /* neutral informational hints */
+
+  /* Focus */
+  --color-focus-ring: #8fe0d0;  /* keyboard-focus indicator (3px halo) */
+
+  /* Translucent fills derived from the above (overlays, scrims, hovers) */
+  --color-scrim:        rgba(10, 10, 16, 0.62);   /* dims the core screen behind ⌘K */
+  --color-hover-wash:   rgba(116, 202, 187, 0.08); /* faint teal hover on rows/controls */
+  --color-accent-soft:  rgba(116, 202, 187, 0.16); /* accent halo / selected wash */
+}
+
+[data-theme="light"] {
+  /* Backgrounds */
+  --color-base:        #eceff3;
+  --color-surface:     #fbfcfd;
+  --color-elevated:    #ffffff;
+
+  /* Text */
+  --color-text-primary:   #1c2433;
+  --color-text-secondary: #565f6e;
+  --color-text-muted:     #8a94a3;
+  --color-text-on-accent: #ffffff;
+
+  /* Accent (rationed) */
+  --color-accent-primary:   #15807a;
+  --color-accent-secondary: #2f6fce;
+
+  /* Structure */
+  --color-border:       #dce1e7;
+  --color-day-header:   #8a94a3;
+  --color-tag-pill-bg:  #e6effb;
+
+  /* States */
+  --color-state-success: #1a7f4f;
+  --color-state-warning: #9a6a00;
+  --color-state-error:   #c2364a;
+  --color-state-info:    #2f6fce;
+
+  /* Focus */
+  --color-focus-ring: #15807a;
+
+  /* Translucent fills */
+  --color-scrim:        rgba(28, 36, 51, 0.34);
+  --color-hover-wash:   rgba(21, 128, 122, 0.06);
+  --color-accent-soft:  rgba(21, 128, 122, 0.12);
+}

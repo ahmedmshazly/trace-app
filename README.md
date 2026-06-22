@@ -10,7 +10,8 @@ it happened; time is the primary key of your record. The governing principle is
 simple and ruthless: **capture friction must be near zero.**
 
 **Status:** In development — V1 fully specified & governed; the **backend
-(feature 001)** is implemented and tested; the frontend is next.
+(feature 001)** is implemented and tested; the **frontend web client** is
+implemented and deployable to Vercel.
 
 ---
 
@@ -27,6 +28,9 @@ The frontend (`frontend/`) is built next against these specs.
 ```
 .
 ├── backend/         Implemented API (feature 001) — Express · Mongoose · TypeScript
+├── frontend/        React web client (Vite) — wired to the API, Vercel-ready
+├── api/             Vercel serverless entry (rewrites /api/* to Express)
+├── vercel.json      Production deployment config (static client + serverless API)
 ├── specs/           Feature specs (Spec-Driven Development)
 │   ├── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
 │   ├── 002-search-and-tags/          ⌘K search, inline #tags, filters, tag index
@@ -75,7 +79,7 @@ configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
 
 ## Roadmap (stage-based)
 
-`Stage 0 Foundations ✓` → `001 Foundation & Capture (backend ✓ · frontend next)` →
+`Stage 0 Foundations ✓` → `001 Foundation & Capture (backend ✓ · frontend ✓)` →
 `002 Search & Tags` → `003 Export` → `004 Hardening & Deploy (V1 GA)` →
 `V2+ Analysis engine`. See [docs/03-project/roadmap.md](docs/03-project/roadmap.md).
 
@@ -90,3 +94,34 @@ configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
 7. **Simplicity & YAGNI** — build the smallest thing that satisfies the spec.
 
 Full text: [the Constitution](docs/constitution.md).
+
+## Deploy to Vercel
+
+Trace ships with a production-ready Vercel configuration: the React client is
+served as static assets and the Express API runs as a serverless function on the
+same origin (`/api/*`).
+
+### Prerequisites
+
+- A [MongoDB Atlas](https://www.mongodb.com/atlas) cluster (or other managed MongoDB reachable from Vercel).
+- A Vercel account linked to this repository.
+
+### One-time setup
+
+1. Import the repo in [Vercel](https://vercel.com/new).
+2. Leave **Framework Preset** as *Other* (configured via `vercel.json`).
+3. Add environment variables from [`.env.example`](.env.example):
+   - `MONGODB_URI` — your Atlas connection string
+   - `JWT_SECRET` — generate with `openssl rand -hex 32`
+   - `ALLOWED_ORIGINS` — your production domain (e.g. `https://trace.example.com`)
+   - `NODE_ENV=production`
+4. Deploy. Preview URLs are allowed automatically via `VERCEL_URL`.
+
+### Verify after deploy
+
+```bash
+curl -s https://your-app.vercel.app/api/health
+```
+
+See [docs/05-operations/deployment.md](docs/05-operations/deployment.md) for
+the full release procedure, rollback, and post-deploy checklist.

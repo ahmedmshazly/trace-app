@@ -1,0 +1,16 @@
+{
+  "name": "trace-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Trace web client — a Vite + React SPA wired to the Trace backend API, built on the Trace design system.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10",
+    "vite-plugin-static-copy": "^1.0.6"
+  }
+}

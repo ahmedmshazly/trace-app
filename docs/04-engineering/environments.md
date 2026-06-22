@@ -44,7 +44,7 @@ or invalid ([R-10](../../specs/001-foundation-and-capture/research.md)).
 
 | Variable | Required | Example | Notes |
 |---|---|---|---|
-| `VITE_API_BASE_URL` | yes | `http://localhost:4000/api` | API origin for the client |
+| `VITE_API_BASE` | no | `/api` | API base path; same-origin on Vercel (default). Set to full URL for split-origin dev. |
 
 ## `.env` discipline
 

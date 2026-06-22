@@ -1,0 +1,24 @@
+{
+  "name": "Trace — a timestamped record of your moments",
+  "short_name": "Trace",
+  "description": "Capture moments as they happen and keep a private, timestamped record.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#15151f",
+  "theme_color": "#15151f",
+  "icons": [
+    {
+      "src": "/assets/brand/app-icon-dark.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/brand/maskable-dark.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -7,9 +7,15 @@ import { logger } from './logger';
  * ephemeral in-memory server while production reads it from validated config.
  */
 export async function connectDb(uri: string = config.mongodbUri): Promise<typeof mongoose> {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose;
+  }
+
   mongoose.set('strictQuery', true);
+  const isServerless = Boolean(process.env.VERCEL);
   const conn = await mongoose.connect(uri, {
-    serverSelectionTimeoutMS: 10_000,
+    serverSelectionTimeoutMS: isServerless ? 5_000 : 10_000,
+    maxPoolSize: isServerless ? 1 : 10,
   });
   // Never log the URI (it may contain credentials) — log only the database name.
   logger.info({ db: conn.connection.name }, 'MongoDB connected');

@@ -1,0 +1,13 @@
+# Keep deploy artifacts lean — the build step produces what Vercel serves.
+specs/
+docs/
+.github/
+backend/tests/
+backend/coverage/
+backend/scripts/
+backend/api.http
+**/*.test.ts
+**/*.md
+!frontend/dist/**
+docker-compose.yml
+.idea/

@@ -1,0 +1,58 @@
+/* ============================================================
+   Trace — Typography tokens
+   Tinos (transitional serif) for the wordmark, display & day
+   headers — quiet, literary, timeless. Roboto Slab for the
+   interface and entry bodies — a plain-text, ledger-like voice.
+   A monospace stack for timestamps and keyboard glyphs.
+   "Recede the structure, surface the moment": body is the
+   loudest element; headers/timestamps recede via size + spacing.
+   ============================================================ */
+
+:root {
+  /* Families */
+  --font-serif: "Tinos", Georgia, "Times New Roman", serif;          /* wordmark, display */
+  --font-slab:  "Roboto Slab", Georgia, "Times New Roman", serif;     /* UI + entry bodies */
+  --font-mono:  "DejaVu Sans Mono", ui-monospace, "SF Mono", Menlo, "Cascadia Code", monospace;
+
+  /* Body / UI font is the slab; aliases for convenience */
+  --font-body: var(--font-slab);
+  --font-display: var(--font-serif);
+
+  /* Type scale (px) — product scale, larger than the structural wireframe board */
+  --text-micro:   11px;  /* keyboard hints, fine print */
+  --text-meta:    13px;  /* timestamps, labels, status */
+  --text-sm:      14px;
+  --text-body:    16px;  /* entry bodies, form fields */
+  --text-lg:      18px;
+  --text-title:   22px;  /* section / panel titles */
+  --text-heading: 28px;  /* screen headings */
+  --text-display: 40px;  /* auth wordmark */
+  --text-hero:    56px;  /* marketing / big wordmark */
+
+  /* Weights */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Line heights */
+  --leading-tight:   1.15;  /* display / wordmark */
+  --leading-snug:    1.3;   /* headings */
+  --leading-normal:  1.55;  /* entry bodies / reading */
+  --leading-meta:    1.2;   /* timestamps, labels */
+
+  /* Letter spacing — day headers recede via tracking, not hue */
+  --tracking-tight:   -0.01em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;
+  --tracking-header:  0.14em;  /* uppercased day headers (TODAY / YESTERDAY) */
+  --tracking-eyebrow: 0.18em;  /* section eyebrows / kickers */
+
+  /* Semantic text roles */
+  --text-wordmark-size:   var(--text-display);
+  --text-entry-size:      var(--text-body);
+  --text-entry-leading:   var(--leading-normal);
+  --text-dayheader-size:  var(--text-meta);
+  --text-timestamp-size:  var(--text-meta);
+}

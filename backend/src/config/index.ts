@@ -44,15 +44,26 @@ function buildConfig(source: NodeJS.ProcessEnv): AppConfig {
   }
 
   const env = parsed.data;
+  const allowedOrigins = env.ALLOWED_ORIGINS.split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
+
+  // On Vercel, preview and production URLs are injected at runtime — allow them
+  // automatically so CORS works without listing every deployment URL.
+  for (const key of ['VERCEL_URL', 'VERCEL_BRANCH_URL'] as const) {
+    const host = source[key];
+    if (host) {
+      allowedOrigins.push(`https://${host}`);
+    }
+  }
+
   return Object.freeze({
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
     mongodbUri: env.MONGODB_URI,
     jwtSecret: env.JWT_SECRET,
     jwtExpiresIn: env.JWT_EXPIRES_IN,
-    allowedOrigins: env.ALLOWED_ORIGINS.split(',')
-      .map((origin) => origin.trim())
-      .filter((origin) => origin.length > 0),
+    allowedOrigins: [...new Set(allowedOrigins)],
     logLevel: env.LOG_LEVEL,
     rateLimit: { windowMs: env.RATE_LIMIT_WINDOW_MS, max: env.RATE_LIMIT_MAX },
     isProduction: env.NODE_ENV === 'production',
