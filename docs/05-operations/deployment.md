@@ -1,11 +1,16 @@
 # Deployment — Trace
 
-**Status:** Baseline (realized in Stage 4 / feature 004) · **Last updated:** 2026-06-18
+**Status:** Production on Vercel · **Last updated:** 2026-07-15
 
 How Trace is deployed to a hosted environment. Trace is **config-driven**: the
 same artifacts run everywhere, steered only by environment configuration
 (Constitution VI; NFR-3.2/3.3). The API is **stateless** (NFR-3.4), enabling
 rolling redeploys without sticky sessions.
+
+**Canonical production URL (current):** https://trace-one-swart.vercel.app  
+(aliases: `trace-ahmdmshazly.vercel.app`). Custom domain `trace.ahmdmshazly.me` is
+not configured yet. Release path: **push to `main`** on `ahmedmshazly/trace`
+(GitHub ↔ Vercel linked; production branch `main`).
 
 ---
 
@@ -111,12 +116,14 @@ Preview deployments work without listing every preview URL — `VERCEL_URL` and
 
 ### Deploy
 
+Preferred: merge/push to **`main`** — Vercel auto-deploys from GitHub.
+
 ```bash
-# From the repo root — mirrors what Vercel runs in CI
+# Local parity with what Vercel runs
 npm run install:all
 npm run vercel-build
 
-# Or push to main with the repo connected to Vercel
+# Manual promote (optional)
 vercel --prod
 ```
 
@@ -125,10 +132,16 @@ The client uses `/api` as its base URL by default (same origin). No
 
 ### MongoDB Atlas notes
 
-- Create a cluster and allow network access from anywhere (`0.0.0.0/0`) or use
-  Vercel's static IPs if on a Pro plan.
-- Use a dedicated database user with read/write on the `trace` database.
-- Enable automated backups before going live.
+- Cluster provider **AWS**, region **`eu-central-1`** (near Vercel `fra1`).
+- Network access: `0.0.0.0/0` for serverless + GitHub Actions dump runners, or
+  tighten later with static egress.
+- DB user with read/write on database `trace`.
+- Set `MONGODB_URI` on Vercel (Production + Preview) **and** SSM
+  `/trace/prod/MONGODB_URI` for the [S3 backup workflow](./aws-backup.md).
+- Enable Atlas automated backups / PITR on the tier before treating the
+  deployment as durable.
+- Set `ALLOWED_ORIGINS=https://trace-one-swart.vercel.app` (update when a
+  custom domain lands).
 
 ## Scaling path (when needed)
 

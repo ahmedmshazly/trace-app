@@ -1,0 +1,66 @@
+# Nightly off-box Mongo dump → S3 (AWS second copy).
+# Uses GitHub OIDC → IAM role (no long-lived AWS keys in repo secrets).
+#
+# Required GitHub Actions variables (repo Settings → Variables):
+#   AWS_ROLE_ARN          arn:aws:iam::352602573649:role/trace-backup-gha
+#   TRACE_BACKUP_BUCKET   ahmdmshazly-trace-backups  (optional; default in script)
+#
+# Required AWS SSM SecureString (eu-central-1):
+#   /trace/prod/MONGODB_URI
+#
+# Required: Atlas network access allows the GitHub-hosted runner egress
+# (or use a self-hosted runner later). For M0, 0.0.0.0/0 is typical with Vercel.
+
+name: Backup Mongo → S3
+
+on:
+  schedule:
+    # 02:17 UTC nightly
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  dump:
+    name: mongodump → S3
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-central-1
+      TRACE_BACKUP_BUCKET: ${{ vars.TRACE_BACKUP_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MongoDB Database Tools
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/mdbtools.tgz \
+            https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.12.0.tgz
+          tar -xzf /tmp/mdbtools.tgz -C /tmp
+          sudo cp /tmp/mongodb-database-tools-*/bin/mongodump /usr/local/bin/
+          mongodump --version
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: eu-central-1
+
+      - name: Load MONGODB_URI from SSM
+        run: |
+          set -euo pipefail
+          URI="$(aws ssm get-parameter \
+            --name /trace/prod/MONGODB_URI \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)"
+          echo "::add-mask::$URI"
+          echo "MONGODB_URI=$URI" >> "$GITHUB_ENV"
+
+      - name: Dump and upload
+        run: |
+          chmod +x scripts/backup/mongodump-to-s3.sh
+          export TRACE_BACKUP_BUCKET="${TRACE_BACKUP_BUCKET:-ahmdmshazly-trace-backups}"
+          ./scripts/backup/mongodump-to-s3.sh

@@ -1,10 +1,15 @@
 # Backup & Recovery — Trace
 
-**Status:** Baseline (operational from Stage 4 / GA) · **Last updated:** 2026-06-18
+**Status:** Operational overlay · **Last updated:** 2026-07-15
 
 The corpus is the product (Constitution II). Losing a user's moments is the worst
 non-privacy failure Trace can have. This document defines how data is protected
 and recovered.
+
+Companion docs:
+
+- [AWS off-box backups](./aws-backup.md) — S3 + OIDC + scripts
+- [Restore drill](./restore-drill.md) — Path A / Path B procedure
 
 ---
 
@@ -12,74 +17,77 @@ and recovered.
 
 | Objective | Target (V1) | Rationale |
 |---|---|---|
-| **RPO** (max acceptable data loss) | Small — minutes, via point-in-time recovery | "No committed entry is ever lost" (SC-5) is the promise; backups make it durable beyond a single DB. |
-| **RTO** (max acceptable downtime to restore) | Hours | V1 is not yet mission-critical infrastructure, but restoration must be proven and reasonable. |
-
-These targets are revisited as the user base grows.
+| **RPO** (max acceptable data loss) | Small — minutes via Atlas PITR where available; ≤ 24h for S3 nightly | "No committed entry is ever lost" (SC-5) beyond a single DB instance. |
+| **RTO** (max acceptable downtime to restore) | Hours | V1 showcase is not mission-critical, but restoration must be proven. |
 
 ## What is backed up
 
-- **MongoDB** — the entire datastore (users + entries). This *is* the corpus.
-- **Configuration/secrets** — managed in the platform secret store (versioned there), not in backups of application data.
-- Application **artifacts** are reproducible from source + CI and are not "backed up" in the data sense.
+- **MongoDB** — the entire datastore (users + entries). This *is* the corpus. V1 has no S3/GridFS blob store for moments.
+- **Configuration/secrets** — Vercel env + AWS SSM; not inside mongodump archives.
+- Application **artifacts** — reproducible from source + CI; not backed up as data.
 
-## Backup strategy
+**Not** prod: local Docker Compose Mongo volumes. `docker compose down -v` wipes **dev only**. Never treat Compose as production recovery.
 
-- Use the **managed MongoDB provider's automated backups** with **point-in-time recovery (PITR)** where available.
-- Retain a rolling window of backups (e.g. daily snapshots + continuous oplog for PITR); retention is sized to balance cost and safety.
-- Backups inherit **encryption at rest** (NFR-4.7).
-- A **pre-migration backup** is mandatory before any schema migration ([runbook](./runbook.md)).
-
-## Restore procedures
-
-### Full restore (DB lost/corrupted)
-
-1. Declare a Sev1 incident; stop writes if corruption is active.
-2. Identify the target restore point (latest good snapshot or PITR timestamp).
-3. Restore to a new database instance from the provider's backup.
-4. Verify integrity (counts, spot-check entries, isolation intact).
-5. Re-point `MONGODB_URI` to the restored instance; roll API instances.
-6. Verify `/api/health` + capture smoke + isolation smoke.
-7. Postmortem.
-
-### Point-in-time recovery (bad write/migration)
-
-1. Choose the timestamp just before the bad event.
-2. PITR-restore to a new instance.
-3. Verify, re-point, validate, communicate.
-
-### Partial / single-user recovery
-
-- Because V1 uses **soft-delete only** (no hard delete), most "I lost an entry"
-  cases are a **restore** in-app, not a DB operation ([data-model](../02-architecture/data-model.md)).
-- For deeper loss, restore a backup to a scratch instance and extract the needed
-  documents.
-
-## Recovery drills
-
-- Periodically **restore a backup to a scratch environment** and run integrity +
-  isolation checks. An untested backup is not a backup.
-- Record drill results; failures become [risk register](../03-project/risk-register.md) items.
-
-## Durability layers (defense in depth)
+## Durability layers
 
 ```mermaid
 flowchart TB
-    A["Soft-delete in app<br/>(user-recoverable)"] --> B["Managed DB replication<br/>(instance durability)"]
-    B --> C["Automated backups + PITR<br/>(point-in-time recovery)"]
-    C --> D["Periodic restore drills<br/>(proven recoverability)"]
+    soft["Soft-delete in app"] --> live["Atlas live store on AWS eu-central-1"]
+    live --> pitr["Atlas automated backups / PITR"]
+    live --> s3["Nightly mongodump → S3"]
+    pitr --> drill["Restore drills Path A"]
+    s3 --> drillB["Restore drills Path B"]
 ```
+
+| Layer | System | Role |
+|---|---|---|
+| Hot path | Vercel + Atlas | Live corpus |
+| Provider backup | Atlas Cloud Backup / PITR | Path A |
+| Off-box second copy | S3 `ahmdmshazly-trace-backups` | Path B — survives Atlas-only failure |
+| Proven | Quarterly restore drill | See [restore-drill.md](./restore-drill.md) |
+
+## Backup strategy
+
+1. **Atlas** — enable automated backups / PITR on the production cluster (AWS `eu-central-1`). Encryption at rest on.
+2. **S3 nightly** — GitHub Actions OIDC → IAM role `trace-backup-gha` → `mongodump` gzip archive under `trace/YYYY/MM/DD/`. See [aws-backup.md](./aws-backup.md).
+3. **Pre-migration** — mandatory dump/snapshot before schema migrations ([runbook](./runbook.md)).
+
+## Restore procedures
+
+### Path A — Atlas PITR / snapshot
+
+1. Declare Sev1 if production is impacted; stop writes if corruption is active.
+2. Restore to a **new** Atlas instance (or scratch DB) at the chosen timestamp.
+3. Verify integrity (counts, spot-check entries, isolation).
+4. Re-point Vercel `MONGODB_URI`; confirm `/api/health` + capture smoke.
+5. Postmortem.
+
+### Path B — S3 archive
+
+1. `DRY_RUN=1 ./scripts/backup/restore-from-s3.sh` to identify the object.
+2. `mongorestore` into **scratch** URI only (`RESTORE_MONGODB_URI` ≠ prod).
+3. Verify, then cut over `MONGODB_URI` only if this is the recovery plan.
+
+### Soft-delete / single-user
+
+Most "I lost an entry" cases are in-app restore (soft-delete), not a DB operation
+([data-model](../02-architecture/data-model.md)).
+
+## Instance-terminate story
+
+There is **no** Trace app EC2 in production. Terminating EduBridge/DealerIQ hosts
+does not affect Trace. Atlas + S3 survive. Laptop Compose loss is irrelevant to prod.
 
 ## Responsibilities
 
-Ops is accountable for backups, retention, and restore drills (see
-[RACI](../03-project/raci.md)). Backup failure is an alertable event
+Ops owns backups, retention, and drills ([RACI](../03-project/raci.md)). Backup
+workflow failure is visible as a failed GitHub Actions run
 ([observability](./observability.md)).
 
-## Pre-GA checklist
+## Checklist
 
-- [ ] Automated backups enabled with PITR.
-- [ ] Retention window configured.
-- [ ] Encryption at rest confirmed.
-- [ ] At least one successful restore drill completed.
-- [ ] Pre-migration backup step in the release runbook.
+- [ ] Atlas automated backups / PITR enabled
+- [ ] SSM `/trace/prod/MONGODB_URI` set; Vercel `MONGODB_URI` set
+- [ ] GitHub variable `AWS_ROLE_ARN` set; first backup workflow green
+- [ ] At least one Path A or Path B restore drill recorded
+- [ ] Pre-migration backup step in the release runbook
