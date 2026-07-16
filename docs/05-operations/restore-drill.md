@@ -83,10 +83,10 @@ Same as Preview drill, but Production `MONGODB_URI` + announce. After Atlas reco
 - [ ] Path A or Path B restore to scratch succeeds with verified counts.
 - [x] Latest S3 object exists under `trace/YYYY/MM/DD/` (and CRR replica `…-ew1`).
 - [x] GHA backup uses OIDC only (no static AWS keys in git).
-- [ ] Path C Preview drill: standby health + capture smoke, then reverted.
+- [x] Path C Preview drill: standby restore + app smoke against EC2, then SG closed / Preview URI reverted.
 
 ## Drill log
 
 | Date | Path | Result | Notes |
 |------|------|--------|-------|
-| 2026-07-16 | C (setup) | pending | EC2 `i-00c3cef5a86c0ed0f` EIP `51.102.93.91`; CRR + 6h dump enabled |
+| 2026-07-16 | C | **pass** | EC2 `i-00c3cef5a86c0ed0f` EIP `51.102.93.91`. SSM restore → collections `users,entries,passwordresettokens`. Preview env briefly pointed at standby; Vercel Preview SSO blocked anonymous HTTP, so capture smoke ran via local Express → standby (`/api/health` ok, register+capture 201). Production left on Atlas (`trace-one-swart` health ok). SG 27017 revoked; Mongo rebound to `127.0.0.1`. GHA `workflow_dispatch` returned 403 on this token — scheduled workflow is in repo; first restore proven via AWS SSM CLI. |
