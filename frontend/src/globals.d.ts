@@ -4,25 +4,29 @@ import type { Root } from 'react-dom/client';
 import type { ReactNode } from 'react';
 
 /** Minimal surface of the Trace design-system global bundle. */
+// Components are intentionally `any` — the precompiled DS bundle is untyped;
+// screens still type their own state and API DTOs (audit FR-005).
+export type DsComponent = (props: any) => ReactNode;
+
 export interface TraceDesignSystem {
-  Logo: (props: Record<string, unknown>) => ReactNode;
-  Button: (props: Record<string, unknown>) => ReactNode;
-  IconButton: (props: Record<string, unknown>) => ReactNode;
-  Kbd: (props: Record<string, unknown>) => ReactNode;
-  Icon: (props: Record<string, unknown>) => ReactNode;
-  CaptureBar: (props: Record<string, unknown>) => ReactNode;
-  TimelineEntry: (props: Record<string, unknown>) => ReactNode;
-  DayHeader: (props: Record<string, unknown>) => ReactNode;
-  TagPill: (props: Record<string, unknown>) => ReactNode;
-  Banner: (props: Record<string, unknown>) => ReactNode;
-  StatusNote: (props: Record<string, unknown>) => ReactNode;
-  SegmentedToggle: (props: Record<string, unknown>) => ReactNode;
-  Switch: (props: Record<string, unknown>) => ReactNode;
-  Select: (props: Record<string, unknown>) => ReactNode;
-  TextField: (props: Record<string, unknown>) => ReactNode;
-  Toast: (props: Record<string, unknown>) => ReactNode;
-  ToastViewport: (props: Record<string, unknown>) => ReactNode;
-  Dialog: (props: Record<string, unknown>) => ReactNode;
+  Logo: DsComponent;
+  Button: DsComponent;
+  IconButton: DsComponent;
+  Kbd: DsComponent;
+  Icon: DsComponent;
+  CaptureBar: DsComponent;
+  TimelineEntry: DsComponent;
+  DayHeader: DsComponent;
+  TagPill: DsComponent;
+  Banner: DsComponent;
+  StatusNote: DsComponent;
+  SegmentedToggle: DsComponent;
+  Switch: DsComponent;
+  Select: DsComponent;
+  TextField: DsComponent;
+  Toast: DsComponent;
+  ToastViewport: DsComponent;
+  Dialog: DsComponent;
   [key: string]: unknown;
 }
 

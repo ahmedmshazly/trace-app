@@ -31,16 +31,52 @@ const EnvSchema = z
     MAIL_FROM: z.string().optional(),
   })
   .superRefine((env, ctx) => {
-    if (env.MAIL_TRANSPORT !== 'smtp') return;
-    for (const key of ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'MAIL_FROM'] as const) {
-      const value = env[key];
-      if (value === undefined || value === '') {
+    if (env.MAIL_TRANSPORT === 'smtp') {
+      for (const key of [
+        'SMTP_HOST',
+        'SMTP_PORT',
+        'SMTP_USER',
+        'SMTP_PASS',
+        'MAIL_FROM',
+      ] as const) {
+        const value = env[key];
+        if (value === undefined || value === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: [key],
+            message: `${key} is required when MAIL_TRANSPORT=smtp`,
+          });
+        }
+      }
+    }
+
+    if (env.NODE_ENV !== 'production') return;
+
+    // Production must deliver reset links — log transport is a silent dead end.
+    if (env.MAIL_TRANSPORT !== 'smtp') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['MAIL_TRANSPORT'],
+        message: 'MAIL_TRANSPORT must be "smtp" in production',
+      });
+    }
+
+    // Reset emails must not point at localhost.
+    try {
+      const host = new URL(env.APP_ORIGIN).hostname;
+      if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
         ctx.addIssue({
           code: 'custom',
-          path: [key],
-          message: `${key} is required when MAIL_TRANSPORT=smtp`,
+          path: ['APP_ORIGIN'],
+          message: 'APP_ORIGIN must be a public origin in production (not localhost)',
         });
       }
+    } catch {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['APP_ORIGIN'],
+        message: 'APP_ORIGIN must be a valid URL in production',
+      });
     }
   });
 

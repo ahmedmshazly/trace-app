@@ -36,9 +36,13 @@ or invalid ([R-10](../../specs/001-foundation-and-capture/research.md)).
 | `PORT` | yes | `4000` | API listen port |
 | `MONGODB_URI` | yes | `mongodb://localhost:27017/trace_dev` | Connection string (secret in hosted) |
 | `JWT_SECRET` | yes | `<random>` | Token signing key — **secret** |
+| `JWT_EXPIRES_IN` | no | `24h` | Access-token lifetime |
 | `ALLOWED_ORIGINS` | yes | `http://localhost:5173` | CORS allowlist (comma-separated) |
+| `APP_ORIGIN` | yes in production | `https://trace.example.com` | Public web origin for reset links (not localhost in prod) |
 | `LOG_LEVEL` | no | `info` | Structured logger level |
 | `RATE_LIMIT_*` | no | — | Tunable auth rate limits |
+| `MAIL_TRANSPORT` | yes in production (`smtp`) | `log` / `smtp` | `log` for local/dev; **must be `smtp` in production** |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `MAIL_FROM` | when `MAIL_TRANSPORT=smtp` | — | SMTP credentials + From address |
 
 ### Frontend variables
 

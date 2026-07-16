@@ -1,17 +1,16 @@
-// @ts-nocheck
 // Capture + Timeline with the
 // onboarding empty state, wired to the live API: real capture, paginated
 // timeline, inline edit, backdate, soft-delete with undo, draft persistence,
-// client-side search / tag index / export, theme, and logout.
+// server-side search / tag index / export, theme, and logout.
 import { useAuth } from '../auth/AuthContext';
 import { api } from '../api/client';
 import {
   groupByDay,
   timeLabel,
   relativeTimeLabel,
-  tagCounts,
   setHour12,
 } from '../lib/entries';
+import type { ReactNode, MouseEvent, ChangeEvent } from 'react';
 
 const {
   Logo, Button, IconButton, Kbd, Icon,
@@ -26,16 +25,47 @@ const DRAFT_KEY = 'trace.draft';
 const THEME_KEY = 'trace.theme';
 const PREFS_KEY = 'trace.prefs';
 
-const DEFAULT_PREFS = { clock24: false, exportFormat: 'Markdown' };
+interface Prefs {
+  clock24: boolean;
+  exportFormat: string;
+}
 
-function readPrefs() {
+interface EntryRow {
+  id: string;
+  body: string;
+  occurredAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deleted?: boolean;
+  source?: string;
+  _pending?: boolean;
+  _fresh?: boolean;
+  [key: string]: unknown;
+}
+
+interface TagCount {
+  tag: string;
+  count: number;
+}
+
+interface ToastState {
+  tone?: string;
+  title?: string;
+  message?: string;
+  duration?: number;
+  action?: ReactNode;
+}
+
+const DEFAULT_PREFS: Prefs = { clock24: false, exportFormat: 'Markdown' };
+
+function readPrefs(): Prefs {
   try {
     return { ...DEFAULT_PREFS, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
   } catch {
     return { ...DEFAULT_PREFS };
   }
 }
-function writePrefs(prefs) {
+function writePrefs(prefs: Prefs): void {
   try {
     localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
   } catch {
@@ -44,7 +74,7 @@ function writePrefs(prefs) {
 }
 
 // Newest-first by occurredAt, tie-broken by id, matching the backend ordering.
-function sortEntries(list) {
+function sortEntries(list: EntryRow[]): EntryRow[] {
   return [...list].sort((a, b) => {
     const diff = new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime();
     if (diff !== 0) return diff;
@@ -52,14 +82,14 @@ function sortEntries(list) {
   });
 }
 
-function readDraft() {
+function readDraft(): string {
   try {
     return localStorage.getItem(DRAFT_KEY) || '';
   } catch {
     return '';
   }
 }
-function writeDraft(value) {
+function writeDraft(value: string): void {
   try {
     if (value) localStorage.setItem(DRAFT_KEY, value);
     else localStorage.removeItem(DRAFT_KEY);
@@ -69,14 +99,46 @@ function writeDraft(value) {
 }
 
 // ── Command palette (⌘K) — server-side search across the whole record ──
-function CommandPalette({ tags, initialTag, onClose }) {
+function CommandPalette({
+  tags,
+  initialTag,
+  onClose,
+}: {
+  tags: TagCount[];
+  initialTag?: string | null;
+  onClose: () => void;
+}) {
   const [q, setQ] = useState('');
-  const [filterTag, setFilterTag] = useState(initialTag || null);
-  const [results, setResults] = useState<any[]>([]);
+  const [filterTag, setFilterTag] = useState<string | null>(initialTag || null);
+  const [results, setResults] = useState<EntryRow[]>([]);
   const [searching, setSearching] = useState(false);
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
+  }, []);
+
+  // Focus trap within the dialog.
+  useEffect(() => {
+    function onKey(e: globalThis.KeyboardEvent) {
+      if (e.key !== 'Tab' || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   const showResults = Boolean(q || filterTag);
@@ -97,7 +159,7 @@ function CommandPalette({ tags, initialTag, onClose }) {
           ...(q.trim() ? { q: q.trim() } : {}),
           ...(filterTag ? { tag: filterTag } : {}),
         });
-        if (!cancelled) setResults(page.items);
+        if (!cancelled) setResults(page.items as EntryRow[]);
       } catch {
         if (!cancelled) setResults([]);
       } finally {
@@ -112,6 +174,9 @@ function CommandPalette({ tags, initialTag, onClose }) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search moments"
       onMouseDown={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 'var(--z-overlay)', background: 'var(--color-scrim)',
@@ -120,7 +185,8 @@ function CommandPalette({ tags, initialTag, onClose }) {
       }}
     >
       <div
-        onMouseDown={(e) => e.stopPropagation()}
+        ref={panelRef}
+        onMouseDown={(e: MouseEvent) => e.stopPropagation()}
         style={{
           width: 'min(620px, 92vw)', background: 'var(--color-elevated)',
           border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)',
@@ -132,9 +198,10 @@ function CommandPalette({ tags, initialTag, onClose }) {
           <input
             ref={inputRef}
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setQ(e.target.value)}
             placeholder="Search moments…"
             className="cp-input"
+            aria-label="Search moments"
             style={{
               flex: 1, border: 'none', outline: 'none', background: 'transparent',
               color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)', fontSize: 'var(--text-lg)',
@@ -199,7 +266,15 @@ function CommandPalette({ tags, initialTag, onClose }) {
 }
 
 // ── Tag index slide-in — counts computed from loaded entries ──────────
-function TagIndexPanel({ tags, onClose, onJump }) {
+function TagIndexPanel({
+  tags,
+  onClose,
+  onJump,
+}: {
+  tags: TagCount[];
+  onClose: () => void;
+  onJump: (tag: string) => void;
+}) {
   const [sort, setSort] = useState('By count');
   const max = Math.max(1, ...tags.map((t) => t.count));
   const sorted = sort === 'A–Z'
@@ -208,7 +283,7 @@ function TagIndexPanel({ tags, onClose, onJump }) {
   return (
     <div onMouseDown={onClose} style={{ position: 'fixed', inset: 0, zIndex: 'var(--z-panel)', background: 'var(--color-scrim)' }}>
       <aside
-        onMouseDown={(e) => e.stopPropagation()}
+        onMouseDown={(e: MouseEvent) => e.stopPropagation()}
         style={{
           position: 'absolute', top: 0, right: 0, bottom: 0, width: 'min(340px, 88vw)',
           background: 'var(--color-elevated)', borderLeft: '1px solid var(--color-border)',
@@ -257,7 +332,7 @@ function TagIndexPanel({ tags, onClose, onJump }) {
 }
 
 // ── Settings & export ─────────────────────────────────────────────────
-function Section({ title, children }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 18, marginBottom: 16 }}>
       <h2 style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-wide)', textTransform: 'uppercase', color: 'var(--color-text-secondary)', margin: '0 0 14px' }}>{title}</h2>
@@ -265,7 +340,7 @@ function Section({ title, children }) {
     </div>
   );
 }
-function Field({ label, children }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 12 }}>
       <span style={{ fontSize: 'var(--text-meta)', color: 'var(--color-text-muted)' }}>{label}</span>
@@ -274,10 +349,14 @@ function Field({ label, children }) {
   );
 }
 
-// Irreversible action gate: requires the user to type the exact confirm phrase.
-function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCancel, onConfirm }) {
+// Irreversible action gate: typed phrase + password re-entry (server step-up).
+function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCancel, onConfirm }: {
+  title: string; description: string; phrase: string; confirmLabel: string;
+  busy: boolean; onCancel: () => void; onConfirm: (password: string) => void;
+}) {
   const [typed, setTyped] = useState('');
-  const armed = typed.trim().toLowerCase() === phrase.toLowerCase();
+  const [password, setPassword] = useState('');
+  const armed = typed.trim().toLowerCase() === phrase.toLowerCase() && password.length > 0;
   return (
     <Dialog
       open
@@ -287,7 +366,7 @@ function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCance
       actions={
         <Fragment>
           <Button variant="ghost" size="sm" onClick={onCancel} disabled={busy}>Cancel</Button>
-          <Button variant="danger" size="sm" icon="warn" onClick={onConfirm} disabled={!armed || busy}>
+          <Button variant="danger" size="sm" icon="warn" onClick={() => onConfirm(password)} disabled={!armed || busy}>
             {busy ? 'Working…' : confirmLabel}
           </Button>
         </Fragment>
@@ -299,8 +378,18 @@ function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCance
       <TextField
         autoFocus
         value={typed}
-        onChange={(e) => setTyped(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTyped(e.target.value)}
         placeholder={phrase}
+      />
+      <p style={{ fontSize: 'var(--text-meta)', color: 'var(--color-text-muted)', margin: '14px 0 10px' }}>
+        Re-enter your password to continue.
+      </p>
+      <TextField
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+        placeholder="Password"
       />
     </Dialog>
   );
@@ -309,6 +398,18 @@ function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCance
 function SettingsScreen({
   theme, onTheme, onBack, email, onLogout, onExport, exportBusy,
   prefs, onPrefs, onDeleteAll, onDeleteAccount,
+}: {
+  theme: string;
+  onTheme: (t: string) => void;
+  onBack: () => void;
+  email?: string;
+  onLogout: () => void;
+  onExport: (fmt: string) => void;
+  exportBusy: boolean;
+  prefs: Prefs;
+  onPrefs: (p: Prefs) => void;
+  onDeleteAll: () => void;
+  onDeleteAccount: () => void;
 }) {
   const [fmt, setFmt] = useState(prefs.exportFormat || 'Markdown');
   return (
@@ -382,13 +483,21 @@ function SettingsScreen({
 }
 
 // ── Backdate dialog (edit occurredAt) ─────────────────────────────────
-function toLocalInputValue(iso) {
+function toLocalInputValue(iso: string): string {
   const d = new Date(iso);
-  const pad = (n) => String(n).padStart(2, '0');
+  const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function BackdateDialog({ entry, onCancel, onConfirm }) {
+function BackdateDialog({
+  entry,
+  onCancel,
+  onConfirm,
+}: {
+  entry: EntryRow;
+  onCancel: () => void;
+  onConfirm: (iso: string) => void;
+}) {
   const [value, setValue] = useState(() => toLocalInputValue(entry.occurredAt));
   return (
     <Dialog
@@ -429,7 +538,17 @@ function BackdateDialog({ entry, onCancel, onConfirm }) {
 }
 
 // ── A single timeline row, with inline editing ────────────────────────
-function TimelineRow({ entry, onEdit, onAdjustTime, onDelete }) {
+function TimelineRow({
+  entry,
+  onEdit,
+  onAdjustTime,
+  onDelete,
+}: {
+  entry: EntryRow;
+  onEdit: (body: string) => Promise<void>;
+  onAdjustTime?: () => void;
+  onDelete?: () => void;
+}) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(entry.body);
   const [busy, setBusy] = useState(false);
@@ -461,9 +580,9 @@ function TimelineRow({ entry, onEdit, onAdjustTime, onDelete }) {
           multiline
           autoFocus
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); save(); }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void save(); }
             if (e.key === 'Escape') setEditing(false);
           }}
           containerStyle={{ marginBottom: 8 }}
@@ -513,7 +632,7 @@ function AnchoredMark() {
     </svg>
   );
 }
-function EmptyState({ onStarter }) {
+function EmptyState({ onStarter }: { onStarter: (text: string) => void }) {
   return (
     <div style={{ textAlign: 'center', padding: '40px 0 24px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><AnchoredMark /></div>
@@ -564,37 +683,38 @@ function EmptyState({ onStarter }) {
 export function AppScreen() {
   const { user, logout } = useAuth();
 
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<EntryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<any>(null);
-  const [nextCursor, setNextCursor] = useState<any>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [tags, setTags] = useState<TagCount[]>([]);
 
   const [draft, setDraft] = useState(() => readDraft());
   const [showDraftBanner, setShowDraftBanner] = useState(() => readDraft().length > 0);
 
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [paletteTag, setPaletteTag] = useState<any>(null);
+  const [paletteTag, setPaletteTag] = useState<string | null>(null);
   const [tagsOpen, setTagsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [backdateEntry, setBackdateEntry] = useState<any>(null);
+  const [backdateEntry, setBackdateEntry] = useState<EntryRow | null>(null);
 
   const [theme, setTheme] = useState(() => {
     try { return localStorage.getItem(THEME_KEY) || 'dark'; } catch { return 'dark'; }
   });
   const [prefs, setPrefs] = useState(readPrefs);
-  const [toast, setToast] = useState<any>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const [exportBusy, setExportBusy] = useState(false);
-  const [danger, setDanger] = useState<any>(null); // 'all' | 'account' | null
+  const [danger, setDanger] = useState<'all' | 'account' | null>(null);
   const [dangerBusy, setDangerBusy] = useState(false);
   const tempId = useRef(0);
-  const toastTimer = useRef<any>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Clock format preference — applied synchronously so every timestamp in this
   // render uses it (timeLabel reads a module-level flag).
   setHour12(prefs.clock24 ? false : true);
 
-  const updatePrefs = useCallback((next) => {
+  const updatePrefs = useCallback((next: Prefs) => {
     setPrefs(next);
     writePrefs(next);
   }, []);
@@ -608,11 +728,20 @@ export function AppScreen() {
   // Persist the draft as it changes.
   useEffect(() => { writeDraft(draft); }, [draft]);
 
-  const showToast = useCallback((next) => {
+  const showToast = useCallback((next: ToastState | null) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
     setToast(next);
     if (next) {
       toastTimer.current = setTimeout(() => setToast(null), next.duration || 6000);
+    }
+  }, []);
+
+  const refreshTags = useCallback(async () => {
+    try {
+      const res = await api.listTags();
+      setTags((res?.tags as TagCount[]) || []);
+    } catch {
+      /* keep previous tags on failure */
     }
   }, []);
 
@@ -624,23 +753,24 @@ export function AppScreen() {
       .listEntries({ limit: PAGE_LIMIT })
       .then((page) => {
         if (cancelled) return;
-        setEntries(sortEntries(page.items));
+        setEntries(sortEntries(page.items as EntryRow[]));
         setNextCursor(page.nextCursor);
         setLoadError(null);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         if (cancelled) return;
         setLoadError(err.message || 'Could not load your timeline.');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+    void refreshTags();
     return () => { cancelled = true; };
-  }, []);
+  }, [refreshTags]);
 
   // Keyboard: ⌘K opens search, Esc closes overlays.
   useEffect(() => {
-    function onKey(e) {
+    function onKey(e: globalThis.KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setPaletteTag(null);
@@ -662,7 +792,7 @@ export function AppScreen() {
       const page = await api.listEntries({ limit: PAGE_LIMIT, cursor: nextCursor });
       setEntries((prev) => sortEntries([...prev, ...page.items]));
       setNextCursor(page.nextCursor);
-    } catch (err) {
+    } catch (err: any) {
       showToast({ tone: 'error', title: 'Could not load older moments', message: err.message });
     } finally {
       setLoadingMore(false);
@@ -695,44 +825,46 @@ export function AppScreen() {
         setEntries((prev) =>
           sortEntries(prev.map((e) => (e.id === localId ? { ...saved, _fresh: true } : e))),
         );
+        void refreshTags();
         // Drop the "new" highlight after a beat.
         setTimeout(() => {
           setEntries((prev) => prev.map((e) => (e.id === saved.id ? { ...e, _fresh: false } : e)));
         }, 1600);
-      } catch (err) {
+      } catch (err: any) {
         setEntries((prev) => prev.filter((e) => e.id !== localId));
         setDraft(body);
         showToast({ tone: 'error', title: 'Capture failed', message: err.message });
       }
     },
-    [showToast],
+    [showToast, refreshTags],
   );
 
   const editEntry = useCallback(
-    async (id, body) => {
+    async (id: string, body: string) => {
       const prevEntry = entries.find((e) => e.id === id);
       setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, body } : e)));
       try {
         const saved = await api.updateEntry(id, { body });
         setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? { ...saved } : e))));
-      } catch (err) {
+        void refreshTags();
+      } catch (err: any) {
         if (prevEntry) setEntries((prev) => prev.map((e) => (e.id === id ? prevEntry : e)));
         showToast({ tone: 'error', title: 'Edit failed', message: err.message });
         throw err;
       }
     },
-    [entries, showToast],
+    [entries, showToast, refreshTags],
   );
 
   const backdateEntryTime = useCallback(
-    async (id, occurredAt) => {
+    async (id: string, occurredAt: string) => {
       setBackdateEntry(null);
       const prevEntry = entries.find((e) => e.id === id);
       setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? { ...e, occurredAt } : e))));
       try {
         const saved = await api.updateEntry(id, { occurredAt });
         setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? { ...saved } : e))));
-      } catch (err) {
+      } catch (err: any) {
         if (prevEntry) setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? prevEntry : e))));
         showToast({ tone: 'error', title: 'Couldn’t change the time', message: err.message });
       }
@@ -760,7 +892,7 @@ export function AppScreen() {
                 try {
                   const restored = await api.restoreEntry(id);
                   setEntries((prev) => sortEntries([restored, ...prev.filter((e) => e.id !== id)]));
-                } catch (err) {
+                } catch (err: any) {
                   showToast({ tone: 'error', title: 'Restore failed', message: err.message });
                 }
               }}
@@ -769,7 +901,7 @@ export function AppScreen() {
             </Button>
           ),
         });
-      } catch (err) {
+      } catch (err: any) {
         if (removed) setEntries((prev) => sortEntries([removed, ...prev]));
         showToast({ tone: 'error', title: 'Delete failed', message: err.message });
       }
@@ -795,7 +927,7 @@ export function AppScreen() {
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-      } catch (err) {
+      } catch (err: any) {
         showToast({ tone: 'error', title: 'Export failed', message: err.message });
       } finally {
         setExportBusy(false);
@@ -804,50 +936,49 @@ export function AppScreen() {
     [showToast],
   );
 
-  // Danger zone — hard, irreversible deletes (gated by typed confirmation).
-  const handleDeleteAll = useCallback(async () => {
+  // Danger zone — hard, irreversible deletes (typed confirm + password step-up).
+  const handleDeleteAll = useCallback(async (password: string) => {
     setDangerBusy(true);
     try {
-      const { deleted } = await api.deleteAllEntries();
+      const { deleted } = await api.deleteAllEntries(password);
       setEntries([]);
       setNextCursor(null);
+      setTags([]);
       setDanger(null);
       showToast({
         tone: 'info',
         title: 'Record cleared',
         message: `${deleted} ${deleted === 1 ? 'moment' : 'moments'} permanently deleted.`,
       });
-    } catch (err) {
+    } catch (err: any) {
       showToast({ tone: 'error', title: 'Could not delete', message: err.message });
     } finally {
       setDangerBusy(false);
     }
   }, [showToast]);
 
-  const handleDeleteAccount = useCallback(async () => {
+  const handleDeleteAccount = useCallback(async (password: string) => {
     setDangerBusy(true);
     try {
-      await api.deleteAccount();
-      // The account is gone; sign out locally and return to the public site.
+      await api.deleteAccount(password);
       await logout();
-    } catch (err) {
+    } catch (err: any) {
       setDangerBusy(false);
       showToast({ tone: 'error', title: 'Could not delete account', message: err.message });
     }
   }, [logout, showToast]);
 
-  function useStarter(text) {
-    setDraft(text);
+  function useStarter(starterText: string) {
+    setDraft(starterText);
     requestAnimationFrame(() => {
-      const el = document.querySelector('.trace-capture');
+      const el = document.querySelector('.trace-capture') as HTMLTextAreaElement | null;
       if (el) {
         el.focus();
-        try { el.selectionStart = el.selectionEnd = text.length; } catch { /* ignore */ }
+        try { el.selectionStart = el.selectionEnd = starterText.length; } catch { /* ignore */ }
       }
     });
   }
 
-  const tags = useMemo(() => tagCounts(entries.filter((e) => !e._pending)), [entries]);
   const groups = useMemo(() => groupByDay(entries), [entries]);
   const isEmpty = !loading && !loadError && entries.length === 0;
 
@@ -937,11 +1068,11 @@ export function AppScreen() {
                     <DayHeader label={g.label} count={g.items.length} />
                     {g.items.map((e) => (
                       <TimelineRow
-                        key={e.id}
-                        entry={e}
-                        onEdit={(body) => editEntry(e.id, body)}
-                        onAdjustTime={e._pending ? undefined : () => setBackdateEntry(e)}
-                        onDelete={e._pending ? undefined : () => deleteEntry(e.id)}
+                        key={e.id as string}
+                        entry={e as EntryRow}
+                        onEdit={(body) => editEntry(e.id as string, body)}
+                        onAdjustTime={e._pending ? undefined : () => setBackdateEntry(e as EntryRow)}
+                        onDelete={e._pending ? undefined : () => deleteEntry(e.id as string)}
                       />
                     ))}
                   </div>

@@ -2,6 +2,7 @@ import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { asyncHandler } from '../lib/async-handler';
 import { requireUser, getUserId } from '../middleware/auth';
+import { verifyUserPassword } from '../services/auth.service';
 import {
   createEntry,
   listEntries,
@@ -11,6 +12,7 @@ import {
   deleteAllEntries,
   countEntries,
   iterateEntryBatches,
+  listTagCounts,
   MAX_ENTRY_BODY_LENGTH,
   type EntryDTO,
 } from '../services/entry.service';
@@ -51,6 +53,10 @@ const exportQuerySchema = z.object({
     .enum(['true', 'false'])
     .optional()
     .transform((value) => value === 'true'),
+});
+
+const stepUpPasswordSchema = z.object({
+  password: z.string().min(1, 'password is required'),
 });
 
 function writeMarkdownEntry(res: Response, entry: EntryDTO, currentDay: { value: string }): void {
@@ -133,6 +139,15 @@ router.get(
   }),
 );
 
+// Tag index for the whole corpus (not just the loaded timeline page).
+router.get(
+  '/tags',
+  asyncHandler(async (req, res) => {
+    const tags = await listTagCounts(getUserId(req));
+    res.status(200).json({ tags });
+  }),
+);
+
 router.post(
   '/',
   asyncHandler(async (req, res) => {
@@ -146,9 +161,12 @@ router.post(
 );
 
 // Bulk hard-delete of all the user's entries (irreversible danger-zone action).
+// Requires password re-entry so a stolen session alone cannot wipe the corpus.
 router.delete(
   '/',
   asyncHandler(async (req, res) => {
+    const { password } = stepUpPasswordSchema.parse(req.body ?? {});
+    await verifyUserPassword(getUserId(req), password);
     const deleted = await deleteAllEntries(getUserId(req));
     res.status(200).json({ deleted });
   }),

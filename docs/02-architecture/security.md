@@ -26,9 +26,10 @@ the reference for how that requirement is met.
 
 - **Method (V1):** email + password.
 - **Password storage:** bcrypt salted hash, sensible cost factor ([ADR-0003](../adr/0003-jwt-authentication.md), NFR-4.2).
-- **Sessions:** stateless JWT bearer access tokens; verified per request → `req.userId`.
-- **Logout:** client discards token; server-side denylist/short expiry as needed.
+- **Sessions:** stateless JWTs. The browser receives them as an `HttpOnly; SameSite=Strict` cookie (`trace_session`); API clients may send `Authorization: Bearer`. Verified per request → `req.userId`. Revocation via `sessionEpoch` (password reset / account delete).
+- **Logout:** clear the session cookie (and discard any client-held bearer); server-side denylist not required for V1.
 - **Password reset (feature 004):** time-limited single-use link emailed to the registered address; old sessions invalidated on reset; uniform response to prevent enumeration (NFR-4.4).
+- **Danger-zone deletes:** account wipe and corpus hard-delete require password re-entry (step-up), not only a valid session.
 
 ## Authorization & data isolation *(the central control)*
 
@@ -48,7 +49,7 @@ the reference for how that requirement is met.
 - **Validation:** zod schemas at the route boundary; reject malformed input with `422` ([R-08](../../specs/001-foundation-and-capture/research.md)).
 - **NoSQL injection:** Mongoose typed queries; never interpolate raw user input into query operators.
 - **XSS:** React escapes by default; entry bodies are rendered as text/escaped Markdown, never as raw HTML.
-- **CSRF:** bearer-token auth (not cookies) avoids classic CSRF on the API; if cookie-based refresh is added, CSRF protection is added with it.
+- **CSRF:** browser sessions use `SameSite=Strict` httpOnly cookies on a same-origin SPA deploy; Bearer-token clients remain CSRF-safe by nature. If cross-site cookie use is ever required, add explicit CSRF tokens.
 
 ## Secrets & configuration
 

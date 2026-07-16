@@ -18,7 +18,7 @@ async function seed(token: string, bodies: string[]): Promise<void> {
 }
 
 describe('timeline: server-side search (q) and tag filter', () => {
-  it('filters by case-insensitive substring with q', async () => {
+  it('filters by case-insensitive full-text match with q', async () => {
     const { token } = await registerUser(app);
     await seed(token, ['Coffee with Priya', 'long walk', 'fixed the COFFEE machine #home']);
 

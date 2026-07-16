@@ -2,10 +2,13 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Smoke e2e with API mocked — verifies the SPA boots (vendored React + DS),
- * reaches the auth gateway, and can complete a register → capture happy path.
+ * restores an anonymous session via /auth/me, and can complete a register →
+ * capture happy path (httpOnly cookie session; no localStorage token).
  */
 test.describe('Trace smoke', () => {
   test.beforeEach(async ({ page }) => {
+    let signedIn = false;
+
     await page.route('**/api/**', async (route) => {
       const req = route.request();
       const url = new URL(req.url());
@@ -13,9 +16,13 @@ test.describe('Trace smoke', () => {
       const method = req.method();
 
       if (method === 'POST' && path.endsWith('/auth/register')) {
+        signedIn = true;
         await route.fulfill({
           status: 201,
           contentType: 'application/json',
+          headers: {
+            'set-cookie': 'trace_session=e2e-token; Path=/; HttpOnly; SameSite=Strict',
+          },
           body: JSON.stringify({
             token: 'e2e-token',
             user: { id: 'u1', email: 'e2e@example.com', createdAt: new Date().toISOString() },
@@ -24,6 +31,16 @@ test.describe('Trace smoke', () => {
         return;
       }
       if (method === 'GET' && path.endsWith('/auth/me')) {
+        if (!signedIn) {
+          await route.fulfill({
+            status: 401,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              error: { code: 'UNAUTHORIZED', message: 'Missing or invalid authentication' },
+            }),
+          });
+          return;
+        }
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -32,6 +49,14 @@ test.describe('Trace smoke', () => {
             email: 'e2e@example.com',
             createdAt: new Date().toISOString(),
           }),
+        });
+        return;
+      }
+      if (method === 'GET' && path.endsWith('/entries/tags')) {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ tags: [] }),
         });
         return;
       }
@@ -62,6 +87,7 @@ test.describe('Trace smoke', () => {
         return;
       }
       if (method === 'POST' && path.endsWith('/auth/logout')) {
+        signedIn = false;
         await route.fulfill({ status: 204 });
         return;
       }

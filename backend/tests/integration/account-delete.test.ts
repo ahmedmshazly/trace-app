@@ -21,11 +21,21 @@ async function seed(token: string, count: number): Promise<void> {
 }
 
 describe('danger zone: bulk delete + account deletion', () => {
-  it('hard-deletes all of the user’s entries', async () => {
-    const { token } = await registerUser(app);
+  it('hard-deletes all of the user’s entries when password is correct', async () => {
+    const password = 'correct horse battery';
+    const { token } = await registerUser(app, { password });
     await seed(token, 3);
 
-    const del = await request(app).delete('/api/entries').set(bearer(token));
+    const denied = await request(app)
+      .delete('/api/entries')
+      .set(bearer(token))
+      .send({ password: 'wrong passphrase' });
+    expect(denied.status).toBe(401);
+
+    const still = await request(app).get('/api/entries').set(bearer(token));
+    expect(still.body.items).toHaveLength(3);
+
+    const del = await request(app).delete('/api/entries').set(bearer(token)).send({ password });
     expect(del.status).toBe(200);
     expect(del.body.deleted).toBe(3);
 
@@ -34,10 +44,17 @@ describe('danger zone: bulk delete + account deletion', () => {
   });
 
   it('deletes the account and all its data, leaving the token unusable', async () => {
-    const { token } = await registerUser(app);
+    const password = 'correct horse battery';
+    const { token } = await registerUser(app, { password });
     await seed(token, 2);
 
-    const del = await request(app).delete('/api/auth/me').set(bearer(token));
+    const denied = await request(app)
+      .delete('/api/auth/me')
+      .set(bearer(token))
+      .send({ password: 'nope' });
+    expect(denied.status).toBe(401);
+
+    const del = await request(app).delete('/api/auth/me').set(bearer(token)).send({ password });
     expect(del.status).toBe(204);
 
     // Missing user ⇒ every protected route rejects the prior JWT (FR-022).
@@ -55,12 +72,13 @@ describe('danger zone: bulk delete + account deletion', () => {
   });
 
   it('only deletes the requesting user’s data (isolation)', async () => {
-    const a = await registerUser(app);
-    const b = await registerUser(app);
+    const password = 'correct horse battery';
+    const a = await registerUser(app, { password });
+    const b = await registerUser(app, { password });
     await seed(a.token, 2);
     await seed(b.token, 2);
 
-    await request(app).delete('/api/entries').set(bearer(a.token));
+    await request(app).delete('/api/entries').set(bearer(a.token)).send({ password });
 
     const bStill = await request(app).get('/api/entries').set(bearer(b.token));
     expect(bStill.body.items).toHaveLength(2);

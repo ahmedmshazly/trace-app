@@ -31,10 +31,15 @@ export interface ListOptions {
   limit?: number;
   cursor?: string;
   includeDeleted?: boolean;
-  /** Case-insensitive substring match against the body (full-text search). */
+  /** Full-text search against the body (Mongo `$text`). */
   q?: string;
   /** Restrict to entries whose body contains this #tag. */
   tag?: string;
+}
+
+export interface TagCount {
+  tag: string;
+  count: number;
 }
 
 const DEFAULT_LIMIT = 50;
@@ -46,6 +51,18 @@ const EXPORT_BATCH_SIZE = 100;
 /** Escapes a user-supplied string for safe use inside a RegExp. */
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Sanitizes a full-text query for Mongo `$text`: strip `$text` operators that
+ * would broaden the search unexpectedly, keep alphanumeric / whitespace / hyphen.
+ */
+function sanitizeTextQuery(raw: string): string {
+  return raw
+    .replace(/["\\]/g, ' ')
+    .replace(/[^\p{L}\p{N}\s_-]+/gu, ' ')
+    .trim()
+    .slice(0, 200);
 }
 
 function toEntryDTO(doc: EntryDocument): EntryDTO {
@@ -152,8 +169,8 @@ function addAnd(filter: EntryFilter, clause: EntryFilter): void {
 
 /**
  * Builds the scoped query for a user, applying optional search (`q`) and `tag`
- * filters as ANDed body-regex clauses. userId scoping is always applied — the
- * single place per-user isolation is enforced (R-03).
+ * filters. userId scoping is always applied — the single place per-user isolation
+ * is enforced (R-03).
  */
 function buildListFilter(userId: string, options: ListOptions): EntryFilter {
   const filter: EntryFilter = { userId: new Types.ObjectId(userId) };
@@ -162,7 +179,10 @@ function buildListFilter(userId: string, options: ListOptions): EntryFilter {
   }
   const q = options.q?.trim();
   if (q) {
-    addAnd(filter, { body: { $regex: escapeRegex(q), $options: 'i' } });
+    const search = sanitizeTextQuery(q);
+    if (search) {
+      addAnd(filter, { $text: { $search: search } });
+    }
   }
   const tag = options.tag?.trim().replace(/^#/, '');
   if (tag) {
@@ -170,21 +190,6 @@ function buildListFilter(userId: string, options: ListOptions): EntryFilter {
     addAnd(filter, { body: { $regex: `#${escapeRegex(tag)}(?![\\w-])`, $options: 'i' } });
   }
   return filter;
-}
-
-/**
- * Returns every entry the user owns, newest-first, with no pagination — the
- * source for a full export. Excludes soft-deleted entries unless asked.
- * Prefer {@link iterateEntryBatches} for large corpora to avoid loading all
- * documents into memory at once.
- */
-export async function listAllEntries(
-  userId: string,
-  options: { includeDeleted?: boolean } = {},
-): Promise<EntryDTO[]> {
-  const filter = buildListFilter(userId, { includeDeleted: options.includeDeleted });
-  const docs = await EntryModel.find(filter).sort({ occurredAt: -1, _id: -1 });
-  return docs.map(toEntryDTO);
 }
 
 /** Counts entries matching the same scope as list/export (for export headers). */
@@ -221,6 +226,33 @@ export async function* iterateEntryBatches(
     }
     cursor = page.nextCursor;
   }
+}
+
+/**
+ * Aggregates #tag counts across the user's non-deleted corpus (server-side so
+ * the tag index is complete even when the timeline is paginated).
+ */
+export async function listTagCounts(userId: string): Promise<TagCount[]> {
+  const TAG_RE = /#([\p{L}\p{N}_-]+)/gu;
+  const counts = new Map<string, number>();
+
+  for await (const batch of iterateEntryBatches(userId)) {
+    for (const entry of batch) {
+      const seenInEntry = new Set<string>();
+      for (const match of entry.body.matchAll(TAG_RE)) {
+        const rawTag = match[1];
+        if (!rawTag) continue;
+        const tag = rawTag.toLowerCase();
+        if (seenInEntry.has(tag)) continue;
+        seenInEntry.add(tag);
+        counts.set(tag, (counts.get(tag) || 0) + 1);
+      }
+    }
+  }
+
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 }
 
 /**

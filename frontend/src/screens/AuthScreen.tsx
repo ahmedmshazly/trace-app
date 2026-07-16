@@ -1,10 +1,9 @@
-// @ts-nocheck
 // Auth gateway, wired to the API.
-// Log in / register hit the backend; errors surface in the design-system voice.
-// Password reset has no backend endpoint in this scope, so it stays an honest,
-// non-functional notice (and never reveals whether an account exists).
+// Log in / register / password reset hit the backend; errors surface in the
+// design-system voice. Reset never reveals whether an account exists.
 import { useAuth } from '../auth/AuthContext';
 import { api, ApiError } from '../api/client';
+import type { ChangeEvent, FormEvent, ReactNode } from 'react';
 
 const { Logo, Button, TextField, StatusNote, Banner } = window.TRACE_UI;
 const { useState, useEffect } = React;
@@ -28,7 +27,7 @@ function messageFor(err) {
   }
 }
 
-function AuthShell({ children, footer }) {
+function AuthShell({ children, footer }: { children: ReactNode; footer?: ReactNode }) {
   return (
     <div
       style={{
@@ -73,7 +72,7 @@ function AuthShell({ children, footer }) {
   );
 }
 
-function ScreenHead({ title, sub }) {
+function ScreenHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <div style={{ marginBottom: 20 }}>
       <h1
@@ -104,7 +103,7 @@ function ScreenHead({ title, sub }) {
   );
 }
 
-function ModeLink({ children, onClick }) {
+function ModeLink({ children, onClick }: { children: ReactNode; onClick: () => void }) {
   return (
     <button
       type="button"
@@ -124,7 +123,7 @@ function ModeLink({ children, onClick }) {
   );
 }
 
-function ErrorNote({ error }) {
+function ErrorNote({ error }: { error: string | null }) {
   if (!error) return null;
   return (
     <Banner tone="error" title="Couldn't continue">
@@ -133,14 +132,14 @@ function ErrorNote({ error }) {
   );
 }
 
-function LoginScreen({ onMode }) {
+function LoginScreen({ onMode }: { onMode: (m: string) => void }) {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  async function submit(e) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
     setError(null);
@@ -165,7 +164,7 @@ function LoginScreen({ onMode }) {
         autoComplete="email"
         placeholder="you@example.com"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <div>
         <TextField
@@ -174,7 +173,7 @@ function LoginScreen({ onMode }) {
           autoComplete="current-password"
           placeholder="••••••••"
           value={pw}
-          onChange={(e) => setPw(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPw(e.target.value)}
         />
         <div style={{ textAlign: 'right', marginTop: 6 }}>
           <span style={{ fontSize: 'var(--text-micro)' }}>
@@ -189,15 +188,15 @@ function LoginScreen({ onMode }) {
   );
 }
 
-function RegisterScreen({ onMode: _onMode }) {
+function RegisterScreen({ onMode: _onMode }: { onMode: (m: string) => void }) {
   const { register } = useAuth();
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const strong = pw.length >= 8;
 
-  async function submit(e) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy || !strong) return;
     setError(null);
@@ -223,7 +222,7 @@ function RegisterScreen({ onMode: _onMode }) {
         autoComplete="email"
         placeholder="you@example.com"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <TextField
         label="Password"
@@ -231,7 +230,7 @@ function RegisterScreen({ onMode: _onMode }) {
         autoComplete="new-password"
         placeholder="at least 8 characters"
         value={pw}
-        onChange={(e) => setPw(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setPw(e.target.value)}
         hint={pw.length === 0 ? 'Stored hashed. We never see it.' : undefined}
         error={pw.length > 0 && !strong ? 'A little longer — 8 characters minimum.' : undefined}
       />
@@ -254,16 +253,16 @@ function RegisterScreen({ onMode: _onMode }) {
   );
 }
 
-function ResetScreen({ onMode, onUseToken }) {
+function ResetScreen({ onMode, onUseToken }: { onMode: (m: string) => void; onUseToken: (t: string) => void }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   // In production the token arrives by email; with no mailer configured the
   // server returns it (non-production) so the reset is completable here.
-  const [devToken, setDevToken] = useState(null);
+  const [devToken, setDevToken] = useState<string | null>(null);
 
-  async function submit(e) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
     setError(null);
@@ -321,7 +320,7 @@ function ResetScreen({ onMode, onUseToken }) {
         autoComplete="email"
         placeholder="you@example.com"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <Button variant="primary" type="submit" fullWidth icon="export" disabled={busy}>
         {busy ? 'Sending…' : 'Send reset link'}
@@ -333,20 +332,20 @@ function ResetScreen({ onMode, onUseToken }) {
   );
 }
 
-function SetPasswordScreen({ token, onMode }) {
+function SetPasswordScreen({ token, onMode }: { token: string | null; onMode: (m: string) => void }) {
   const { completePasswordReset } = useAuth();
   const [pw, setPw] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const strong = pw.length >= 8;
 
-  async function submit(e) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy || !strong) return;
     setError(null);
     setBusy(true);
     try {
-      await completePasswordReset(token, pw);
+      await completePasswordReset(token!, pw);
       // Success flips to authenticated; App swaps to the timeline.
     } catch (err) {
       setError(messageFor(err));
@@ -365,7 +364,7 @@ function SetPasswordScreen({ token, onMode }) {
         autoComplete="new-password"
         placeholder="at least 8 characters"
         value={pw}
-        onChange={(e) => setPw(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setPw(e.target.value)}
         error={pw.length > 0 && !strong ? 'A little longer — 8 characters minimum.' : undefined}
       />
       <Button variant="primary" type="submit" fullWidth disabled={busy || !strong}>
@@ -395,9 +394,9 @@ function readResetTokenFromUrl() {
   }
 }
 
-export function AuthScreen({ initialMode = 'login', onBack }) {
+export function AuthScreen({ initialMode = 'login', onBack }: { initialMode?: string; onBack?: () => void }) {
   const [urlToken] = useState(readResetTokenFromUrl);
-  const [resetToken, setResetToken] = useState(urlToken || null);
+  const [resetToken, setResetToken] = useState<string | null>(urlToken || null);
   const [mode, setMode] = useState(urlToken ? 'set-password' : initialMode);
 
   useEffect(() => {

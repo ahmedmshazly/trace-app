@@ -4,6 +4,7 @@ import { config } from '../config';
 import { asyncHandler } from '../lib/async-handler';
 import { authRateLimiter } from '../middleware/rate-limit';
 import { requireUser, getUserId } from '../middleware/auth';
+import { setSessionCookie, clearSessionCookie } from '../lib/session-cookie';
 import {
   register,
   login,
@@ -11,6 +12,7 @@ import {
   requestPasswordReset,
   resetPassword,
   deleteAccount,
+  verifyUserPassword,
 } from '../services/auth.service';
 
 // Registration enforces the password policy; login only checks presence so a
@@ -35,6 +37,10 @@ const resetPasswordSchema = z.object({
   password: z.string().min(8, 'password must be at least 8 characters'),
 });
 
+const stepUpPasswordSchema = z.object({
+  password: z.string().min(1, 'password is required'),
+});
+
 const router = Router();
 
 router.post(
@@ -43,6 +49,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { email, password } = registerSchema.parse(req.body);
     const result = await register(email, password);
+    setSessionCookie(res, result.token);
     res.status(201).json(result);
   }),
 );
@@ -53,6 +60,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { email, password } = loginSchema.parse(req.body);
     const result = await login(email, password);
+    setSessionCookie(res, result.token);
     res.status(200).json(result);
   }),
 );
@@ -82,13 +90,14 @@ router.post(
   asyncHandler(async (req, res) => {
     const { token, password } = resetPasswordSchema.parse(req.body);
     const result = await resetPassword(token, password);
+    setSessionCookie(res, result.token);
     res.status(200).json(result);
   }),
 );
 
-// Stateless JWT: logout is the client discarding its token. The endpoint exists
-// for symmetry and future refresh-token revocation (research R-01).
+// Stateless JWT: logout discards the httpOnly cookie (and clients drop any bearer).
 router.post('/logout', requireUser, (_req, res) => {
+  clearSessionCookie(res);
   res.status(204).end();
 });
 
@@ -101,12 +110,16 @@ router.get(
   }),
 );
 
-// Permanently deletes the account and all its data (irreversible).
+// Permanently deletes the account and all its data (irreversible). Requires
+// password re-entry so a stolen session cookie alone cannot wipe the account.
 router.delete(
   '/me',
   requireUser,
   asyncHandler(async (req, res) => {
+    const { password } = stepUpPasswordSchema.parse(req.body ?? {});
+    await verifyUserPassword(getUserId(req), password);
     await deleteAccount(getUserId(req));
+    clearSessionCookie(res);
     res.status(204).end();
   }),
 );

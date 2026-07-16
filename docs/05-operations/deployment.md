@@ -109,7 +109,10 @@ Set these in the Vercel project (Settings → Environment Variables):
 | `MONGODB_URI` | Managed MongoDB connection string (Atlas recommended) |
 | `JWT_SECRET` | Long random secret (`openssl rand -hex 32`) |
 | `ALLOWED_ORIGINS` | Production domain(s), comma-separated |
+| `APP_ORIGIN` | Public web origin used in password-reset links (must not be localhost) |
 | `NODE_ENV` | `production` |
+| `MAIL_TRANSPORT` | Must be `smtp` in production |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `MAIL_FROM` | Required when `MAIL_TRANSPORT=smtp` |
 
 Preview deployments work without listing every preview URL — `VERCEL_URL` and
 `VERCEL_BRANCH_URL` are added to the CORS allowlist automatically.

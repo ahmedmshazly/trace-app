@@ -2,25 +2,33 @@ import type { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../lib/token';
 import { UnauthorizedError } from '../lib/errors';
 import { UserModel } from '../models/user';
+import { readSessionCookie } from '../lib/session-cookie';
 
 /**
- * Resolves the bearer token to `req.userId` when present. It does NOT reject
- * unauthenticated requests — `requireUser` does that. This split lets a route be
- * optionally authenticated if ever needed, while keeping rejection in one place.
+ * Resolves the bearer token or httpOnly session cookie to `req.userId` when
+ * present. It does NOT reject unauthenticated requests — `requireUser` does
+ * that. Bearer wins when both are present.
  *
  * After signature verification, the user's current `sessionEpoch` is checked so
  * revoked sessions (password reset, deleted account) cannot keep calling the API.
  */
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const header = req.header('authorization');
-  if (!header) {
-    next();
-    return;
+  let token: string | null = null;
+
+  if (header) {
+    const [scheme, value] = header.split(' ');
+    if (scheme !== 'Bearer' || !value) {
+      next(new UnauthorizedError('Authorization header must be "Bearer <token>"'));
+      return;
+    }
+    token = value;
+  } else {
+    token = readSessionCookie(req.header('cookie') ?? undefined);
   }
 
-  const [scheme, token] = header.split(' ');
-  if (scheme !== 'Bearer' || !token) {
-    next(new UnauthorizedError('Authorization header must be "Bearer <token>"'));
+  if (!token) {
+    next();
     return;
   }
 

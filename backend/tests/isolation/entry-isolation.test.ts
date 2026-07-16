@@ -56,4 +56,32 @@ describe('per-user isolation (FR-040, SC-004)', () => {
     expect(aList.body.items).toHaveLength(1);
     expect(aList.body.items[0].body).toBe("A's entry");
   });
+
+  it("user B's export/search/tags never include user A's corpus", async () => {
+    const a = await registerUser(app);
+    const b = await registerUser(app);
+
+    await request(app)
+      .post('/api/entries')
+      .set(bearer(a.token))
+      .send({ body: 'alpha coffee #private' });
+
+    const exportRes = await request(app)
+      .get('/api/entries/export?format=json')
+      .set(bearer(b.token));
+    expect(exportRes.status).toBe(200);
+    expect(JSON.parse(exportRes.text)).toEqual([]);
+
+    const search = await request(app).get('/api/entries?q=coffee').set(bearer(b.token));
+    expect(search.status).toBe(200);
+    expect(search.body.items).toHaveLength(0);
+
+    const tagged = await request(app).get('/api/entries?tag=private').set(bearer(b.token));
+    expect(tagged.status).toBe(200);
+    expect(tagged.body.items).toHaveLength(0);
+
+    const tags = await request(app).get('/api/entries/tags').set(bearer(b.token));
+    expect(tags.status).toBe(200);
+    expect(tags.body.tags).toEqual([]);
+  });
 });

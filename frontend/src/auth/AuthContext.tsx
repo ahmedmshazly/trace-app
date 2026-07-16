@@ -1,7 +1,7 @@
-// Session state: holds the current user, persists the JWT, restores the session
-// on reload, and clears it on any 401. Built on the global React provided by the
-// design-system bundle (see src/main.tsx).
-import { api, getToken, setToken, onUnauthorized } from '../api/client';
+// Session state: holds the current user, restores the session via the httpOnly
+// cookie on reload, and clears local UI state on any 401. Built on the global
+// React provided by the design-system bundle (see src/main.tsx).
+import { api, onUnauthorized } from '../api/client';
 import type { ReactNode } from 'react';
 
 const { createContext, useContext, useState, useEffect, useCallback, createElement } = React;
@@ -27,14 +27,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  // "loading" while we restore an existing token; gates the first render so we
-  // don't flash the gateway for an already-signed-in user.
-  const [status, setStatus] = useState<'loading' | 'anonymous' | 'authenticated'>(
-    getToken() ? 'loading' : 'anonymous',
-  );
+  // Always probe /auth/me on boot — the httpOnly cookie is not readable from JS.
+  const [status, setStatus] = useState<'loading' | 'anonymous' | 'authenticated'>('loading');
 
   const signOutLocal = useCallback(() => {
-    setToken(null);
     setUser(null);
     setStatus('anonymous');
   }, []);
@@ -53,7 +49,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         if (cancelled) return;
-        // onUnauthorized already clears on 401; this covers other failures.
         signOutLocal();
       });
     return () => {
@@ -62,25 +57,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [status, signOutLocal]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const { token, user: profile } = await api.login(email, password);
-    setToken(token);
+    const { user: profile } = await api.login(email, password);
     setUser(profile);
     setStatus('authenticated');
     return profile as AuthUser;
   }, []);
 
   const register = useCallback(async (email: string, password: string) => {
-    const { token, user: profile } = await api.register(email, password);
-    setToken(token);
+    const { user: profile } = await api.register(email, password);
     setUser(profile);
     setStatus('authenticated');
     return profile as AuthUser;
   }, []);
 
-  // Completes a password reset and signs the user in with the fresh token.
+  // Completes a password reset and signs the user in with the fresh session cookie.
   const completePasswordReset = useCallback(async (resetToken: string, password: string) => {
-    const { token, user: profile } = await api.resetPassword(resetToken, password);
-    setToken(token);
+    const { user: profile } = await api.resetPassword(resetToken, password);
     setUser(profile);
     setStatus('authenticated');
     return profile as AuthUser;
@@ -90,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.logout();
     } catch {
-      /* logout is best-effort; the token is dropped locally regardless */
+      /* logout is best-effort; local UI clears regardless */
     }
     signOutLocal();
   }, [signOutLocal]);

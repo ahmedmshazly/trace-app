@@ -60,4 +60,7 @@ const entrySchema = new Schema<Entry>(
 // Serves the reverse-chronological, day-grouped, cursor-paginated timeline (R-06).
 entrySchema.index({ userId: 1, occurredAt: -1, _id: -1 });
 
+// Full-text search over body (feature 002); equality on userId still filters first.
+entrySchema.index({ body: 'text' });
+
 export const EntryModel = model<Entry>('Entry', entrySchema);

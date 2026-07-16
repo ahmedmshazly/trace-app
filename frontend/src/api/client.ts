@@ -4,9 +4,11 @@
 // (vite.config.js) forwards them to the Express API, and in production the app
 // is expected to be served behind the same origin as the API. Override with
 // VITE_API_BASE when that is not the case.
+//
+// Auth: the SPA relies on the httpOnly `trace_session` cookie (credentials:
+// 'include'). JWTs are never stored in localStorage.
 
 const BASE_URL = import.meta.env.VITE_API_BASE || '/api';
-const TOKEN_KEY = 'trace.token';
 
 /** Error carrying the backend's `{ error: { code, message } }` envelope. */
 export class ApiError extends Error {
@@ -20,23 +22,6 @@ export class ApiError extends Error {
     this.status = status;
     this.code = code || 'UNKNOWN';
     this.details = details;
-  }
-}
-
-export function getToken(): string | null {
-  try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
-}
-
-export function setToken(token: string | null): void {
-  try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
-  } catch {
-    /* storage unavailable — session simply won't persist */
   }
 }
 
@@ -59,19 +44,21 @@ async function request(method: string, path: string, { body, auth = true }: Requ
   const headers: Record<string, string> = {};
   if (body !== undefined) headers['content-type'] = 'application/json';
 
-  const token = auth ? getToken() : null;
-  if (token) headers.authorization = `Bearer ${token}`;
-
   let response: Response;
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       method,
       headers,
+      credentials: 'include',
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
   } catch {
     throw new ApiError(0, 'NETWORK_ERROR', 'Could not reach the server. Check your connection.');
   }
+
+  // `auth` is unused for headers now (cookie carries the session) but still
+  // gates whether a 401 should clear the local session UI.
+  void auth;
 
   if (response.status === 204) return null;
 
@@ -99,13 +86,12 @@ async function request(method: string, path: string, { body, auth = true }: Requ
 // Streams an authenticated file download (used for export). Returns the blob
 // and a server-suggested filename parsed from Content-Disposition.
 async function downloadRequest(path: string) {
-  const headers: Record<string, string> = {};
-  const token = getToken();
-  if (token) headers.authorization = `Bearer ${token}`;
-
   let response: Response;
   try {
-    response = await fetch(`${BASE_URL}${path}`, { method: 'GET', headers });
+    response = await fetch(`${BASE_URL}${path}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
   } catch {
     throw new ApiError(0, 'NETWORK_ERROR', 'Could not reach the server. Check your connection.');
   }
@@ -140,7 +126,8 @@ export const api = {
     request('POST', '/auth/forgot-password', { body: { email }, auth: false }),
   resetPassword: (token: string, password: string) =>
     request('POST', '/auth/reset-password', { body: { token, password }, auth: false }),
-  deleteAccount: () => request('DELETE', '/auth/me'),
+  deleteAccount: (password: string) =>
+    request('DELETE', '/auth/me', { body: { password } }),
 
   listEntries: ({
     limit,
@@ -164,6 +151,7 @@ export const api = {
     const qs = params.toString();
     return request('GET', `/entries${qs ? `?${qs}` : ''}`);
   },
+  listTags: () => request('GET', '/entries/tags'),
   createEntry: ({ body, occurredAt }: { body: string; occurredAt?: string } = { body: '' }) =>
     request('POST', '/entries', {
       body: { body, ...(occurredAt ? { occurredAt } : {}) },
@@ -172,7 +160,8 @@ export const api = {
     request('PATCH', `/entries/${id}`, { body: patch }),
   deleteEntry: (id: string) => request('DELETE', `/entries/${id}`),
   restoreEntry: (id: string) => request('POST', `/entries/${id}/restore`),
-  deleteAllEntries: () => request('DELETE', '/entries'),
+  deleteAllEntries: (password: string) =>
+    request('DELETE', '/entries', { body: { password } }),
   exportEntries: (format: string) =>
     downloadRequest(`/entries/export?format=${encodeURIComponent(format)}`),
 };

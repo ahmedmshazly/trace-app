@@ -131,19 +131,21 @@ export async function requestPasswordReset(email: string): Promise<{ rawToken: s
 }
 
 /**
- * Completes a password reset: validates the (single-use) token, sets the new
- * password, invalidates the token, and issues a fresh session (auto-login).
+ * Completes a password reset: atomically claims the (single-use) token, sets
+ * the new password, and issues a fresh session (auto-login).
  * @throws ValidationError when the token is unknown or expired.
  */
 export async function resetPassword(rawToken: string, newPassword: string): Promise<AuthResult> {
   const tokenHash = hashResetToken(rawToken);
-  const grant = await PasswordResetTokenModel.findOne({ tokenHash });
-  if (!grant || grant.expiresAt.getTime() <= Date.now()) {
-    if (grant) await PasswordResetTokenModel.deleteOne({ _id: grant._id });
+  const grant = await PasswordResetTokenModel.findOneAndDelete({
+    tokenHash,
+    expiresAt: { $gt: new Date() },
+  });
+  if (!grant) {
     throw new ValidationError('Invalid or expired reset token');
   }
 
-  const user = await UserModel.findById(grant.userId);
+  const user = await UserModel.findById(grant.userId).select('+passwordHash');
   if (!user) {
     await PasswordResetTokenModel.deleteMany({ userId: grant.userId });
     throw new ValidationError('Invalid or expired reset token');
@@ -162,8 +164,23 @@ export async function resetPassword(rawToken: string, newPassword: string): Prom
 }
 
 /**
+ * Verifies the account password for step-up actions (danger-zone deletes).
+ * @throws InvalidCredentialsError when the password does not match.
+ */
+export async function verifyUserPassword(userId: string, password: string): Promise<void> {
+  const user = await UserModel.findById(userId).select('+passwordHash');
+  if (!user) {
+    throw new UnauthorizedError();
+  }
+  const ok = await verifyPassword(password, user.passwordHash);
+  if (!ok) {
+    throw new InvalidCredentialsError();
+  }
+}
+
+/**
  * Permanently deletes the account and everything it owns (entries + reset
- * tokens). Irreversible — exposed only behind the client's typed confirmation.
+ * tokens). Irreversible — exposed only behind password step-up + client confirm.
  */
 export async function deleteAccount(userId: string): Promise<void> {
   await EntryModel.deleteMany({ userId });

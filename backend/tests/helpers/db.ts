@@ -5,6 +5,7 @@ import { connectDb, disconnectDb } from '../../src/lib/db';
 import { UserModel } from '../../src/models/user';
 import { EntryModel } from '../../src/models/entry';
 import { PasswordResetTokenModel } from '../../src/models/password-reset-token';
+import { RateLimitBucketModel } from '../../src/models/rate-limit-bucket';
 
 const URI_FILE = path.join(process.cwd(), 'tests', '.mongo-uri');
 
@@ -22,7 +23,12 @@ export async function startTestDb(): Promise<void> {
   if (mongoose.connection.readyState !== 1) {
     await connectDb(uri);
   }
-  await Promise.all([UserModel.init(), EntryModel.init(), PasswordResetTokenModel.init()]);
+  await Promise.all([
+    UserModel.init(),
+    EntryModel.init(),
+    PasswordResetTokenModel.init(),
+    RateLimitBucketModel.init(),
+  ]);
 }
 
 /**
