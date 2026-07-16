@@ -113,7 +113,8 @@ same origin (`/api/*`).
 3. Add environment variables from [`.env.example`](.env.example):
    - `MONGODB_URI` — your Atlas connection string
    - `JWT_SECRET` — generate with `openssl rand -hex 32`
-   - `ALLOWED_ORIGINS` — `https://trace-one-swart.vercel.app` (update for custom domain)
+   - `ALLOWED_ORIGINS` — `https://trace.ahmdmshazly.me` (optionally keep `*.vercel.app` aliases)
+   - `APP_ORIGIN` — `https://trace.ahmdmshazly.me`
    - `NODE_ENV=production`
 4. Push to `main` (GitHub → Vercel) or `vercel --prod`.
 
@@ -123,7 +124,7 @@ Off-box durability (Atlas PITR + nightly S3 via OIDC): see
 ### Verify after deploy
 
 ```bash
-curl -s https://trace-one-swart.vercel.app/api/health
+curl -s https://trace.ahmdmshazly.me/api/health
 ```
 
 See [docs/05-operations/deployment.md](docs/05-operations/deployment.md) for

@@ -1,15 +1,15 @@
 # Deployment — Trace
 
-**Status:** Production on Vercel · **Last updated:** 2026-07-15
+**Status:** Production on Vercel · **Last updated:** 2026-07-16
 
 How Trace is deployed to a hosted environment. Trace is **config-driven**: the
 same artifacts run everywhere, steered only by environment configuration
 (Constitution VI; NFR-3.2/3.3). The API is **stateless** (NFR-3.4), enabling
 rolling redeploys without sticky sessions.
 
-**Canonical production URL (current):** https://trace-one-swart.vercel.app  
-(aliases: `trace-ahmdmshazly.vercel.app`). Custom domain `trace.ahmdmshazly.me` is
-not configured yet. Release path: **push to `main`** on `ahmedmshazly/trace`
+**Canonical production URL:** https://trace.ahmdmshazly.me  
+(aliases: `trace-one-swart.vercel.app`, `trace-ahmdmshazly.vercel.app`).
+Release path: **push to `main`** on `ahmedmshazly/trace`
 (GitHub ↔ Vercel linked; production branch `main`).
 
 ---
@@ -143,8 +143,8 @@ The client uses `/api` as its base URL by default (same origin). No
   `/trace/prod/MONGODB_URI` for the [S3 backup workflow](./aws-backup.md).
 - Enable Atlas automated backups / PITR on the tier before treating the
   deployment as durable.
-- Set `ALLOWED_ORIGINS=https://trace-one-swart.vercel.app` (update when a
-  custom domain lands).
+- Set `ALLOWED_ORIGINS=https://trace.ahmdmshazly.me` (optionally keep the
+  `*.vercel.app` alias comma-separated) and `APP_ORIGIN=https://trace.ahmdmshazly.me`.
 
 ## Scaling path (when needed)
 
