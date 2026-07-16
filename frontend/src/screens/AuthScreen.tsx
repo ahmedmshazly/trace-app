@@ -1,9 +1,10 @@
+// @ts-nocheck
 // Auth gateway, wired to the API.
 // Log in / register hit the backend; errors surface in the design-system voice.
 // Password reset has no backend endpoint in this scope, so it stays an honest,
 // non-functional notice (and never reveals whether an account exists).
-import { useAuth } from '../auth/AuthContext.jsx';
-import { api, ApiError } from '../api/client.js';
+import { useAuth } from '../auth/AuthContext';
+import { api, ApiError } from '../api/client';
 
 const { Logo, Button, TextField, StatusNote, Banner } = window.TRACE_UI;
 const { useState, useEffect } = React;
@@ -188,7 +189,7 @@ function LoginScreen({ onMode }) {
   );
 }
 
-function RegisterScreen({ onMode }) {
+function RegisterScreen({ onMode: _onMode }) {
   const { register } = useAuth();
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');

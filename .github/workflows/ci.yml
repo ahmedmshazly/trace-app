@@ -25,6 +25,14 @@ jobs:
 
       - run: npm ci
 
+      - name: Cache MongoMemoryServer binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-memory-server
+          key: mms-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            mms-${{ runner.os }}-
+
       - name: Lint
         run: npm run lint
 
@@ -41,7 +49,7 @@ jobs:
         run: npm run build
 
   frontend:
-    name: frontend · build
+    name: frontend · lint · typecheck · build · e2e
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,8 +65,20 @@ jobs:
 
       - run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Build
         run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E smoke
+        run: npm run test:e2e
 
   vercel-build:
     name: monorepo · vercel-build parity

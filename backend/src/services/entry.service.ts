@@ -39,6 +39,9 @@ export interface ListOptions {
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
+/** Domain cap for a single moment body (defense beyond the 1mb JSON payload). */
+export const MAX_ENTRY_BODY_LENGTH = 10_000;
+const EXPORT_BATCH_SIZE = 100;
 
 /** Escapes a user-supplied string for safe use inside a RegExp. */
 function escapeRegex(value: string): string {
@@ -88,6 +91,9 @@ function assertNonEmptyBody(body: string): string {
   const trimmed = body.trim();
   if (trimmed.length === 0) {
     throw new ValidationError('body must not be empty');
+  }
+  if (trimmed.length > MAX_ENTRY_BODY_LENGTH) {
+    throw new ValidationError(`body must be at most ${MAX_ENTRY_BODY_LENGTH} characters`);
   }
   return trimmed;
 }
@@ -169,6 +175,8 @@ function buildListFilter(userId: string, options: ListOptions): EntryFilter {
 /**
  * Returns every entry the user owns, newest-first, with no pagination — the
  * source for a full export. Excludes soft-deleted entries unless asked.
+ * Prefer {@link iterateEntryBatches} for large corpora to avoid loading all
+ * documents into memory at once.
  */
 export async function listAllEntries(
   userId: string,
@@ -177,6 +185,42 @@ export async function listAllEntries(
   const filter = buildListFilter(userId, { includeDeleted: options.includeDeleted });
   const docs = await EntryModel.find(filter).sort({ occurredAt: -1, _id: -1 });
   return docs.map(toEntryDTO);
+}
+
+/** Counts entries matching the same scope as list/export (for export headers). */
+export async function countEntries(
+  userId: string,
+  options: { includeDeleted?: boolean } = {},
+): Promise<number> {
+  const filter = buildListFilter(userId, { includeDeleted: options.includeDeleted });
+  return EntryModel.countDocuments(filter);
+}
+
+/**
+ * Yields the user's entries newest-first in fixed-size batches (keyset cursor).
+ * Used by streaming export so large corpora do not require a full in-memory load.
+ */
+export async function* iterateEntryBatches(
+  userId: string,
+  options: { includeDeleted?: boolean; batchSize?: number } = {},
+): AsyncGenerator<EntryDTO[], void, undefined> {
+  const batchSize = options.batchSize ?? EXPORT_BATCH_SIZE;
+  let cursor: string | undefined;
+  for (;;) {
+    const page = await listEntries(userId, {
+      limit: batchSize,
+      includeDeleted: options.includeDeleted,
+      ...(cursor ? { cursor } : {}),
+    });
+    if (page.items.length === 0) {
+      return;
+    }
+    yield page.items;
+    if (!page.nextCursor) {
+      return;
+    }
+    cursor = page.nextCursor;
+  }
 }
 
 /**

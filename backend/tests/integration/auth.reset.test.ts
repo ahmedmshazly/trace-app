@@ -16,7 +16,11 @@ async function register(email: string, password = 'correct horse battery'): Prom
 
 describe('auth: password reset (forgot / reset)', () => {
   it('issues a reset token for a known account and lets it set a new password', async () => {
-    await register('reset@example.com', 'original passphrase');
+    const reg = await request(app)
+      .post('/api/auth/register')
+      .send({ email: 'reset@example.com', password: 'original passphrase' });
+    expect(reg.status).toBe(201);
+    const priorToken = reg.body.token as string;
 
     const forgot = await request(app)
       .post('/api/auth/forgot-password')
@@ -32,6 +36,17 @@ describe('auth: password reset (forgot / reset)', () => {
     expect(reset.status).toBe(200);
     expect(typeof reset.body.token).toBe('string');
     expect(reset.body.user.email).toBe('reset@example.com');
+
+    // Prior session invalidated (sessionEpoch bump — FR-003 / SC-002).
+    const stale = await request(app)
+      .get('/api/auth/me')
+      .set('authorization', `Bearer ${priorToken}`);
+    expect(stale.status).toBe(401);
+
+    const fresh = await request(app)
+      .get('/api/auth/me')
+      .set('authorization', `Bearer ${reset.body.token}`);
+    expect(fresh.status).toBe(200);
 
     // Old password rejected, new password accepted.
     const oldPw = await request(app)

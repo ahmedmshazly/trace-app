@@ -1,10 +1,10 @@
 // Top-level app: provides session state and routes between the auth gateway and
 // the capture/timeline app. Mounted by src/main.jsx after the design-system
 // bundle and global React are ready.
-import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
-import { LandingScreen } from './screens/LandingScreen.jsx';
-import { AuthScreen } from './screens/AuthScreen.jsx';
-import { AppScreen } from './screens/AppScreen.jsx';
+import { AuthProvider, useAuth } from './auth/AuthContext';
+import { LandingScreen } from './screens/LandingScreen';
+import { AuthScreen } from './screens/AuthScreen';
+import { AppScreen } from './screens/AppScreen';
 
 const { useEffect, useState, createElement } = React;
 
@@ -68,7 +68,7 @@ function App() {
   );
 }
 
-export function mountApp(container) {
+export function mountApp(container: Element) {
   const root = ReactDOM.createRoot(container);
   root.render(createElement(App));
   return root;

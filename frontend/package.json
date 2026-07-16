@@ -5,12 +5,31 @@
   "type": "module",
   "description": "Trace web client — a Vite + React SPA wired to the Trace backend API, built on the Trace design system.",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 4173"
+    "postinstall": "node scripts/sync-vendor.mjs",
+    "sync-vendor": "node scripts/sync-vendor.mjs",
+    "dev": "node scripts/sync-vendor.mjs && vite",
+    "build": "node scripts/sync-vendor.mjs && vite build",
+    "preview": "vite preview --port 4173",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "vite": "^5.4.10",
-    "vite-plugin-static-copy": "^1.0.6"
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.64.0",
+    "vite": "^6.4.3",
+    "vite-plugin-static-copy": "^2.3.2"
   }
 }

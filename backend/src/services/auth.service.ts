@@ -4,6 +4,8 @@ import { PasswordResetTokenModel } from '../models/password-reset-token';
 import { hashPassword, verifyPassword } from '../lib/password';
 import { signToken } from '../lib/token';
 import { generateResetToken, hashResetToken, RESET_TOKEN_TTL_MS } from '../lib/reset-token';
+import { sendPasswordResetEmail } from '../lib/mailer';
+import { config } from '../config';
 import {
   EmailInUseError,
   InvalidCredentialsError,
@@ -58,7 +60,10 @@ export async function register(email: string, password: string): Promise<AuthRes
     throw err;
   }
 
-  return { token: signToken(user._id.toString()), user: toPublicUser(user) };
+  return {
+    token: signToken(user._id.toString(), user.sessionEpoch),
+    user: toPublicUser(user),
+  };
 }
 
 /**
@@ -80,7 +85,10 @@ export async function login(email: string, password: string): Promise<AuthResult
     throw new InvalidCredentialsError();
   }
 
-  return { token: signToken(user._id.toString()), user: toPublicUser(user) };
+  return {
+    token: signToken(user._id.toString(), user.sessionEpoch),
+    user: toPublicUser(user),
+  };
 }
 
 /** Returns the authenticated user's public profile. */
@@ -96,8 +104,8 @@ export async function getCurrentUser(userId: string): Promise<PublicUser> {
  * Begins a password reset. Returns the raw token only when an account exists;
  * the caller (route) must respond identically either way so the endpoint never
  * reveals whether an email is registered (no account enumeration, FR-7.*).
- * In production the token travels by email; with no mailer configured it is
- * surfaced to the caller for non-production/testing use only.
+ * Sends the reset link via the configured mailer; surfaces the raw token to the
+ * caller only for non-production log-transport testing.
  */
 export async function requestPasswordReset(email: string): Promise<{ rawToken: string | null }> {
   const normalizedEmail = email.trim().toLowerCase();
@@ -115,6 +123,9 @@ export async function requestPasswordReset(email: string): Promise<{ rawToken: s
     tokenHash: hash,
     expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
   });
+
+  const resetUrl = `${config.appOrigin}/?reset-token=${encodeURIComponent(raw)}`;
+  await sendPasswordResetEmail({ to: user.email, resetUrl });
 
   return { rawToken: raw };
 }
@@ -139,10 +150,15 @@ export async function resetPassword(rawToken: string, newPassword: string): Prom
   }
 
   user.passwordHash = await hashPassword(newPassword);
+  // Bump epoch so any JWT issued before this reset is rejected (FR-003 / R-003).
+  user.sessionEpoch = (user.sessionEpoch ?? 0) + 1;
   await user.save();
   await PasswordResetTokenModel.deleteMany({ userId: user._id });
 
-  return { token: signToken(user._id.toString()), user: toPublicUser(user) };
+  return {
+    token: signToken(user._id.toString(), user.sessionEpoch),
+    user: toPublicUser(user),
+  };
 }
 
 /**

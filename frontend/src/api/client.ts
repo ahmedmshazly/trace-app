@@ -10,7 +10,11 @@ const TOKEN_KEY = 'trace.token';
 
 /** Error carrying the backend's `{ error: { code, message } }` envelope. */
 export class ApiError extends Error {
-  constructor(status, code, message, details) {
+  status: number;
+  code: string;
+  details: unknown;
+
+  constructor(status: number, code: string, message?: string, details?: unknown) {
     super(message || code || `Request failed (${status})`);
     this.name = 'ApiError';
     this.status = status;
@@ -19,7 +23,7 @@ export class ApiError extends Error {
   }
 }
 
-export function getToken() {
+export function getToken(): string | null {
   try {
     return localStorage.getItem(TOKEN_KEY);
   } catch {
@@ -27,7 +31,7 @@ export function getToken() {
   }
 }
 
-export function setToken(token) {
+export function setToken(token: string | null): void {
   try {
     if (token) localStorage.setItem(TOKEN_KEY, token);
     else localStorage.removeItem(TOKEN_KEY);
@@ -36,22 +40,29 @@ export function setToken(token) {
   }
 }
 
+type UnauthorizedListener = () => void;
+
 // Listeners notified whenever a request is rejected as unauthenticated, so the
 // app can drop the session and return to the gateway.
-const unauthorizedListeners = new Set();
-export function onUnauthorized(listener) {
+const unauthorizedListeners = new Set<UnauthorizedListener>();
+export function onUnauthorized(listener: UnauthorizedListener): () => void {
   unauthorizedListeners.add(listener);
   return () => unauthorizedListeners.delete(listener);
 }
 
-async function request(method, path, { body, auth = true } = {}) {
-  const headers = {};
+interface RequestOptions {
+  body?: unknown;
+  auth?: boolean;
+}
+
+async function request(method: string, path: string, { body, auth = true }: RequestOptions = {}) {
+  const headers: Record<string, string> = {};
   if (body !== undefined) headers['content-type'] = 'application/json';
 
   const token = auth ? getToken() : null;
   if (token) headers.authorization = `Bearer ${token}`;
 
-  let response;
+  let response: Response;
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       method,
@@ -64,7 +75,7 @@ async function request(method, path, { body, auth = true } = {}) {
 
   if (response.status === 204) return null;
 
-  let payload = null;
+  let payload: any = null;
   const text = await response.text();
   if (text) {
     try {
@@ -87,12 +98,12 @@ async function request(method, path, { body, auth = true } = {}) {
 
 // Streams an authenticated file download (used for export). Returns the blob
 // and a server-suggested filename parsed from Content-Disposition.
-async function downloadRequest(path) {
-  const headers = {};
+async function downloadRequest(path: string) {
+  const headers: Record<string, string> = {};
   const token = getToken();
   if (token) headers.authorization = `Bearer ${token}`;
 
-  let response;
+  let response: Response;
   try {
     response = await fetch(`${BASE_URL}${path}`, { method: 'GET', headers });
   } catch {
@@ -103,13 +114,13 @@ async function downloadRequest(path) {
     if (response.status === 401) {
       for (const listener of unauthorizedListeners) listener();
     }
-    let envelope = {};
+    let envelope: { code?: string; message?: string } = {};
     try {
       envelope = (await response.json()).error || {};
     } catch {
       /* non-JSON error body */
     }
-    throw new ApiError(response.status, envelope.code, envelope.message);
+    throw new ApiError(response.status, envelope.code || 'UNKNOWN', envelope.message);
   }
 
   const disposition = response.headers.get('content-disposition') || '';
@@ -119,21 +130,31 @@ async function downloadRequest(path) {
 }
 
 export const api = {
-  // ── auth ──────────────────────────────────────────────────────────
-  register: (email, password) =>
+  register: (email: string, password: string) =>
     request('POST', '/auth/register', { body: { email, password }, auth: false }),
-  login: (email, password) =>
+  login: (email: string, password: string) =>
     request('POST', '/auth/login', { body: { email, password }, auth: false }),
   logout: () => request('POST', '/auth/logout'),
   me: () => request('GET', '/auth/me'),
-  forgotPassword: (email) =>
+  forgotPassword: (email: string) =>
     request('POST', '/auth/forgot-password', { body: { email }, auth: false }),
-  resetPassword: (token, password) =>
+  resetPassword: (token: string, password: string) =>
     request('POST', '/auth/reset-password', { body: { token, password }, auth: false }),
   deleteAccount: () => request('DELETE', '/auth/me'),
 
-  // ── entries ───────────────────────────────────────────────────────
-  listEntries: ({ limit, cursor, includeDeleted, q, tag } = {}) => {
+  listEntries: ({
+    limit,
+    cursor,
+    includeDeleted,
+    q,
+    tag,
+  }: {
+    limit?: number;
+    cursor?: string;
+    includeDeleted?: boolean;
+    q?: string;
+    tag?: string;
+  } = {}) => {
     const params = new URLSearchParams();
     if (limit != null) params.set('limit', String(limit));
     if (cursor) params.set('cursor', cursor);
@@ -143,13 +164,15 @@ export const api = {
     const qs = params.toString();
     return request('GET', `/entries${qs ? `?${qs}` : ''}`);
   },
-  createEntry: ({ body, occurredAt } = {}) =>
+  createEntry: ({ body, occurredAt }: { body: string; occurredAt?: string } = { body: '' }) =>
     request('POST', '/entries', {
       body: { body, ...(occurredAt ? { occurredAt } : {}) },
     }),
-  updateEntry: (id, patch) => request('PATCH', `/entries/${id}`, { body: patch }),
-  deleteEntry: (id) => request('DELETE', `/entries/${id}`),
-  restoreEntry: (id) => request('POST', `/entries/${id}/restore`),
+  updateEntry: (id: string, patch: Record<string, unknown>) =>
+    request('PATCH', `/entries/${id}`, { body: patch }),
+  deleteEntry: (id: string) => request('DELETE', `/entries/${id}`),
+  restoreEntry: (id: string) => request('POST', `/entries/${id}/restore`),
   deleteAllEntries: () => request('DELETE', '/entries'),
-  exportEntries: (format) => downloadRequest(`/entries/export?format=${encodeURIComponent(format)}`),
+  exportEntries: (format: string) =>
+    downloadRequest(`/entries/export?format=${encodeURIComponent(format)}`),
 };

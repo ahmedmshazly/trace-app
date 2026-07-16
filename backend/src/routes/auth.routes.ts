@@ -58,7 +58,7 @@ router.post(
 );
 
 // Always responds the same way whether or not the email is registered, so it
-// never reveals which accounts exist. With no mailer configured, the reset
+// never reveals which accounts exist. With the log mail transport, the reset
 // token is returned only in non-production to make the flow usable/testable.
 router.post(
   '/forgot-password',
@@ -69,7 +69,7 @@ router.post(
     const body: { message: string; devToken?: string } = {
       message: 'If an account exists for that address, a reset link is on its way.',
     };
-    if (!config.isProduction && rawToken) {
+    if (!config.isProduction && config.mail.transport === 'log' && rawToken) {
       body.devToken = rawToken;
     }
     res.status(200).json(body);

@@ -12,6 +12,7 @@ dist/
 # Test & coverage artifacts
 coverage/
 .vitest/
+tests/.mongo-uri
 
 # Logs
 *.log

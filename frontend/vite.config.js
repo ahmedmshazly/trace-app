@@ -6,6 +6,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 //   - never bundles its own React (JSX compiles to global React.createElement);
 //   - loads React UMD + ui-bundle.js + styles.css at runtime (see src/main.jsx);
 //   - copies those design-system files into dist/ for production builds.
+// React UMDs are vendored same-origin under /vendor (see scripts/sync-vendor.mjs).
 const API_TARGET = process.env.VITE_API_PROXY || 'http://localhost:4000';
 
 export default defineConfig({
@@ -37,9 +38,6 @@ export default defineConfig({
   },
   plugins: [
     viteStaticCopy({
-      // Replicate the design-system consumables into the build output so the
-      // runtime references (/styles.css, /ui-bundle.js, /tokens, /fonts, /assets)
-      // resolve in production exactly as they do against the dev-server root.
       targets: [
         { src: 'ui-bundle.js', dest: '.' },
         { src: 'styles.css', dest: '.' },

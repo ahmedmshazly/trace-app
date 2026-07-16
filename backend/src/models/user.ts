@@ -5,6 +5,11 @@ export interface User {
   email: string;
   /** bcrypt salted hash — never plaintext, never serialized (Constitution V). */
   passwordHash: string;
+  /**
+   * Bumped on password reset (and similar revoke events). Embedded in JWTs as
+   * `sev` so prior sessions can be invalidated without a denylist (R-003).
+   */
+  sessionEpoch: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +32,7 @@ const userSchema = new Schema<User>(
     },
     // `select: false` keeps the hash out of query results unless explicitly requested.
     passwordHash: { type: String, required: true, select: false },
+    sessionEpoch: { type: Number, required: true, default: 0 },
   },
   {
     timestamps: true,
@@ -36,6 +42,7 @@ const userSchema = new Schema<User>(
         ret.id = ret._id;
         delete ret._id;
         delete ret.passwordHash;
+        delete ret.sessionEpoch;
         return ret;
       },
     },

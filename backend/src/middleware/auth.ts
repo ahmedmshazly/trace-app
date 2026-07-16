@@ -1,11 +1,15 @@
 import type { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../lib/token';
 import { UnauthorizedError } from '../lib/errors';
+import { UserModel } from '../models/user';
 
 /**
  * Resolves the bearer token to `req.userId` when present. It does NOT reject
  * unauthenticated requests — `requireUser` does that. This split lets a route be
  * optionally authenticated if ever needed, while keeping rejection in one place.
+ *
+ * After signature verification, the user's current `sessionEpoch` is checked so
+ * revoked sessions (password reset, deleted account) cannot keep calling the API.
  */
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const header = req.header('authorization');
@@ -20,14 +24,21 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
     return;
   }
 
-  try {
-    const payload = verifyToken(token);
-    req.userId = payload.sub;
-    next();
-  } catch {
-    // Do not leak why verification failed (expired vs tampered).
-    next(new UnauthorizedError());
-  }
+  void (async () => {
+    try {
+      const payload = verifyToken(token);
+      const user = await UserModel.findById(payload.sub).select('sessionEpoch').lean();
+      if (!user || user.sessionEpoch !== payload.sev) {
+        next(new UnauthorizedError());
+        return;
+      }
+      req.userId = payload.sub;
+      next();
+    } catch {
+      // Do not leak why verification failed (expired vs tampered vs revoked).
+      next(new UnauthorizedError());
+    }
+  })();
 }
 
 /** Guard for protected routes: 401 unless a verified `req.userId` is present. */

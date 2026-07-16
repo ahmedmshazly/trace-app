@@ -1,26 +1,33 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { asyncHandler } from '../lib/async-handler';
 import { requireUser, getUserId } from '../middleware/auth';
 import {
   createEntry,
   listEntries,
-  listAllEntries,
   updateEntry,
   softDeleteEntry,
   restoreEntry,
   deleteAllEntries,
+  countEntries,
+  iterateEntryBatches,
+  MAX_ENTRY_BODY_LENGTH,
   type EntryDTO,
 } from '../services/entry.service';
 
+const bodySchema = z
+  .string()
+  .min(1, 'body must not be empty')
+  .max(MAX_ENTRY_BODY_LENGTH, `body must be at most ${MAX_ENTRY_BODY_LENGTH} characters`);
+
 const createEntrySchema = z.object({
-  body: z.string().min(1, 'body must not be empty'),
+  body: bodySchema,
   occurredAt: z.string().datetime({ offset: true }).optional(),
 });
 
 const updateEntrySchema = z
   .object({
-    body: z.string().min(1, 'body must not be empty').optional(),
+    body: bodySchema.optional(),
     occurredAt: z.string().datetime({ offset: true }).optional(),
   })
   .refine((data) => data.body !== undefined || data.occurredAt !== undefined, {
@@ -46,21 +53,54 @@ const exportQuerySchema = z.object({
     .transform((value) => value === 'true'),
 });
 
-function buildMarkdown(entries: EntryDTO[]): string {
-  const stamp = new Date().toISOString().slice(0, 10);
-  const lines = ['# Trace export', '', `_${entries.length} moments · exported ${stamp}_`, ''];
-  let currentDay = '';
-  for (const entry of entries) {
-    const day = entry.occurredAt.slice(0, 10);
-    if (day !== currentDay) {
-      currentDay = day;
-      lines.push(`## ${day}`, '');
-    }
-    const time = entry.occurredAt.slice(11, 16);
-    lines.push(`- **${time}** — ${entry.body.replace(/\r?\n/g, ' ')}`);
+function writeMarkdownEntry(res: Response, entry: EntryDTO, currentDay: { value: string }): void {
+  const day = entry.occurredAt.slice(0, 10);
+  if (day !== currentDay.value) {
+    currentDay.value = day;
+    res.write(`## ${day}\n\n`);
   }
-  lines.push('');
-  return lines.join('\n');
+  const time = entry.occurredAt.slice(11, 16);
+  res.write(`- **${time}** — ${entry.body.replace(/\r?\n/g, ' ')}\n`);
+}
+
+async function streamJsonExport(
+  res: Response,
+  userId: string,
+  includeDeleted: boolean | undefined,
+): Promise<void> {
+  res.write('[\n');
+  let first = true;
+  for await (const batch of iterateEntryBatches(userId, { includeDeleted })) {
+    for (const entry of batch) {
+      if (!first) res.write(',\n');
+      first = false;
+      const json = JSON.stringify(entry, null, 2)
+        .split('\n')
+        .map((line) => `  ${line}`)
+        .join('\n');
+      res.write(json);
+    }
+  }
+  res.write('\n]\n');
+  res.end();
+}
+
+async function streamMarkdownExport(
+  res: Response,
+  userId: string,
+  includeDeleted: boolean | undefined,
+): Promise<void> {
+  const total = await countEntries(userId, { includeDeleted });
+  const stamp = new Date().toISOString().slice(0, 10);
+  res.write(`# Trace export\n\n_${total} moments · exported ${stamp}_\n\n`);
+  const currentDay = { value: '' };
+  for await (const batch of iterateEntryBatches(userId, { includeDeleted })) {
+    for (const entry of batch) {
+      writeMarkdownEntry(res, entry, currentDay);
+    }
+  }
+  res.write('\n');
+  res.end();
 }
 
 const router = Router();
@@ -69,24 +109,27 @@ const router = Router();
 router.use(requireUser);
 
 // Full export of the user's record. Declared before "/:id"-style routes; the
-// path is distinct from the GET "/" timeline.
+// path is distinct from the GET "/" timeline. Streams in batches to avoid
+// loading the entire corpus into memory.
 router.get(
   '/export',
   asyncHandler(async (req, res) => {
     const query = exportQuerySchema.parse(req.query);
-    const entries = await listAllEntries(getUserId(req), { includeDeleted: query.includeDeleted });
+    const userId = getUserId(req);
     const stamp = new Date().toISOString().slice(0, 10);
 
     if (query.format === 'json') {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="trace-export-${stamp}.json"`);
-      res.status(200).send(JSON.stringify(entries, null, 2));
+      res.status(200);
+      await streamJsonExport(res, userId, query.includeDeleted);
       return;
     }
 
     res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="trace-export-${stamp}.md"`);
-    res.status(200).send(buildMarkdown(entries));
+    res.status(200);
+    await streamMarkdownExport(res, userId, query.includeDeleted);
   }),
 );
 

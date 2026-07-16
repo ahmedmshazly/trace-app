@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Public landing page.
 // A short, calm narrative that previews the tool; its CTAs lead into the
 // auth gateway (Start your trace -> register, Log in -> login). Visuals are
@@ -29,7 +30,7 @@ function QuietLink({ children, onClick, style }) {
       className="quiet-link"
       onClick={(e) => {
         e.preventDefault();
-        onClick && onClick();
+        if (onClick) onClick();
       }}
       style={{
         fontFamily: 'var(--font-body)',
@@ -240,7 +241,7 @@ function Reframe() {
         entries.forEach((e) => { if (e.isIntersecting) reveal(); });
       }, { threshold: 0.4 });
       if (ref.current) io.observe(ref.current);
-    } catch (_) { /* no IO support */ }
+    } catch { /* no IO support */ }
     window.addEventListener('scroll', check, { passive: true });
     window.addEventListener('resize', check);
     const t = setTimeout(check, 120);
