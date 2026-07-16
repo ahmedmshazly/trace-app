@@ -1,0 +1,110 @@
+# Refresh EC2 Mongo warm standby from the latest S3 dump via SSM Run Command.
+# Standby keeps 27017 closed; restore runs on-box (no public Mongo ingress).
+#
+# Required GitHub Actions variables:
+#   AWS_ROLE_ARN          arn:aws:iam::352602573649:role/trace-backup-gha
+#   TRACE_BACKUP_BUCKET   ahmdmshazly-trace-backups (optional)
+#
+# Instance must be tagged Name=trace-mongo-standby and SSM-managed.
+
+name: Restore Mongo standby
+
+on:
+  schedule:
+    # 30 minutes after the :17 dump cron
+    - cron: "47 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  restore:
+    name: SSM mongorestore → standby
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-central-1
+      TRACE_BACKUP_BUCKET: ${{ vars.TRACE_BACKUP_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: eu-central-1
+
+      - name: Resolve standby instance
+        id: inst
+        run: |
+          set -euo pipefail
+          ID="$(aws ec2 describe-instances \
+            --filters \
+              'Name=tag:Name,Values=trace-mongo-standby' \
+              'Name=instance-state-name,Values=running' \
+            --query 'Reservations[0].Instances[0].InstanceId' \
+            --output text)"
+          if [[ -z "$ID" || "$ID" == "None" ]]; then
+            echo "error: no running instance tagged Name=trace-mongo-standby" >&2
+            exit 1
+          fi
+          echo "instance_id=$ID" >> "$GITHUB_OUTPUT"
+          echo "Using $ID"
+
+      - name: Upload host restore script to instance via SSM
+        id: cmd
+        run: |
+          set -euo pipefail
+          BUCKET="${TRACE_BACKUP_BUCKET:-ahmdmshazly-trace-backups}"
+          # Embed script content into a write+exec command
+          SCRIPT_B64="$(base64 -w0 scripts/backup/restore-standby-on-host.sh)"
+          PARAMS=$(jq -n \
+            --arg b64 "$SCRIPT_B64" \
+            --arg bucket "$BUCKET" \
+            '{
+              commands: [
+                ("echo " + $b64 + " | base64 -d > /opt/trace-backup/restore-standby-on-host.sh"),
+                "chmod +x /opt/trace-backup/restore-standby-on-host.sh",
+                ("export TRACE_BACKUP_BUCKET=" + $bucket + " AWS_REGION=eu-central-1"),
+                "/opt/trace-backup/restore-standby-on-host.sh"
+              ]
+            }')
+          CMD_ID="$(aws ssm send-command \
+            --instance-ids "${{ steps.inst.outputs.instance_id }}" \
+            --document-name AWS-RunShellScript \
+            --comment "Trace standby mongorestore from S3" \
+            --parameters "$PARAMS" \
+            --timeout-seconds 600 \
+            --query 'Command.CommandId' \
+            --output text)"
+          echo "command_id=$CMD_ID" >> "$GITHUB_OUTPUT"
+          echo "SSM command $CMD_ID"
+
+      - name: Wait for SSM command
+        run: |
+          set -euo pipefail
+          CMD_ID="${{ steps.cmd.outputs.command_id }}"
+          IID="${{ steps.inst.outputs.instance_id }}"
+          for i in $(seq 1 60); do
+            STATUS="$(aws ssm get-command-invocation \
+              --command-id "$CMD_ID" \
+              --instance-id "$IID" \
+              --query 'Status' \
+              --output text 2>/dev/null || echo Pending)"
+            echo "status=$STATUS"
+            case "$STATUS" in
+              Success) exit 0 ;;
+              Failed|Cancelled|TimedOut)
+                aws ssm get-command-invocation \
+                  --command-id "$CMD_ID" \
+                  --instance-id "$IID" \
+                  --query '[Status,StandardOutputContent,StandardErrorContent]' \
+                  --output text || true
+                exit 1
+                ;;
+            esac
+            sleep 10
+          done
+          echo "error: timed out waiting for SSM command" >&2
+          exit 1

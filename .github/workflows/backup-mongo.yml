@@ -15,8 +15,8 @@ name: Backup Mongo → S3
 
 on:
   schedule:
-    # 02:17 UTC nightly
-    - cron: "17 2 * * *"
+    # Every 6 hours at :17 UTC (RPO ≤ 6h)
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
