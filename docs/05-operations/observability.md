@@ -1,9 +1,9 @@
-# Observability — Trace
+# Observability: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
 What we can see, we can run. This document defines logging, health, metrics, and
-alerting for Trace — designed around a hard privacy constraint: **observability
+alerting for Trace, designed around a hard privacy constraint: **observability
 never exposes user entry content or secrets** (Constitution V & VI).
 
 ---
@@ -18,7 +18,7 @@ This is a review item and a release-blocking expectation (NFR-4.6).
 
 ## Health checks
 
-- **`GET /api/health`** — liveness/readiness probe returning status + uptime (NFR-3.5).
+- **`GET /api/health`.** Liveness/readiness probe returning status + uptime (NFR-3.5).
 - Used by the platform for rollout gating and by the [runbook](./runbook.md) for diagnosis.
 - Post-deploy verification requires a healthy response before traffic shift.
 
@@ -33,7 +33,7 @@ Example (shape, illustrative):
 
 ```json
 { "level":"info", "ts":"2026-06-18T14:02:00Z", "reqId":"abc123",
-  "method":"POST", "route":"/api/entries", "status":201, "ms":18, "userId":"u_…" }
+  "method":"POST", "route":"/api/entries", "status":201, "ms":18, "userId":"u_..." }
 ```
 
 ## Metrics (Stage 4+)
@@ -73,7 +73,7 @@ Sev1 alerts (privacy/data-integrity) page the accountable human immediately.
 
 A minimal operational dashboard: request/error/latency, capture latency, auth
 metrics, DB health, backup status. Deliberately **not** a product-analytics
-dashboard — we do not analyze entry content.
+dashboard; we do not analyze entry content.
 
 ## Verification
 

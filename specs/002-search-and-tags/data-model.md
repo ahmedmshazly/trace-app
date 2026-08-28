@@ -3,11 +3,11 @@
 The feature-scoped data model **delta** for Search & Tags. The canonical,
 project-wide reference is [`docs/02-architecture/data-model.md`](../../docs/02-architecture/data-model.md)
 (which already reserves `tags` and the search/tag indexes); this file activates
-them. No breaking schema change is introduced — `tags` is additive.
+them. No breaking schema change is introduced, `tags` is additive.
 
 ---
 
-## Entry — delta
+## Entry: delta
 
 The `Entry` from feature 001 gains one field and two indexes.
 
@@ -21,9 +21,9 @@ All other `Entry` fields (`userId`, `body`, `occurredAt`, `createdAt`,
 
 ### Indexes (added by this feature)
 
-- **Text index on `body`** — serves full-text relevance search (`$text` +
+- **Text index on `body`.** Serves full-text relevance search (`$text` +
   `textScore`). Scoped at query time by `{ userId, deleted: false }`.
-- **Compound `{ userId: 1, tags: 1 }`** — serves single-tag filtering and the tag
+- **Compound `{ userId: 1, tags: 1 }`.** Serves single-tag filtering and the tag
   aggregation.
 - Existing `{ userId: 1, occurredAt: -1, _id: -1 }` (from 001) continues to serve
   date-range filtering and chronological pagination.
@@ -58,7 +58,7 @@ suite (Constitution IV).
 
 ---
 
-## Tag index (derived aggregation — not a stored entity)
+## Tag index (derived aggregation: not a stored entity)
 
 The tag index is computed on demand, not stored:
 

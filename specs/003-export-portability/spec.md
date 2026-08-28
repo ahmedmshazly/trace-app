@@ -11,7 +11,7 @@ and JSON, scope an export to everything / a date range / the current filter, and
 (optionally) re-import previously exported JSON. Make data ownership real."
 
 > This is Stage 3 of Trace (see `docs/03-project/roadmap.md`). It delivers
-> Constitution II (*The Corpus Is the Product — Ownership & Portability*) as a
+> Constitution II (*The Corpus Is the Product. Ownership & Portability*) as a
 > shipped capability. It builds on feature 001 (the `Entry` model, auth,
 > isolation) and reuses the filter semantics from feature 002 for "current
 > filter" / date-range scope. It realizes the **Settings → Export** panel in the
@@ -49,8 +49,8 @@ fields/structure, in the documented format, and only that user's data.
 
 ### User Story 2 - Export a scoped subset (Priority: P2)
 
-A user exports only part of their corpus — a date range, or whatever filter is
-currently applied (a tag, a search) — rather than everything.
+A user exports only part of their corpus, a date range, or whatever filter is
+currently applied (a tag, a search), rather than everything.
 
 **Why this priority**: Whole-corpus export (US1) delivers the ownership guarantee;
 scoped export is the practical refinement for sharing or archiving a slice (e.g.
@@ -59,20 +59,20 @@ feature-002 filter semantics and is not required for the core portability promis
 
 **Independent Test**: Apply a date range and/or a current filter, export with that
 scope, and confirm the output contains exactly the entries that the same filter
-returns in the timeline/search — no more, no fewer.
+returns in the timeline/search, no more, no fewer.
 
 **Acceptance Scenarios**:
 
 1. **Given** a date range, **When** the user exports with scope "Date range", **Then** the output contains exactly the non-deleted entries whose `occurredAt` falls within the (inclusive) range.
 2. **Given** an active filter (tag and/or text query) in the app, **When** the user exports with scope "Current filter", **Then** the output contains exactly the entries that filter currently returns.
-3. **Given** a scoped export, **When** it completes, **Then** the chosen format (Markdown/JSON) and the documented structure are identical to the full export — only the set of entries differs.
+3. **Given** a scoped export, **When** it completes, **Then** the chosen format (Markdown/JSON) and the documented structure are identical to the full export, only the set of entries differs.
 4. **Given** a scope that matches no entries, **When** the user exports, **Then** they receive a well-formed empty document (an empty JSON array / a Markdown file with no entries), not an error.
 
 ---
 
 ### User Story 3 - Re-import previously exported JSON (Priority: P3, optional)
 
-A user imports a previously exported JSON file back into their own corpus —
+A user imports a previously exported JSON file back into their own corpus
 restoring from a backup or moving between accounts they own.
 
 **Why this priority**: Round-trippability proves the JSON export is genuinely
@@ -106,22 +106,22 @@ re-importing the same file does not create duplicates.
 
 ## Requirements *(mandatory)*
 
-> Local IDs (FR-001…) scope this feature; the parenthetical maps to the canonical
+> Local IDs (FR-001...) scope this feature; the parenthetical maps to the canonical
 > register in `docs/01-requirements/functional-requirements.md`.
 
 ### Functional Requirements
 
 **Export**
 
-- **FR-001** (FR-6.2): System MUST export the authenticated user's corpus as structured JSON — an array of entries with all fields preserved (round-trippable).
-- **FR-002** (FR-6.1): System MUST export the corpus as timestamped Markdown — entries grouped under day headers with local time and inline tags, in the documented shape.
+- **FR-001** (FR-6.2): System MUST export the authenticated user's corpus as structured JSON, an array of entries with all fields preserved (round-trippable).
+- **FR-002** (FR-6.1): System MUST export the corpus as timestamped Markdown, entries grouped under day headers with local time and inline tags, in the documented shape.
 - **FR-003** (FR-6.3): Users MUST be able to scope an export to **everything**, a **date range**, or the **current filter** (tag/text), reusing feature-002 filter semantics.
 - **FR-004**: System MUST exclude soft-deleted entries from all exports.
 - **FR-005**: System MUST show an export size estimate (entry count + approximate bytes) before the export is committed.
 - **FR-006**: System MUST stream large exports so memory use stays bounded regardless of corpus size (NFR-10.2).
 - **FR-007**: System MUST deliver exports as a download with a sensible filename and correct content type.
 
-**Import (optional — FR-6.4 *Could*)**
+**Import (optional, FR-6.4 *Could*)**
 
 - **FR-010** (FR-6.4): Users SHOULD be able to import previously exported JSON into their own corpus, preserving `body`, `occurredAt`, `tags`, and `source`.
 - **FR-011**: System MUST validate an import against the documented JSON schema and reject malformed input with a clear error and no partial/ambiguous state.
@@ -146,8 +146,8 @@ see `contracts/openapi.yaml` for the API surface.
 ### Measurable Outcomes
 
 - **SC-001** (NFR-5.1, SC-7): A user can export their entire corpus to both Markdown and JSON at any time, with every non-deleted entry present.
-- **SC-002** (NFR-5.2): A JSON export is self-contained and round-trippable — re-importing it reconstructs an equivalent corpus (body, timestamps, tags, source preserved).
-- **SC-003**: Scoped exports contain exactly the entries the equivalent in-app filter returns — verified by parity tests.
+- **SC-002** (NFR-5.2): A JSON export is self-contained and round-trippable, re-importing it reconstructs an equivalent corpus (body, timestamps, tags, source preserved).
+- **SC-003**: Scoped exports contain exactly the entries the equivalent in-app filter returns, verified by parity tests.
 - **SC-004**: A 50k-entry export completes with bounded memory (streamed) and within an acceptable time budget on a representative dev machine.
 - **SC-005**: Zero cross-user exposure: an export/import never includes or writes another user's entries (verified by the isolation suite).
 - **SC-006**: Markdown and JSON exports preserve Unicode and Markdown-significant characters exactly; no content corruption or unintended rendering.
@@ -156,7 +156,7 @@ see `contracts/openapi.yaml` for the API surface.
 ## Assumptions
 
 - Builds on features 001 (Entry, auth, isolation) and 002 (tags + filter semantics for "current filter"/date-range scope).
-- Export is **synchronous download** in V1 (no background job queue, no emailed exports) — sufficient at the per-user scale target.
+- Export is **synchronous download** in V1 (no background job queue, no emailed exports), sufficient at the per-user scale target.
 - JSON is the canonical round-trippable format; Markdown is a human-readable, lossy-for-reimport format (Markdown is not required to round-trip).
 - Import (FR-6.4) is *Could*/optional; if descoped from V1, US1+US2 still fully deliver the portability guarantee (SC-001).
 - `createdAt` policy on import is documented (a re-import sets a fresh server `createdAt` while preserving `occurredAt`), consistent with the immutable-ledger principle (the ledger records when *this* corpus committed the entry).

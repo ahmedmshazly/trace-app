@@ -12,7 +12,7 @@ session-invalidating); **account settings** (change email/password) and the
 **Light/Dark theme** toggle that applies the ADR-0006 token system app-wide; a
 fenced **danger zone** for deleting all entries / the whole account with a typed
 confirmation, plus a **Trash** browse/restore surface; and the cross-cutting
-**production-readiness pass** — rate limiting, security/web-vuln defense,
+**production-readiness pass**, rate limiting, security/web-vuln defense,
 accessibility (WCAG AA), performance validation, CI/CD gates, configuration-driven
 deployment, health/observability wiring, and a rehearsed backup/restore.
 
@@ -34,12 +34,12 @@ helmet, cors, express-rate-limit · a configurable email transport (e.g. nodemai
 with an env-selected provider; dev logs the link) · React 18 + Vite 5, React
 Router, TanStack Query · the CSS custom-property theme system (ADR-0006).
 
-**Storage**: MongoDB 7 — adds a `PasswordResetToken` collection (TTL index on
+**Storage**: MongoDB 7, adds a `PasswordResetToken` collection (TTL index on
 expiry); account/data deletion removes `User` + `Entry` documents for the user.
 
 **Testing**: Vitest (unit) · Supertest + Vitest with `mongodb-memory-server`
-(integration — reset, settings, deletion, rate limits, isolation) · Playwright
-(E2E — reset flow, theme toggle, danger-zone typed confirmation) · accessibility
+(integration, reset, settings, deletion, rate limits, isolation) · Playwright
+(E2E, reset flow, theme toggle, danger-zone typed confirmation) · accessibility
 checks (axe) and performance benchmarks against the NFR targets.
 
 **Target Platform**: Linux server (API) + any modern browser (client)
@@ -47,7 +47,7 @@ checks (axe) and performance benchmarks against the NFR targets.
 **Project Type**: Web application (extends existing `backend/` and `frontend/`)
 
 **Performance Goals**: Maintain capture < 100 ms, cold load < 2 s, search < 300 ms,
-smooth at 50k entries/user (NFR-1.*) — validated as a GA gate. Theme applies before
+smooth at 50k entries/user (NFR-1.*), validated as a GA gate. Theme applies before
 first paint (no FOUC).
 
 **Constraints**: No account enumeration; reset tokens single-use + expiring;
@@ -67,7 +67,7 @@ operational/security/quality gates for GA across the whole app.
 | I. Capture Friction Is Sacred | Settings/recovery live off the capture path; theme reduces eye strain for long sessions | PASS |
 | II. Corpus Is the Product | Account/data deletion delivers the right to leave; export (003) already delivers portability | PASS |
 | III. Spec-Driven Development | This plan derives from spec.md; tasks derive from this plan | PASS |
-| IV. Test-First & Quality Gates | Reset, deletion, isolation, a11y, and perf gates have tests; CI blocks on red (SC-006) — this feature *is* the gate | PASS |
+| IV. Test-First & Quality Gates | Reset, deletion, isolation, a11y, and perf gates have tests; CI blocks on red (SC-006): this feature *is* the gate | PASS |
 | V. Security & Privacy by Default | Non-enumerating reset, single-use tokens, rate limiting, web-vuln defense, session invalidation, secrets via config | PASS |
 | VI. Observability & Operability | Health endpoint, structured content-free logs, config-only deploy, rehearsed backup/restore, runbooks | PASS |
 | VII. Simplicity & YAGNI | Reuses existing services/middleware; email transport is config-selected; no new infra beyond a token collection | PASS |
@@ -82,11 +82,11 @@ No violations. Complexity Tracking section below is intentionally empty.
 specs/004-hardening-and-deploy/
 ├── plan.md              # This file
 ├── spec.md              # Feature specification
-├── research.md          # Phase 0 — decisions & rationale
-├── data-model.md        # Phase 1 — PasswordResetToken + deletion semantics
-├── quickstart.md        # Phase 1 — local run & verification
+├── research.md          # Phase 0: decisions & rationale
+├── data-model.md        # Phase 1: PasswordResetToken + deletion semantics
+├── quickstart.md        # Phase 1: local run & verification
 ├── contracts/
-│   └── openapi.yaml     # Phase 1 — reset, account, deletion API
+│   └── openapi.yaml     # Phase 1: reset, account, deletion API
 └── tasks.md             # Phase 2: task breakdown
 ```
 

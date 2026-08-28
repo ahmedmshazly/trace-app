@@ -1,4 +1,4 @@
-# Non-Functional Requirements Register — Trace V1
+# Non-Functional Requirements Register: Trace V1
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -40,7 +40,7 @@ benchmark, I = inspection/audit, D = demo.
 
 | ID | Requirement | Target | Verify |
 |---|---|---|---|
-| NFR-4.1 | Transport encryption | HTTPS/TLS for all client–server traffic in production. | I |
+| NFR-4.1 | Transport encryption | HTTPS/TLS for all client-server traffic in production. | I |
 | NFR-4.2 | Credential protection | Passwords stored only as salted hashes (bcrypt). | I, T |
 | NFR-4.3 | Authorization & isolation | Every request scoped to authenticated user; cross-user access impossible. | T (isolation suite) |
 | NFR-4.4 | Web-vulnerability protection | Defend injection, XSS, CSRF (as applicable); validate all input. | T, I |

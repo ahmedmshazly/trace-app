@@ -15,8 +15,8 @@ builds on feature 001 (the `Entry` model, auth, isolation) and reuses feature
 
 The technical approach extends the existing Express/Mongo backend and React/Vite
 client. Server-side: an `export.service.ts` that **streams** entries from a cursor
-through a format serializer (JSON array / Markdown writer) to the HTTP response —
-bounded memory regardless of corpus size (FR-006) — reusing the feature-002 query
+through a format serializer (JSON array / Markdown writer) to the HTTP response
+bounded memory regardless of corpus size (FR-006), reusing the feature-002 query
 builder for scope; a `count`/size-estimate endpoint; and an optional validated
 `import.service.ts`. Client-side: the **Settings → Export** panel (format toggle,
 scope selector, size summary, Export action) and, if shipped, an import control.
@@ -31,14 +31,14 @@ import validation) · React 18 + Vite 5, TanStack Query. JSON is serialized as a
 stream; Markdown via a small in-repo writer (no new heavy dependency). No new
 runtime services.
 
-**Storage**: MongoDB 7 — no new collections or fields; reads use existing indexes
+**Storage**: MongoDB 7, no new collections or fields; reads use existing indexes
 (`{ userId, occurredAt, _id }`, `{ userId, tags }`). Import writes `Entry`
 documents via the existing entry service.
 
-**Testing**: Vitest (unit — Markdown/JSON serializers, scope→query mapping,
+**Testing**: Vitest (unit. Markdown/JSON serializers, scope→query mapping,
 import validator) · Supertest + Vitest with `mongodb-memory-server` (API
-integration — export content/scope/streaming, import, isolation) · Playwright
-(E2E — export from Settings)
+integration, export content/scope/streaming, import, isolation) · Playwright
+(E2E, export from Settings)
 
 **Target Platform**: Linux server (API) + any modern browser (client)
 
@@ -62,11 +62,11 @@ entries excluded; export reflects a consistent snapshot; bodies emitted safely
 | Principle | Check | Status |
 |---|---|---|
 | I. Capture Friction Is Sacred | Export is a utility screen off the capture path; it does not touch the capture loop | PASS |
-| II. Corpus Is the Product | This feature *is* the portability guarantee — open MD+JSON, round-trippable, user-owned | PASS |
+| II. Corpus Is the Product | This feature *is* the portability guarantee: open MD+JSON, round-trippable, user-owned | PASS |
 | III. Spec-Driven Development | This plan derives from spec.md; tasks derive from this plan | PASS |
 | IV. Test-First & Quality Gates | Serializers, scope parity, round-trip, and isolation have tests before/with implementation (SC-002/003/005/007) | PASS |
 | V. Security & Privacy by Default | Export/import scoped to `req.userId`; import validated with zod; isolation suite extended | PASS |
-| VI. Observability & Operability | Export requests logged (id, scope, count, timing — never entry content); streaming avoids memory blowups | PASS |
+| VI. Observability & Operability | Export requests logged (id, scope, count, timing: never entry content); streaming avoids memory blowups | PASS |
 | VII. Simplicity & YAGNI | Synchronous streamed download; no job queue; Markdown writer in-repo; import optional | PASS |
 
 No violations. Complexity Tracking section below is intentionally empty.
@@ -79,11 +79,11 @@ No violations. Complexity Tracking section below is intentionally empty.
 specs/003-export-portability/
 ├── plan.md              # This file
 ├── spec.md              # Feature specification
-├── research.md          # Phase 0 — decisions & rationale
-├── data-model.md        # Phase 1 — export/import shapes (no new persistent fields)
-├── quickstart.md        # Phase 1 — local run & verification
+├── research.md          # Phase 0: decisions & rationale
+├── data-model.md        # Phase 1: export/import shapes (no new persistent fields)
+├── quickstart.md        # Phase 1: local run & verification
 ├── contracts/
-│   └── openapi.yaml     # Phase 1 — export/size/import API
+│   └── openapi.yaml     # Phase 1: export/size/import API
 └── tasks.md             # Phase 2: task breakdown
 ```
 
@@ -120,7 +120,7 @@ docs/                            # update FR verification + traceability + api-d
 **Structure Decision**: Extends the existing web-application layout. The export
 path is read-only and streams from a Mongo cursor through a format serializer to
 the response, so memory stays bounded (FR-006). Scope reuses the feature-002 query
-builder (Constitution VII — no duplicate filter logic). Import (optional) writes
+builder (Constitution VII, no duplicate filter logic). Import (optional) writes
 through the existing entry service so all invariants (isolation, tag parsing,
 immutable `createdAt`) are enforced in one place.
 

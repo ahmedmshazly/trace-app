@@ -19,7 +19,7 @@ implemented, tested, and demoed independently.
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: US1 (full export), US2 (scoped export), US3 (import — optional)
+- **[Story]**: US1 (full export), US2 (scoped export), US3 (import, optional)
 - File paths follow the `backend/` + `frontend/` structure in plan.md.
 
 ---
@@ -40,7 +40,7 @@ implemented, tested, and demoed independently.
 - [ ] T005 [P] Unit tests for both serializers (shape, ordering, Unicode + Markdown-significant chars, empty corpus) in `backend/tests/unit/serializers.test.ts` (write first, must fail).
 - [ ] T006 Implement `export.service.ts` that maps scope → the feature-002 query builder and streams a Mongo cursor through a chosen serializer to a writable stream in `backend/src/services/export.service.ts`.
 
-**Checkpoint**: Foundation ready — serializers + streaming export service exist.
+**Checkpoint**: Foundation ready, serializers + streaming export service exist.
 
 ---
 
@@ -63,7 +63,7 @@ implemented, tested, and demoed independently.
 - [ ] T012 [US1] Implement `GET /export` (format=json|md, full scope) with streaming response, `Content-Disposition` filename, and content type in `backend/src/routes/export.routes.ts`.
 - [ ] T013 [P] [US1] Frontend `ExportPanel` (format toggle, Export action, download handling) within `SettingsScreen` in `frontend/src/components/ExportPanel.tsx` and `frontend/src/api/export.ts`.
 
-**Checkpoint**: 🎯 Stage-3 MVP — the user can export the entire corpus to MD + JSON.
+**Checkpoint**: 🎯 Stage-3 MVP, the user can export the entire corpus to MD + JSON.
 
 ---
 
@@ -75,7 +75,7 @@ implemented, tested, and demoed independently.
 
 ### Tests for User Story 2 (write first, must fail)
 
-- [ ] T014 [P] [US2] Integration test: scoped export (tag / q / before+after) equals `GET /entries` with the same params — parity (FR-003, SC-003) in `backend/tests/integration/export-scope-parity.test.ts`.
+- [ ] T014 [P] [US2] Integration test: scoped export (tag / q / before+after) equals `GET /entries` with the same params, parity (FR-003, SC-003) in `backend/tests/integration/export-scope-parity.test.ts`.
 - [ ] T015 [P] [US2] Integration test: `GET /export/estimate` returns correct count + plausible approxBytes per scope (FR-005) in `backend/tests/integration/export-estimate.test.ts`.
 - [ ] T016 [P] [US2] Integration test: empty-scope export yields a well-formed empty document (edge case) in `backend/tests/integration/export-empty.test.ts`.
 
@@ -97,7 +97,7 @@ implemented, tested, and demoed independently.
 
 ### Tests for User Story 3 (write first, must fail)
 
-- [ ] T020 [P] [US3] Integration test: round-trip — export then import reconstructs an equivalent corpus (body/occurredAt/tags/source preserved; createdAt fresh) (FR-010, SC-002, R-008) in `backend/tests/integration/import-roundtrip.test.ts`.
+- [ ] T020 [P] [US3] Integration test: round-trip, export then import reconstructs an equivalent corpus (body/occurredAt/tags/source preserved; createdAt fresh) (FR-010, SC-002, R-008) in `backend/tests/integration/import-roundtrip.test.ts`.
 - [ ] T021 [P] [US3] Integration test: malformed payload rejected with a clear error and no partial state (FR-011) in `backend/tests/integration/import-validation.test.ts`.
 - [ ] T022 [P] [US3] Integration test: re-importing the same file skips duplicates per the de-dup rule (FR-012) in `backend/tests/integration/import-dedup.test.ts`.
 - [ ] T023 [P] [US3] Isolation test: import writes only to the authenticated user (FR-020) in `backend/tests/isolation/import-isolation.test.ts`.

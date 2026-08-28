@@ -8,7 +8,7 @@
 ## Context
 
 The corpus is the product (Constitution II), and "no committed entry is ever lost"
-(SC-5) is a core promise. Users will inevitably remove entries — sometimes by
+(SC-5) is a core promise. Users will inevitably remove entries, sometimes by
 mistake. We must decide whether deletion destroys data or hides it recoverably.
 
 ## Decision
@@ -39,5 +39,5 @@ which is the deliberate exception for user data-ownership/erasure rights.
 
 ## Alternatives considered
 
-- **Hard delete** — rejected: irreversible; violates the durability promise and Constitution II.
-- **Trash with TTL auto-purge** — deferred: adds a background purge and a new "permanently gone" state; unnecessary complexity for V1 (Constitution VII). Could be revisited via a new ADR.
+- **Hard delete.** Rejected: irreversible; violates the durability promise and Constitution II.
+- **Trash with TTL auto-purge.** Deferred: adds a background purge and a new "permanently gone" state; unnecessary complexity for V1 (Constitution VII). Could be revisited via a new ADR.

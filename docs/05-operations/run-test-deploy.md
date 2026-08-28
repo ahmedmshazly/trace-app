@@ -1,9 +1,9 @@
-# Run, Test & Deploy — Trace (hands-on guide)
+# Run, Test & Deploy: Trace (hands-on guide)
 
 **Status:** Baseline · **Last updated:** 2026-06-20
 
 A practical, **learn-by-doing** walkthrough of the Trace backend: how to run it,
-how to test it, and how to deploy it — with enough explanation of *why* each step
+how to test it, and how to deploy it, with enough explanation of *why* each step
 exists that you can operate it confidently.
 
 If you just want the terse setup, see
@@ -16,7 +16,7 @@ guide is already done.
 ## 0. The mental model (read this first)
 
 Trace's backend is a **stateless Express API** that stores everything in
-**MongoDB**. "Stateless" means the API process keeps **no** session in memory —
+**MongoDB**. "Stateless" means the API process keeps **no** session in memory
 your identity travels on every request as a **JWT** (a signed token). That is why
 you can run many copies of the API and restart them freely: all the durable state
 lives in Mongo.
@@ -42,9 +42,9 @@ Three things steer the app, and they never live in the source code:
 
 Two rules the API enforces that you'll see while testing:
 
-- **Per-user isolation** — every database query is scoped by `userId`. A foreign
+- **Per-user isolation.** Every database query is scoped by `userId`. A foreign
   or non-existent record always returns `404` (existence is never revealed).
-- **`createdAt` is immutable** — set once on capture, never changed. You can
+- **`createdAt` is immutable.** Set once on capture, never changed. You can
   backdate `occurredAt` (when a moment *happened*), but not the commit instant.
 
 ---
@@ -95,7 +95,7 @@ What this does, piece by piece:
 - **`tsx`** runs TypeScript directly (no separate compile step).
 - **`watch`** restarts the server automatically when you edit a file.
 - **`--env-file-if-exists=.env`** loads your `.env` into the process before the
-  app reads it. (The app code itself only reads `process.env` — see the mental
+  app reads it. (The app code itself only reads `process.env`: see the mental
   model. The `-if-exists` part means it won't crash when there's no `.env`, e.g.
   in CI.)
 
@@ -117,7 +117,7 @@ Stop the server with **Ctrl-C** in its terminal.
 
 ### 2b. Production mode locally (the real artifact)
 
-This is exactly what runs in production — a compiled build, no `tsx`:
+This is exactly what runs in production, a compiled build, no `tsx`:
 
 ```bash
 cd backend
@@ -138,7 +138,7 @@ pgrep -af "tsx watch"; pgrep -af "dist/server.js"
 pkill -f "tsx watch"; pkill -f "dist/server.js"
 ```
 
-If you start while an old server still holds `:4000`, you'll get `EADDRINUSE` —
+If you start while an old server still holds `:4000`, you'll get `EADDRINUSE`
 stop the old one or set a different `PORT` in `.env`.
 
 ### 2d. Inspecting the database
@@ -153,7 +153,7 @@ mongosh "mongodb://localhost:27017/trace_dev" --quiet --eval '
 '
 ```
 
-Reset your local data when you want a clean slate (destructive — local only):
+Reset your local data when you want a clean slate (destructive, local only):
 
 ```bash
 mongosh "mongodb://localhost:27017/trace_dev" --quiet --eval "db.dropDatabase()"
@@ -163,7 +163,7 @@ mongosh "mongodb://localhost:27017/trace_dev" --quiet --eval "db.dropDatabase()"
 
 ## 3. Testing
 
-There are **two complementary levels**. Learn both — they catch different things.
+There are **two complementary levels**. Learn both; they catch different things.
 
 ### 3a. Automated code tests (the safety net)
 
@@ -188,7 +188,7 @@ What lives where, and what each suite *proves*:
 
 | Folder | Proves |
 |---|---|
-| `tests/unit/` | pure logic — password hashing, JWT sign/verify |
+| `tests/unit/` | pure logic: password hashing, JWT sign/verify |
 | `tests/integration/` | real API behavior over real queries: auth, health, capture, timeline/pagination, curation, rate limiting |
 | `tests/isolation/` | user B can **never** read/patch/delete user A's data |
 
@@ -198,12 +198,12 @@ What lives where, and what each suite *proves*:
 > with "Invalid configuration".
 
 Reading coverage: it prints `% Stmts / % Branch / % Funcs / % Lines` per file.
-Coverage is a **signal, not a target** — the rule is that every critical path
+Coverage is a **signal, not a target**, the rule is that every critical path
 (auth, isolation, capture/persistence) has a test, which it does.
 
 ### 3b. Live API acceptance (the smoke test)
 
-This drives a **real running server** end-to-end with `curl` — the closest thing
+This drives a **real running server** end-to-end with `curl`, the closest thing
 to "use the product." Start the server, then in another terminal:
 
 ```bash
@@ -266,7 +266,7 @@ describe('arithmetic sanity', () => {
 });
 ```
 
-Run `npm test` — it's auto-discovered (any `tests/**/*.test.ts`). For an
+Run `npm test`; it's auto-discovered (any `tests/**/*.test.ts`). For an
 API-level test, copy the pattern in `tests/integration/health.test.ts`: it builds
 the app with `createApp()`, boots an in-memory DB via the `tests/helpers/db.ts`
 helpers, and drives it with `supertest`.
@@ -277,7 +277,7 @@ helpers, and drives it with `supertest`.
 npm run typecheck && npm run lint && npm run format:check && npm test
 ```
 
-All four must pass — that's what CI enforces on every pull request
+All four must pass, that's what CI enforces on every pull request
 ([ci-cd](../04-engineering/ci-cd.md)). `npm run format` (no `:check`) auto-fixes
 formatting; `npm run lint:fix` auto-fixes lint where possible.
 
@@ -285,13 +285,13 @@ formatting; `npm run lint:fix` auto-fixes lint where possible.
 
 ## 4. Deploy
 
-Deploying has two layers. **Learn layer A locally first** — it teaches the exact
+Deploying has two layers. **Learn layer A locally first**; it teaches the exact
 production shape on your own machine. Layer B is the real hosted release.
 
-### 4a. Layer A — production-like stack on your machine (Docker)
+### 4a. Layer A: production-like stack on your machine (Docker)
 
 This runs the **API container** against a **MongoDB container**, wired only by
-environment — the same topology as production. It's the safest place to learn
+environment, the same topology as production. It's the safest place to learn
 deploy mechanics because nothing is public.
 
 ```bash
@@ -323,9 +323,9 @@ docker compose down -v                 # also delete the database volume (clean 
 
 Mental model of the difference vs. `npm run dev`: same code, but now the API and
 DB are isolated containers talking over a private network, configured purely by
-env — exactly like a host would do it.
+env, exactly like a host would do it.
 
-### 4b. Layer B — the real hosted deploy (when you "go online")
+### 4b. Layer B: the real hosted deploy (when you "go online")
 
 Full procedure, topology diagram, and checklists live in
 [deployment.md](./deployment.md). The essentials, framed for learning:
@@ -345,10 +345,10 @@ unlike `npm install` which may update the lockfile.
 - A Linux host/platform to run the Node process (e.g. a PaaS, a container host,
   or a VM).
 - A **managed MongoDB** (e.g. MongoDB Atlas) with backups + encryption at rest.
-- **TLS** at the edge (HTTPS) — a reverse proxy / load balancer terminates it.
+- **TLS** at the edge (HTTPS), a reverse proxy / load balancer terminates it.
 - A **secret store** for the config below.
 
-**3. Configure per environment** (never in the repo — set these in the platform's
+**3. Configure per environment** (never in the repo, set these in the platform's
 env/secret mechanism):
 
 | Variable | Production value |
@@ -362,7 +362,7 @@ env/secret mechanism):
 **4. Release:**
 
 1. Confirm CI is green on `main`.
-2. Roll out the new API instances (rolling or blue-green — because the API is
+2. Roll out the new API instances (rolling or blue-green; because the API is
    stateless, you can swap instances with no session loss).
 3. **Verify `/api/health` on the new instances before sending real traffic.**
 4. Run a smoke check (register + capture + a second-user isolation check) against
@@ -377,7 +377,7 @@ test. See [deployment.md](./deployment.md) and
 ### "Going online" checklist (don't skip)
 
 - [ ] `NODE_ENV=production` and a strong, store-provided `JWT_SECRET`.
-- [ ] `ALLOWED_ORIGINS` set to your real client origin(s) — **not** `localhost`.
+- [ ] `ALLOWED_ORIGINS` set to your real client origin(s), **not** `localhost`.
 - [ ] Managed MongoDB with **backups enabled** and encryption at rest.
 - [ ] TLS valid at the edge; security headers present (the API sets `helmet`).
 - [ ] Rate limits reviewed (`RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX`).
@@ -432,13 +432,13 @@ The first three questions to ask, in order:
 
 1. **Is Mongo up?** `mongosh --quiet --eval "db.runCommand({ ping: 1 })"`
 2. **Is `.env` present and loaded?** Startup error mentioning `MONGODB_URI`/
-   `JWT_SECRET` means it isn't — create `backend/.env`.
+   `JWT_SECRET` means it isn't, create `backend/.env`.
 3. **Is the old server still on `:4000`?** `ss -ltnp | grep :4000`, then `pkill`.
 
 ## See also
 
-- [Local Development](./local-development.md) — install + verify details
-- [API Testing](../04-engineering/api-testing.md) — suites, smoke script, examples
-- [Deployment](./deployment.md) — hosted release procedure, topology, rollback
-- [Environments & Configuration](../04-engineering/environments.md) — the config contract
-- [Backend README](../../backend/README.md) — API surface and project layout
+- [Local Development](./local-development.md), install + verify details
+- [API Testing](../04-engineering/api-testing.md), suites, smoke script, examples
+- [Deployment](./deployment.md), hosted release procedure, topology, rollback
+- [Environments & Configuration](../04-engineering/environments.md), the config contract
+- [Backend README](../../backend/README.md), API surface and project layout

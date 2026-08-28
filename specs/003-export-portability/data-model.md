@@ -2,8 +2,8 @@
 
 Export & Portability introduces **no new persistent fields or collections**. It
 operates over the existing `Entry` schema (feature 001 + the `tags` field
-activated in feature 002). This document defines the **export/import shapes** —
-the transient artifacts produced and consumed — and references the canonical
+activated in feature 002). This document defines the **export/import shapes**
+the transient artifacts produced and consumed, and references the canonical
 data model.
 
 Canonical reference:
@@ -52,7 +52,7 @@ A single JSON document: an array of entry objects with all fields preserved.
 
 ## Markdown export shape (canonical, human-readable)
 
-Day-grouped, local time, inline tags — matching the canonical shape:
+Day-grouped, local time, inline tags, matching the canonical shape:
 
 ```markdown
 ## 2026-06-19
@@ -73,7 +73,7 @@ Day-grouped, local time, inline tags — matching the canonical shape:
 
 ---
 
-## Import payload (transient, optional — FR-6.4)
+## Import payload (transient, optional: FR-6.4)
 
 - Accepts the JSON export shape above (the `entries` array; envelope optional).
 - Validated with zod: each entry requires `body` (non-empty) and `occurredAt`

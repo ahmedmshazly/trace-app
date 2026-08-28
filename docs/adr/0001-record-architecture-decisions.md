@@ -38,5 +38,5 @@ the old one.
 
 ## Alternatives considered
 
-- **Decisions only in commit messages / PRs** — rejected: not discoverable, scatters rationale.
-- **A single "decisions" wiki page** — rejected: grows unwieldy, no per-decision status/supersession.
+- **Decisions only in commit messages / PRs.** Rejected: not discoverable, scatters rationale.
+- **A single "decisions" wiki page.** Rejected: grows unwieldy, no per-decision status/supersession.

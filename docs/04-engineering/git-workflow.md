@@ -1,4 +1,4 @@
-# Git Workflow — Trace
+# Git Workflow: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -39,7 +39,7 @@ Examples: `feat/capture-loop`, `fix/timeline-day-boundary`, `docs/srs-baseline`.
 A PR MUST:
 
 1. Be scoped to one feature or coherent sub-slice.
-2. Link to its spec/feature (`specs/NNN-…`).
+2. Link to its spec/feature (`specs/NNN-...`).
 3. Pass all CI gates (lint, typecheck, unit, integration incl. isolation, e2e for UI).
 4. Keep docs in sync with behavior (Definition of Done).
 5. Update the [traceability matrix](../01-requirements/traceability-matrix.md) where requirements were realized.
@@ -50,7 +50,7 @@ note any new ADRs.
 ## Review
 
 - At least one reviewing pass before merge (the accountable human; see [RACI](../03-project/raci.md)).
-- Review focuses on substance: correctness, isolation/security, adherence to the Constitution, test coverage — not formatting (that's automated).
+- Review focuses on substance: correctness, isolation/security, adherence to the Constitution, test coverage, not formatting (that's automated).
 
 ## Merge policy
 

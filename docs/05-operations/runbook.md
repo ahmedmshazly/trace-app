@@ -1,4 +1,4 @@
-# Operations Runbook — Trace
+# Operations Runbook: Trace
 
 **Status:** Baseline (operational from Stage 4 / GA) · **Last updated:** 2026-06-18
 
@@ -13,9 +13,9 @@ are routine, not panic (Constitution VI). Pair with [deployment](./deployment.md
 | Signal | Where |
 |---|---|
 | Service health | `GET /api/health` |
-| Logs | structured app logs (no entry content) — [observability](./observability.md) |
-| Config/secrets | platform secret store — [environments](../04-engineering/environments.md) |
-| Backups | managed MongoDB backups / PITR — [backup-recovery](./backup-recovery.md) |
+| Logs | structured app logs (no entry content): [observability](./observability.md) |
+| Config/secrets | platform secret store: [environments](../04-engineering/environments.md) |
+| Backups | managed MongoDB backups / PITR: [backup-recovery](./backup-recovery.md) |
 
 ## Routine procedures
 
@@ -33,7 +33,7 @@ artifact; verify health + smoke.
 
 1. Generate a new secret in the platform secret store.
 2. Roll the API instances to pick it up.
-3. Note: rotating `JWT_SECRET` invalidates existing tokens — users re-authenticate (expected, communicate if needed).
+3. Note: rotating `JWT_SECRET` invalidates existing tokens, users re-authenticate (expected, communicate if needed).
 
 ### Apply a database migration
 
@@ -71,7 +71,7 @@ flowchart LR
 
 ### Playbook: suspected cross-user data exposure (Sev1)
 
-1. **Treat as highest priority** — this is the product's core promise.
+1. **Treat as highest priority.** This is the product's core promise.
 2. Contain: if a code path is implicated, roll back to the last known-good release.
 3. Reproduce against the isolation suite; identify the leaking query/route.
 4. Fix at the service layer (centralized `userId` scope); add a regression test.

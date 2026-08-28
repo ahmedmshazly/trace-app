@@ -1,4 +1,4 @@
-# Delivery Plan — Trace
+# Delivery Plan: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -12,7 +12,7 @@ the [development workflow](../04-engineering/development-workflow.md).
 
 Trace uses **Spec-Driven Development** with **incremental, stage-based delivery**.
 Each stage (= one feature under `specs/`) is independently specified, built behind its
-own branch, tested to its Definition of Done, and merged via PR — leaving the
+own branch, tested to its Definition of Done, and merged via PR, leaving the
 product working at every step.
 
 ## The unit of delivery: a feature
@@ -32,14 +32,14 @@ flowchart LR
     H --> I["PR → CI gates → review → merge"]
 ```
 
-## Definition of Ready (a feature may start when…)
+## Definition of Ready (a feature may start when...)
 
 - Its spec exists with prioritized, independently-testable user stories.
 - All `[NEEDS CLARIFICATION]` markers are resolved.
 - A plan passes the Constitution Check.
 - Tasks are generated and ordered.
 
-## Definition of Done (a feature is complete when…)
+## Definition of Done (a feature is complete when...)
 
 - All targeted acceptance scenarios pass via automated tests.
 - Release-blocking NFRs for the slice are met (isolation, no-data-loss, etc.).

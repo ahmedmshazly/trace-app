@@ -1,4 +1,4 @@
-# Requirements Traceability Matrix — Trace V1
+# Requirements Traceability Matrix: Trace V1
 
 **Status:** Living document · **Last updated:** 2026-06-18
 

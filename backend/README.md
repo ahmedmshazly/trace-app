@@ -1,4 +1,4 @@
-# Trace — Backend (API)
+# Trace: Backend (API)
 
 The stateless **Express + MongoDB** REST API for Trace, implementing feature
 [`001-foundation-and-capture`](../specs/001-foundation-and-capture/): email/password
@@ -32,7 +32,7 @@ npm run dev                    # http://localhost:4000  (tsx watch)
 Requires a MongoDB reachable at `MONGODB_URI` (local install or Docker). The
 process **fails fast** if required configuration is missing or invalid. The
 `dev` and `start` scripts load `.env` via Node's `--env-file-if-exists`; the app
-code itself reads only `process.env` (12-factor — hosted envs inject config).
+code itself reads only `process.env` (12-factor, hosted envs inject config).
 
 ```bash
 curl -s http://localhost:4000/api/health        # { "status": "ok", ... }
@@ -74,7 +74,7 @@ src/
 ├── middleware/    request-context, auth (JWT→userId), requireUser, rate-limit, error
 ├── routes/        health, auth, entries (zod validation at the boundary)
 ├── services/      business logic + the userId isolation scope (auth, entry)
-├── app.ts         Express app factory (no listen) — used by tests and server
+├── app.ts         Express app factory (no listen), used by tests and server
 └── server.ts      bootstrap: connect DB → listen → graceful shutdown
 tests/
 ├── unit/          password, token

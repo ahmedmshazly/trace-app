@@ -1,4 +1,4 @@
-# Testing Strategy — Trace
+# Testing Strategy: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -11,16 +11,16 @@ How Trace proves correctness. Testing is a release gate, not an afterthought
 
 - **Test the critical paths first**: authentication, **per-user isolation**, capture/commit, persistence. These are written before or alongside implementation.
 - **Red-Green-Refactor** for non-trivial logic.
-- Tests are **deterministic and hermetic** — no reliance on external services or wall-clock flakiness.
+- Tests are **deterministic and hermetic**, no reliance on external services or wall-clock flakiness.
 - A test exists to protect a requirement; it traces back via the [matrix](../01-requirements/traceability-matrix.md).
 
 ## The test pyramid
 
 ```mermaid
 flowchart TB
-    e2e["End-to-End (Playwright)<br/>capture loop · auth isolation in a real browser<br/>— few, high-value"]
-    int["Integration (Vitest + Supertest + in-memory Mongo)<br/>API behavior, isolation suite, persistence, pagination<br/>— the backbone"]
-    unit["Unit (Vitest)<br/>services, utils, components<br/>— many, fast"]
+    e2e["End-to-End (Playwright)<br/>capture loop · auth isolation in a real browser<br/>few, high-value"]
+    int["Integration (Vitest + Supertest + in-memory Mongo)<br/>API behavior, isolation suite, persistence, pagination<br/>the backbone"]
+    unit["Unit (Vitest)<br/>services, utils, components<br/>many, fast"]
     unit --> int --> e2e
 ```
 
@@ -42,7 +42,7 @@ flowchart TB
 | **Capture loop (e2e)** | focus-on-load, Enter commits, Shift+Enter newline, reload persists | FR-1.1/1.3/1.4, SC-1/3 |
 
 The **isolation** and **no-data-loss** suites are the two that must never be
-skipped — they protect the product's core promises.
+skipped; they protect the product's core promises.
 
 ## Conventions
 
@@ -63,7 +63,7 @@ skipped — they protect the product's core promises.
 
 ## Coverage policy
 
-- Coverage is a **signal, not a target** — we measure it but gate on *critical-path* coverage, not a blanket percentage.
+- Coverage is a **signal, not a target**; we measure it but gate on *critical-path* coverage, not a blanket percentage.
 - Every **Must** functional requirement has at least one automated verification before its feature is "done."
 
 ## CI integration

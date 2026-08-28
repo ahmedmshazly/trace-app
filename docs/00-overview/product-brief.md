@@ -1,4 +1,4 @@
-# Trace — Product Brief
+# Trace: Product Brief
 
 **Status:** Approved · **Last updated:** 2026-06-18 · **Audience:** everyone
 
@@ -9,8 +9,8 @@ A one-page orientation to what Trace is, why it exists, and the shape of V1.
 ## Problem
 
 People live high-resolution lives but keep low-resolution records of them. By the
-time you want to understand a pattern — why your energy crashes, what precedes a
-good week, how often a thing actually happens — the raw material is gone. Existing
+time you want to understand a pattern, why your energy crashes, what precedes a
+good week, how often a thing actually happens, the raw material is gone. Existing
 tools are either too heavy (full journaling apps with friction), too unstructured
 (a scratch note), or too rigid (habit trackers that only capture what you
 predefined).
@@ -29,7 +29,7 @@ dense, honest, **plain-text-portable** corpus that a future analysis layer (or j
 | **Time as the primary key** | Every entry is anchored to when it happened; the timeline is the home. |
 | **You own the corpus** | Export to Markdown + JSON anytime; the data is never trapped. |
 | **Private by construction** | Multi-user with strict per-user isolation; no content analytics. |
-| **Analysis-ready data** | Flat, time-keyed, documented schema — consumable without preprocessing. |
+| **Analysis-ready data** | Flat, time-keyed, documented schema: consumable without preprocessing. |
 
 ## Target user
 
@@ -58,12 +58,12 @@ rich media, cross-user collaboration. See [`../03-project/roadmap.md`](../03-pro
 
 ## Key decisions already made
 
-- GUI front-end (not CLI), built with MERN — *user decision*.
-- Multi-user and hosting-ready from V1 — *user decision*.
-- Local-first development, hosted via configuration — *Constitution standard*.
-- Soft-delete only (no hard delete) in V1 — [ADR-0004](../adr/0004-soft-delete.md).
-- UTC storage, local display — [ADR-0005](../adr/0005-utc-storage-local-display.md).
-- Working product name: **Trace** (a trace is, in software, a timestamped sequence of events — and the traces a life leaves behind).
+- GUI front-end (not CLI), built with MERN (*user decision*).
+- Multi-user and hosting-ready from V1 (*user decision*).
+- Local-first development, hosted via configuration (*Constitution standard*).
+- Soft-delete only (no hard delete) in V1. See [ADR-0004](../adr/0004-soft-delete.md).
+- UTC storage, local display. See [ADR-0005](../adr/0005-utc-storage-local-display.md).
+- Working product name: **Trace** (a trace is, in software, a timestamped sequence of events, and the traces a life leaves behind).
 
 ## How the work is organized
 

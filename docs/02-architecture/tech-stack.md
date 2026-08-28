@@ -1,4 +1,4 @@
-# Technology Stack — Trace
+# Technology Stack: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 

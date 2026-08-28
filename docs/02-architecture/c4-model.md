@@ -1,4 +1,4 @@
-# C4 Model — Trace
+# C4 Model: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -8,7 +8,7 @@ Diagrams are Mermaid so they render in GitHub/VS Code.
 
 ---
 
-## Level 1 — System Context
+## Level 1: System Context
 
 Who uses Trace and what it depends on.
 
@@ -17,7 +17,7 @@ flowchart TB
     user["End User<br/>(self-quantifier / journaler)"]
     operator["Deploying Operator"]
 
-    subgraph trace["Trace — personal life-logging system"]
+    subgraph trace["Trace: personal life-logging system"]
         sys["Trace web application"]
     end
 
@@ -31,7 +31,7 @@ flowchart TB
 **Notes:** V1 has **no** third-party integrations. Email delivery for password
 reset (feature 004) will be the first external dependency.
 
-## Level 2 — Containers
+## Level 2: Containers
 
 The deployable/executable units.
 
@@ -56,7 +56,7 @@ flowchart TB
 | API Service | Node 22 + Express, TS | AuthN/AuthZ, isolation, entry CRUD, pagination, export; the only writer to the DB |
 | Database | MongoDB 7 | Persistent store of users and entries |
 
-## Level 3 — Components (API Service)
+## Level 3: Components (API Service)
 
 Inside the API container.
 
@@ -83,7 +83,7 @@ flowchart TB
     routes -.-> log
 ```
 
-## Level 3 — Components (Web Client)
+## Level 3: Components (Web Client)
 
 Inside the client container.
 

@@ -42,7 +42,7 @@ implemented, tested, and demoed independently.
 - [ ] T007 Wire tag parsing into `entry.service.ts` create() and update() so `tags` is derived from `body` server-side (never from client input) in `backend/src/services/entry.service.ts`.
 - [ ] T008 Add zod query-schema for `GET /entries` params (`q`, `tag`, `before`, `after`, `limit`, `cursor`) and `GET /tags` params (`sort`, `filter`) in `backend/src/routes/` validators.
 
-**Checkpoint**: Foundation ready — tags are parsed/stored; query validation exists.
+**Checkpoint**: Foundation ready, tags are parsed/stored; query validation exists.
 
 ---
 
@@ -67,7 +67,7 @@ implemented, tested, and demoed independently.
 - [ ] T016 [P] [US1] Frontend `CommandPalette` overlay (focused input, dimmed backdrop, debounced query, keyboard nav, empty-query recents/jump-to-tag) in `frontend/src/components/CommandPalette.tsx`.
 - [ ] T017 [P] [US1] Frontend `SearchResultRow` (reuses `TimelineEntry` treatment; inline match emphasis) + search query hook in `frontend/src/components/SearchResultRow.tsx` and `frontend/src/api/search.ts`.
 
-**Checkpoint**: 🎯 Stage-2 MVP — a user can find any moment instantly via `⌘K`.
+**Checkpoint**: 🎯 Stage-2 MVP, a user can find any moment instantly via `⌘K`.
 
 ---
 
@@ -166,5 +166,5 @@ implemented, tested, and demoed independently.
 ## MVP definition
 
 Setup + Foundational + **US1 (search)** = the shippable increment for Stage 2:
-instant `⌘K` full-text retrieval over the corpus. US2–US4 are incremental
+instant `⌘K` full-text retrieval over the corpus. US2-US4 are incremental
 refinements (tags, combined filters, tag index) that do not break search.

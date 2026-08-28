@@ -1,4 +1,4 @@
-# Trace — Documentation
+# Trace: Documentation
 
 Enterprise documentation for **Trace**, a personal, timestamped life-logging web
 application (hosted, multi-user, MERN). This is the map; start here.
@@ -16,20 +16,20 @@ Documentation is layered from *why* → *what* → *how* → *run*:
 
 ```
 docs/
-├── 00-overview/      Why Trace exists — vision, brief, personas, glossary
-├── 01-requirements/  What V1 must do — SRS, FR/NFR registers, use cases, traceability
-├── 02-architecture/  How it's built — overview, C4, data model, API, security, stack
-├── 03-project/       How it's delivered — roadmap, delivery plan, risks, RACI
-├── 04-engineering/   How we work — workflow, git, standards, testing, CI/CD, envs
-├── 05-operations/    How it's run — deployment, runbook, observability, backup
-├── 06-design/        How it looks & behaves — UI/UX spec, color system, components
-├── adr/              Why we chose X — Architecture Decision Records
+├── 00-overview/      Why Trace exists: vision, brief, personas, glossary
+├── 01-requirements/  What V1 must do: SRS, FR/NFR registers, use cases, traceability
+├── 02-architecture/  How it's built: overview, C4, data model, API, security, stack
+├── 03-project/       How it's delivered: roadmap, delivery plan, risks, RACI
+├── 04-engineering/   How we work: workflow, git, standards, testing, CI/CD, envs
+├── 05-operations/    How it's run: deployment, runbook, observability, backup
+├── 06-design/        How it looks & behaves: UI/UX spec, color system, components
+├── adr/              Why we chose X: Architecture Decision Records
 └── diagrams/         Flow & lifecycle diagrams (Mermaid)
 ```
 
 ## Reading paths by role
 
-| You are… | Start with |
+| You are... | Start with |
 |---|---|
 | **New to the project** | [Vision](00-overview/vision.md) → [Product Brief](00-overview/product-brief.md) → [Glossary](00-overview/glossary.md) |
 | **Product / planning** | [SRS](01-requirements/srs.md) → [Roadmap](03-project/roadmap.md) → [Risk Register](03-project/risk-register.md) |
@@ -41,17 +41,17 @@ docs/
 ## Full index
 
 ### 00 · Overview
-- [Vision](00-overview/vision.md) — the product thesis and the governing principle
-- [Product Brief](00-overview/product-brief.md) — one-page orientation
-- [Personas](00-overview/personas.md) — who Trace is (and isn't) for
-- [Glossary](00-overview/glossary.md) — shared vocabulary
+- [Vision](00-overview/vision.md), the product thesis and the governing principle
+- [Product Brief](00-overview/product-brief.md): one-page orientation
+- [Personas](00-overview/personas.md), who Trace is (and isn't) for
+- [Glossary](00-overview/glossary.md), shared vocabulary
 
 ### 01 · Requirements
-- [SRS](01-requirements/srs.md) — canonical Software Requirements Specification (v1.0)
-- [Functional Requirements](01-requirements/functional-requirements.md) — FR register (30)
-- [Non-Functional Requirements](01-requirements/non-functional-requirements.md) — NFR register (33)
-- [Use Cases](01-requirements/use-cases.md) — UC-01..12
-- [Traceability Matrix](01-requirements/traceability-matrix.md) — principle → requirement → story → design → test
+- [SRS](01-requirements/srs.md), canonical Software Requirements Specification (v1.0)
+- [Functional Requirements](01-requirements/functional-requirements.md), FR register (30)
+- [Non-Functional Requirements](01-requirements/non-functional-requirements.md), NFR register (33)
+- [Use Cases](01-requirements/use-cases.md), UC-01..12
+- [Traceability Matrix](01-requirements/traceability-matrix.md), principle → requirement → story → design → test
 
 ### 02 · Architecture
 - [Architecture Overview](02-architecture/architecture-overview.md)
@@ -62,38 +62,38 @@ docs/
 - [Technology Stack](02-architecture/tech-stack.md)
 
 ### 03 · Project
-- [Roadmap](03-project/roadmap.md) — stage-based
+- [Roadmap](03-project/roadmap.md), stage-based
 - [Delivery Plan](03-project/delivery-plan.md)
 - [Risk Register](03-project/risk-register.md)
 - [RACI & Roles](03-project/raci.md)
 
 ### 04 · Engineering
-- [Development Workflow](04-engineering/development-workflow.md) — Spec-Driven Development
+- [Development Workflow](04-engineering/development-workflow.md). Spec-Driven Development
 - [Git Workflow](04-engineering/git-workflow.md)
 - [Coding Standards](04-engineering/coding-standards.md)
 - [Testing Strategy](04-engineering/testing-strategy.md)
-- [API Testing](04-engineering/api-testing.md) — automated suites + live acceptance (smoke) script
+- [API Testing](04-engineering/api-testing.md), automated suites + live acceptance (smoke) script
 - [CI/CD](04-engineering/ci-cd.md)
 - [Environments & Configuration](04-engineering/environments.md)
 
 ### 05 · Operations
-- [Run, Test & Deploy](05-operations/run-test-deploy.md) — hands-on, detailed guide (start here to learn the workflow)
-- [Local Development](05-operations/local-development.md) — run & verify the backend locally (real Mongo, tests, smoke, Docker)
+- [Run, Test & Deploy](05-operations/run-test-deploy.md), hands-on, detailed guide (start here to learn the workflow)
+- [Local Development](05-operations/local-development.md), run & verify the backend locally (real Mongo, tests, smoke, Docker)
 - [Deployment](05-operations/deployment.md)
 - [Runbook](05-operations/runbook.md)
 - [Observability](05-operations/observability.md)
 - [Backup & Recovery](05-operations/backup-recovery.md)
 
 ### 06 · Design
-- [UI/UX Specification](06-design/ui-ux-spec.md) — screens, flows, keyboard map, responsive, accessibility, logo placeholder
-- [Color System](06-design/color-system.md) — dark-first two-theme tokens + WCAG contrast verification
-- [Component Inventory](06-design/component-inventory.md) — components mapped to features and tokens
+- [UI/UX Specification](06-design/ui-ux-spec.md), screens, flows, keyboard map, responsive, accessibility, logo placeholder
+- [Color System](06-design/color-system.md), dark-first two-theme tokens + WCAG contrast verification
+- [Component Inventory](06-design/component-inventory.md), components mapped to features and tokens
 
 ### ADRs
-- [ADR Index](adr/README.md) — decisions 0001–0006
+- [ADR Index](adr/README.md), decisions 0001-0006
 
 ### Diagrams
-- [Flow Diagrams](diagrams/trace-diagrams.md) — user flow, entry lifecycle, auth sub-flow
+- [Flow Diagrams](diagrams/trace-diagrams.md), user flow, entry lifecycle, auth sub-flow
 
 ## Conventions
 

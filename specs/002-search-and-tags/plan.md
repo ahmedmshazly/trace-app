@@ -16,7 +16,7 @@ isolation, and timeline.
 The technical approach extends the existing Express/Mongo backend and React/Vite
 client. Server-side: a MongoDB **text index** on `body` for relevance search, a
 **`{ userId, tags }`** index for tag filtering, and the existing
-`{ userId, occurredAt, _id }` index for date-bounded, paginated results — every
+`{ userId, occurredAt, _id }` index for date-bounded, paginated results, every
 query scoped by `req.userId`. Tag parsing is a pure, tested function applied in
 the entry service. Client-side: a `⌘K` command-palette overlay and a slide-in tag
 index panel, both reusing the timeline's entry treatment, wired with TanStack
@@ -32,12 +32,12 @@ theming is applied in 004).
 search uses MongoDB's built-in text index (or an equivalent `$regex`/Atlas Search
 strategy documented in research). A small debounce utility on the client.
 
-**Storage**: MongoDB 7 — adds a text index on `Entry.body` and a `{ userId, tags }`
+**Storage**: MongoDB 7, adds a text index on `Entry.body` and a `{ userId, tags }`
 compound index (migrations; verified against performance targets).
 
-**Testing**: Vitest (unit — tag parser, query builders) · Supertest + Vitest with
-`mongodb-memory-server` (API integration — search/filter/tag-index, isolation) ·
-Playwright (E2E — `⌘K` search flow, tag filter, tag index)
+**Testing**: Vitest (unit, tag parser, query builders) · Supertest + Vitest with
+`mongodb-memory-server` (API integration, search/filter/tag-index, isolation) ·
+Playwright (E2E, `⌘K` search flow, tag filter, tag index)
 
 **Target Platform**: Linux server (API) + any modern browser (client)
 
@@ -78,11 +78,11 @@ No violations. Complexity Tracking section below is intentionally empty.
 specs/002-search-and-tags/
 ├── plan.md              # This file
 ├── spec.md              # Feature specification
-├── research.md          # Phase 0 — decisions & rationale
-├── data-model.md        # Phase 1 — Entry delta (tags), indexes, tag aggregation
-├── quickstart.md        # Phase 1 — local run & verification
+├── research.md          # Phase 0: decisions & rationale
+├── data-model.md        # Phase 1: Entry delta (tags), indexes, tag aggregation
+├── quickstart.md        # Phase 1: local run & verification
 ├── contracts/
-│   └── openapi.yaml     # Phase 1 — search, filter, tag-index API delta
+│   └── openapi.yaml     # Phase 1: search, filter, tag-index API delta
 └── tasks.md             # Phase 2: task breakdown
 ```
 

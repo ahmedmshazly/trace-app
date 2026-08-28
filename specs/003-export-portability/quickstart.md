@@ -22,12 +22,12 @@ TOKEN=$(curl -s -X POST http://localhost:4000/api/auth/login \
   -H 'content-type: application/json' \
   -d '{"email":"a@example.com","password":"correct horse battery"}' | jq -r .token)
 
-# JSON — everything (round-trippable)
+# JSON, everything (round-trippable)
 curl -s "http://localhost:4000/api/export?format=json" \
   -H "authorization: Bearer $TOKEN" -o trace-export.json
 jq '.trace.count, (.entries | length)' trace-export.json   # counts match
 
-# Markdown — everything (human-readable)
+# Markdown, everything (human-readable)
 curl -s "http://localhost:4000/api/export?format=md" \
   -H "authorization: Bearer $TOKEN" -o trace-export.md
 head -n 6 trace-export.md
@@ -50,7 +50,7 @@ curl -s "http://localhost:4000/api/export/estimate" \
 curl -s "http://localhost:4000/api/export?format=json&after=2026-06-01T00:00:00Z&before=2026-06-30T23:59:59Z" \
   -H "authorization: Bearer $TOKEN" | jq '.entries | length'
 
-# Current filter (a tag) — parity with GET /entries?tag=work
+# Current filter (a tag), parity with GET /entries?tag=work
 curl -s "http://localhost:4000/api/export?format=json&tag=work" \
   -H "authorization: Bearer $TOKEN" | jq '.entries | length'
 curl -s "http://localhost:4000/api/entries?tag=work" \

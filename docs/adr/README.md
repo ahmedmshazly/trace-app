@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This directory records the **significant** technical decisions for Trace — the
+This directory records the **significant** technical decisions for Trace, the
 ones that are expensive to reverse or that future contributors will ask "why?"
 about. ADRs are short, immutable once accepted, and superseded (never edited)
 when a decision changes.

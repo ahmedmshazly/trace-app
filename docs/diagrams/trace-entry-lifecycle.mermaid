@@ -1,4 +1,4 @@
-%%  Trace — Entry Lifecycle State Diagram
+%%  Trace entry lifecycle state diagram
 %%  Scope: the complete state machine for a single Entry document.
 %%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
 
@@ -7,17 +7,17 @@ stateDiagram-v2
     %% ── Draft ───────────────────────────────────────────────────────────────
     [*] --> Draft : User starts typing
 
-    Draft --> Draft     : Shift+Enter — insert newline
-    Draft --> Committed : Enter — createdAt set (immutable)
-    Draft --> [*]       : Discard — draft text recoverable on restart
+    Draft --> Draft     : Shift+Enter inserts a newline
+    Draft --> Committed : Enter, createdAt set (immutable)
+    Draft --> [*]       : Discard, draft text recoverable on restart
 
     %% ── Committed ───────────────────────────────────────────────────────────
-    Committed --> Committed   : Edit body text — updatedAt refreshed
-    Committed --> Committed   : Adjust occurredAt — backdate event
-    Committed --> SoftDeleted : Soft-delete — deleted=true · hidden from timeline
+    Committed --> Committed   : Edit body text, updatedAt refreshed
+    Committed --> Committed   : Adjust occurredAt, backdate event
+    Committed --> SoftDeleted : Soft-delete, deleted=true · hidden from timeline
 
     %% ── SoftDeleted ─────────────────────────────────────────────────────────
-    SoftDeleted --> Committed : Restore — deleted=false · re-appears in timeline
+    SoftDeleted --> Committed : Restore, deleted=false · re-appears in timeline
 
     %% ── Annotations ─────────────────────────────────────────────────────────
     note right of Draft
@@ -28,7 +28,7 @@ stateDiagram-v2
 
     note right of Committed
         createdAt is set once on commit and never changes.
-        occurredAt is the primary analysis axis — editable.
+        occurredAt is the primary analysis axis, editable.
         updatedAt refreshes whenever body or occurredAt changes.
         body is Markdown-friendly plain text.
         tags are parsed from inline #hashtags.
@@ -38,5 +38,5 @@ stateDiagram-v2
         The document persists in MongoDB (deleted=true).
         Hidden from all timeline and search views.
         Restorable at any time.
-        Hard delete is out of scope for V1 — no data is ever permanently erased.
+        Hard delete is out of scope for V1; no data is ever permanently erased.
     end note

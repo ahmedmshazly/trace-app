@@ -8,11 +8,11 @@
 
 **Input**: User description: "Hardening & deploy for V1 GA: credential recovery,
 account settings (incl. light/dark theme), account & data deletion with a fenced
-danger zone, plus the production-readiness pass — rate limiting, security review,
+danger zone, plus the production-readiness pass, rate limiting, security review,
 accessibility, performance validation, CI/CD, deployment, observability,
 backups, and runbooks."
 
-> This is Stage 4 of Trace (see `docs/03-project/roadmap.md`) — the slice that
+> This is Stage 4 of Trace (see `docs/03-project/roadmap.md`), the slice that
 > turns the built feature set into a **production-ready, operable, secure V1
 > General Availability** release. It completes the **Settings** screen (theme,
 > account, danger zone) and the **password reset** flow from the
@@ -30,7 +30,7 @@ backups, and runbooks."
 ### User Story 1 - Recover access to my account (Priority: P1) 🎯 GA-critical
 
 A user who has forgotten their password requests a reset from the login screen,
-receives a reset link by email, sets a new password, and signs in — and the flow
+receives a reset link by email, sets a new password, and signs in, and the flow
 never reveals whether an email is registered.
 
 **Why this priority**: A multi-user hosted product is not shippable to real users
@@ -44,7 +44,7 @@ new password works, the old password fails, and prior sessions are invalidated.
 
 **Acceptance Scenarios**:
 
-1. **Given** the login screen, **When** the user requests a password reset for any email, **Then** the confirmation is identical whether or not the email is registered (no enumeration — NFR-4.4).
+1. **Given** the login screen, **When** the user requests a password reset for any email, **Then** the confirmation is identical whether or not the email is registered (no enumeration, NFR-4.4).
 2. **Given** a registered email, **When** a reset is requested, **Then** a time-limited, single-use reset link is sent to that address (and only that address).
 3. **Given** a valid, unexpired reset token, **When** the user sets a new valid password, **Then** the password is updated, the user can sign in with it, and all prior sessions are invalidated.
 4. **Given** an expired, used, or invalid reset token, **When** the user attempts to reset, **Then** the attempt is rejected with a clear, non-enumerating message.
@@ -55,7 +55,7 @@ new password works, the old password fails, and prior sessions are invalidated.
 ### User Story 2 - Manage account settings & appearance (Priority: P2)
 
 A user opens Settings to view their account, change their email and/or password,
-and switch between light and dark themes — with dark as the first-class default.
+and switch between light and dark themes, with dark as the first-class default.
 
 **Why this priority**: Settings are expected of any account-based product and make
 the app livable (theme is a comfort feature for an app kept open for hours). It is
@@ -80,7 +80,7 @@ validation).
 ### User Story 3 - Delete my data and my account (Priority: P2)
 
 A user permanently deletes all their entries, or deletes their entire account and
-corpus, from a clearly fenced danger zone that requires a typed confirmation —
+corpus, from a clearly fenced danger zone that requires a typed confirmation
 because these actions are irreversible.
 
 **Why this priority**: Data ownership includes the right to leave (Constitution
@@ -106,7 +106,7 @@ confirm the account and its corpus are removed and the session ends.
 
 As the operator/maintainer, I can deploy Trace from configuration alone, observe
 its health, defend it against abuse, recover it from backup, and trust that it
-meets its security, accessibility, and performance bars — so V1 can go GA.
+meets its security, accessibility, and performance bars, so V1 can go GA.
 
 **Why this priority**: A hosted multi-user product lives or dies by operability
 and security (Constitution V, VI). These are the release-blocking gates for GA;
@@ -122,7 +122,7 @@ isolation/a11y/perf suites green; perform a backup and a restore.
 2. **Given** a running instance, **When** the platform probes `/api/health`, **Then** it reports readiness/liveness; **When** requests are served, **Then** structured logs carry a correlation id and never contain entry content or secrets (NFR-3.5, Constitution VI).
 3. **Given** auth and other sensitive endpoints, **When** they receive excessive requests, **Then** they are rate-limited (NFR-4.5); common web vulnerabilities (injection, XSS, CSRF as applicable) are defended and inputs validated (NFR-4.4).
 4. **Given** the CI pipeline, **When** a PR is opened, **Then** lint, type-check, unit, integration, isolation, and e2e suites run and a red pipeline blocks merge (Constitution IV).
-5. **Given** the accessibility and performance bars, **When** they are evaluated, **Then** WCAG AA contrast/keyboard/focus pass (NFR-7.4, verified against the color-system contrast table) and the performance targets hold (capture < 100 ms, cold load < 2 s, search < 300 ms, smooth at 50k entries — NFR-1.*).
+5. **Given** the accessibility and performance bars, **When** they are evaluated, **Then** WCAG AA contrast/keyboard/focus pass (NFR-7.4, verified against the color-system contrast table) and the performance targets hold (capture < 100 ms, cold load < 2 s, search < 300 ms, smooth at 50k entries, NFR-1.*).
 6. **Given** a backup, **When** a restore is performed per the runbook, **Then** the corpus is recovered intact (NFR-2.1) and the procedure is documented and repeatable.
 
 ---
@@ -142,7 +142,7 @@ isolation/a11y/perf suites green; perform a backup and a restore.
 
 ## Requirements *(mandatory)*
 
-> Local IDs (FR-001…) scope this feature; the parenthetical maps to the canonical
+> Local IDs (FR-001...) scope this feature; the parenthetical maps to the canonical
 > register in `docs/01-requirements/functional-requirements.md`. Operational
 > requirements map to the NFR register.
 
@@ -197,12 +197,12 @@ See `data-model.md` for the reset-token entity and deletion semantics, and
 - **SC-003**: The theme preference applies immediately and persists across reload and re-login, with no flash of the wrong theme; first run honors the OS preference.
 - **SC-004**: Destructive actions cannot be triggered without a typed confirmation; "delete all entries" and "delete account" remove only the authenticated user's data (verified by isolation tests).
 - **SC-005**: Trace deploys to a clean environment from configuration alone and serves over HTTPS, with a working health endpoint and structured, content-free logs.
-- **SC-006**: All release-blocking gates pass in CI — security/isolation, accessibility (WCAG AA against the contrast table), and performance (capture < 100 ms, cold < 2 s, search < 300 ms, smooth at 50k) — and a red pipeline blocks merge.
+- **SC-006**: All release-blocking gates pass in CI, security/isolation, accessibility (WCAG AA against the contrast table), and performance (capture < 100 ms, cold < 2 s, search < 300 ms, smooth at 50k), and a red pipeline blocks merge.
 - **SC-007**: A backup can be restored per the runbook to recover the corpus intact (rehearsed, documented).
 
 ## Assumptions
 
-- Builds on features 001–003 (auth, entries, search/tags, export).
+- Builds on features 001-003 (auth, entries, search/tags, export).
 - Email delivery uses a configurable transport (provider via environment config); local/dev may log the reset link instead of sending mail. SSO/MFA remain out of V1 scope.
 - The theme system is the CSS custom-property token contract from ADR-0006; this feature ships the toggle, persistence, and full theme application across screens.
 - Hard deletion exists **only** for the explicit account/data-deletion actions; routine entry deletion remains soft (feature 001, ADR-0004). Account deletion is the sole bulk-erase path.

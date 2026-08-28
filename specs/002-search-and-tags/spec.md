@@ -25,8 +25,8 @@ a ⌘K command palette, inline #tag parsing, filter by tag and date range
 ### User Story 1 - Find a moment by full-text search (Priority: P1) 🎯 MVP
 
 An authenticated user presses `⌘K` from anywhere, types a few words they remember,
-and sees matching moments instantly — the matched terms emphasized, the most
-relevant results first — then presses Enter to jump to a result in the timeline.
+and sees matching moments instantly, the matched terms emphasized, the most
+relevant results first, then presses Enter to jump to a result in the timeline.
 
 **Why this priority**: A dense corpus is worthless if you can't find anything in
 it. Full-text retrieval is the single capability that turns the timeline from a
@@ -35,7 +35,7 @@ with no tags and no filters, instant search delivers the core promise of Stage 2
 
 **Independent Test**: Seed entries, open the palette with `⌘K`, type a term that
 appears in some bodies, and confirm only matching entries are returned with the
-term emphasized, ranked sensibly, fast — and that selecting a result navigates to
+term emphasized, ranked sensibly, fast, and that selecting a result navigates to
 it in the timeline.
 
 **Acceptance Scenarios**:
@@ -56,7 +56,7 @@ shown as pills, and the user can filter the timeline to a single tag to see only
 those moments.
 
 **Why this priority**: Tags are the lightweight structure that makes the corpus
-navigable without forcing taxonomy work at capture time (Constitution I —
+navigable without forcing taxonomy work at capture time (Constitution I
 zero-friction). They are P2 because search (US1) already provides retrieval;
 tagging adds a second, complementary axis and is the prerequisite for the tag
 index (US4).
@@ -104,7 +104,7 @@ A user opens a tag index panel listing every tag in their corpus with its entry
 count, sorts by count or alphabetically, filters the list, and selects a tag to
 jump to a filtered view.
 
-**Why this priority**: The tag index is the map of one's own corpus — a discovery
+**Why this priority**: The tag index is the map of one's own corpus, a discovery
 surface ("what do I actually write about?"). It is P3 because filtering by a known
 tag already works via US2/US3; the index adds browsability and counts on top.
 
@@ -137,7 +137,7 @@ returns to the timeline/results.
 
 ## Requirements *(mandatory)*
 
-> Local IDs (FR-001…) scope this feature; the parenthetical maps to the canonical
+> Local IDs (FR-001...) scope this feature; the parenthetical maps to the canonical
 > register in `docs/01-requirements/functional-requirements.md`.
 
 ### Functional Requirements
@@ -174,8 +174,8 @@ returns to the timeline/results.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Entry** (extended): gains a `tags` field — an array of normalized tag strings parsed from `body`. All other `Entry` semantics are unchanged from feature 001. See `data-model.md`.
-- **Tag (derived)**: not a stored entity in V1 — a tag is a normalized string derived from entry bodies. The "tag index" is an aggregation (distinct tags + counts) computed over the user's entries.
+- **Entry** (extended): gains a `tags` field, an array of normalized tag strings parsed from `body`. All other `Entry` semantics are unchanged from feature 001. See `data-model.md`.
+- **Tag (derived)**: not a stored entity in V1, a tag is a normalized string derived from entry bodies. The "tag index" is an aggregation (distinct tags + counts) computed over the user's entries.
 - **Recent search (client-local)**: a convenience list of the user's recent queries, held on the client; not part of the corpus and never affecting it.
 
 See `data-model.md` for the canonical delta and `contracts/openapi.yaml` for the
@@ -196,7 +196,7 @@ API surface.
 ## Assumptions
 
 - Builds on feature 001: authentication, the `Entry` model, per-user isolation, and the timeline already exist.
-- Tags are **derived from body text** (inline `#tags`); there is no separate tag-management UI (rename/merge/colors) in V1 — out of scope.
+- Tags are **derived from body text** (inline `#tags`); there is no separate tag-management UI (rename/merge/colors) in V1, out of scope.
 - "Full-text search" uses the datastore's native text-search capability over `body`; advanced query language (boolean operators, fuzzy matching) is out of V1 scope beyond the documented tag/date/phrase filters.
 - Recent searches are stored client-side only; they are not synced across devices in V1.
 - Date filters operate on `occurredAt` and use the user's local day boundaries, consistent with timeline grouping (ADR-0005).

@@ -16,8 +16,8 @@ persistence). Test tasks for those paths are written before their implementation
 implemented, tested, and demoed independently.
 
 > **Implementation status (2026-06-19):** the **backend** (`backend/`) is
-> implemented and green — config, models, auth + isolation, capture, timeline,
-> curation, health — with unit/integration/isolation suites passing and CI wired.
+> implemented and green, config, models, auth + isolation, capture, timeline,
+> curation, health, with unit/integration/isolation suites passing and CI wired.
 > Frontend (`frontend/`) tasks, the Playwright e2e tasks, and the performance pass
 > remain open. Backend tasks below are checked off; frontend/e2e are not.
 
@@ -44,7 +44,7 @@ implemented, tested, and demoed independently.
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
 - [x] T006 Implement validated config module `backend/src/config/index.ts` (zod-parse env, fail-fast) per research R-10.
-- [x] T007 [P] Implement structured logger `backend/src/lib/logger.ts` (never logs entry content or secrets — Constitution VI).
+- [x] T007 [P] Implement structured logger `backend/src/lib/logger.ts` (never logs entry content or secrets. Constitution VI).
 - [x] T008 Implement MongoDB connection + lifecycle in `backend/src/lib/db.ts`.
 - [x] T009 Create Express app `backend/src/app.ts` with helmet, cors (allowed origins from config), JSON parsing, and a global error handler `backend/src/middleware/error.ts`.
 - [x] T010 [P] Implement `User` model `backend/src/models/user.ts` and `Entry` model `backend/src/models/entry.ts` with indexes per data-model.md (unique email; compound `{userId, occurredAt:-1, _id:-1}`).
@@ -53,7 +53,7 @@ implemented, tested, and demoed independently.
 - [x] T013 Implement health route `backend/src/routes/health.routes.ts` (`GET /api/health`) per contracts.
 - [ ] T014 [P] Frontend foundation: API client `frontend/src/api/client.ts`, auth context `frontend/src/lib/auth.tsx`, router shell, theme + protected-route wrapper.
 
-**Checkpoint**: Foundation ready — user stories can begin.
+**Checkpoint**: Foundation ready, user stories can begin.
 
 ---
 
@@ -85,7 +85,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 4: User Story 1 - Capture a moment with zero friction (Priority: P1) 🎯 MVP
 
-**Goal**: The capture loop — focused-on-load input, Enter to commit, instant timeline insert, immutable `createdAt`.
+**Goal**: The capture loop, focused-on-load input, Enter to commit, instant timeline insert, immutable `createdAt`.
 
 **Independent Test**: Log in, type, Enter → entry persists and appears; Shift+Enter inserts newline; reload persists.
 
@@ -103,7 +103,7 @@ implemented, tested, and demoed independently.
 - [ ] T029 [P] [US1] Frontend `TimelineEntry` component + capture page wiring in `frontend/src/pages/Capture.tsx` and `frontend/src/components/TimelineEntry.tsx`.
 - [ ] T030 [US1] TanStack Query create-entry mutation with optimistic update in `frontend/src/api/entries.ts`.
 
-**Checkpoint**: 🎯 MVP — a user can register, sign in, and capture moments that persist. Deployable.
+**Checkpoint**: 🎯 MVP, a user can register, sign in, and capture moments that persist. Deployable.
 
 ---
 
@@ -130,7 +130,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 6: User Story 4 - Correct and curate entries (Priority: P3)
 
-**Goal**: Edit, backdate, soft-delete, restore — no hard delete (R-07, FR-030/031/032).
+**Goal**: Edit, backdate, soft-delete, restore, no hard delete (R-07, FR-030/031/032).
 
 **Independent Test**: Edit body, backdate (re-sorts), soft-delete (disappears), restore (re-appears).
 
@@ -151,7 +151,7 @@ implemented, tested, and demoed independently.
 ## Phase 7: Polish & Cross-Cutting Concerns
 
 - [x] T040 [P] Add backend request logging (correlation id; no entry content) and finalize error-response shape per contracts.
-- [ ] T041 [P] Accessibility pass on capture + auth screens (focus states, contrast, keyboard nav — NFR-7.4).
+- [ ] T041 [P] Accessibility pass on capture + auth screens (focus states, contrast, keyboard nav, NFR-7.4).
 - [ ] T042 [P] Performance check against SC-002/003/006; add the compound index migration/verification. *(compound index implemented; benchmark pending)*
 - [ ] T043 [P] Update `docs/` (architecture, API) to match shipped behavior; verify against `contracts/openapi.yaml`. *(backend README added; broader docs pending)*
 - [ ] T044 Run `quickstart.md` end-to-end as the manual acceptance script; confirm Definition of Done.

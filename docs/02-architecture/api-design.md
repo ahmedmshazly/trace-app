@@ -1,4 +1,4 @@
-# API Design — Trace
+# API Design: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -43,12 +43,12 @@ this document explains the conventions behind it (NFR-8.3).
 | POST | `/api/entries/:id/restore` | Restore soft-deleted | bearer |
 
 Later features add (now fully specified, with their own OpenAPI deltas): search +
-tag index ([002](../../specs/002-search-and-tags/contracts/openapi.yaml) —
-`GET /api/entries?q=…&tag=…&before=…&after=…`, `GET /api/tags`), export + import
-([003](../../specs/003-export-portability/contracts/openapi.yaml) —
+tag index ([002](../../specs/002-search-and-tags/contracts/openapi.yaml)
+`GET /api/entries?q=...&tag=...&before=...&after=...`, `GET /api/tags`), export + import
+([003](../../specs/003-export-portability/contracts/openapi.yaml)
 `GET /api/export?format=md|json`, `GET /api/export/estimate`, `POST /api/import`),
 and recovery/settings/deletion
-([004](../../specs/004-hardening-and-deploy/contracts/openapi.yaml) —
+([004](../../specs/004-hardening-and-deploy/contracts/openapi.yaml)
 `/api/auth/reset/*`, `PATCH /api/auth/password|email`, `DELETE /api/account`).
 
 ## Pagination (timeline)
@@ -57,7 +57,7 @@ Keyset/cursor pagination on `(occurredAt, _id)` descending ([R-06](../../specs/0
 
 ```
 GET /api/entries?limit=50&cursor=<opaque>
-→ { "items": [ …Entry ], "nextCursor": "<opaque>|null" }
+→ { "items": [ ...Entry ], "nextCursor": "<opaque>|null" }
 ```
 
 - `nextCursor` is `null` when the corpus is exhausted.
@@ -88,7 +88,7 @@ A single, consistent shape:
 | 500 | Unexpected server error (no internal details leaked) |
 
 > **Isolation nuance:** requesting another user's resource returns `404`, not
-> `403` — we never confirm that a resource the caller doesn't own exists.
+> `403`; we never confirm that a resource the caller doesn't own exists.
 
 ## Conventions
 

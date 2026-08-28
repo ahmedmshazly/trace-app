@@ -36,7 +36,7 @@ cookie-authenticated mutating requests.
 
 ### Positive
 
-- Stateless: no shared session store, no sticky routing — supports horizontal scale (NFR-3.4).
+- Stateless: no shared session store, no sticky routing, supports horizontal scale (NFR-3.4).
 - Uniform identity on every request → a single, auditable isolation choke point ([R-03](../../specs/001-foundation-and-capture/research.md)).
 - bcrypt is battle-tested and adaptive; meets credential-protection requirements (NFR-4.2).
 - httpOnly cookie keeps the JWT out of `document` / XSS-readable storage for the SPA.
@@ -53,7 +53,7 @@ cookie-authenticated mutating requests.
 
 ## Alternatives considered
 
-- **Server-side sessions** — rejected: require shared session storage / sticky sessions; violate the stateless-API standard.
-- **OAuth/SSO** — deferred: out of scope for V1; provider complexity with no V1 value.
-- **argon2** for hashing — deferred: excellent but heavier native dependency than needed for V1; bcrypt suffices.
-- **localStorage bearer only** — rejected after audit: XSS can exfiltrate intimate corpus tokens.
+- **Server-side sessions.** Rejected: require shared session storage / sticky sessions; violate the stateless-API standard.
+- **OAuth/SSO.** Deferred: out of scope for V1; provider complexity with no V1 value.
+- **argon2** for hashing, deferred: excellent but heavier native dependency than needed for V1; bcrypt suffices.
+- **localStorage bearer only.** Rejected after audit: XSS can exfiltrate intimate corpus tokens.

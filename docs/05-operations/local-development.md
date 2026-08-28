@@ -1,9 +1,9 @@
-# Local Development — Trace
+# Local Development: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-20
 
 How to bring the Trace **backend** up on a developer machine and verify it like
-the real thing — a real MongoDB, a validated `.env`, the full test suites, a live
+the real thing, a real MongoDB, a validated `.env`, the full test suites, a live
 API acceptance run, and an optional Docker stack that mirrors a hosted deploy.
 
 This is the concrete, machine-verified companion to the feature
@@ -56,13 +56,13 @@ mongosh --quiet --eval "db.runCommand({ ping: 1 })"   # → { ok: 1 }
 ```
 
 Other platforms: install MongoDB Community 7/8 by their docs, or use the Docker
-stack below — anything that exposes a `mongod` at the URI in `.env` works.
+stack below, anything that exposes a `mongod` at the URI in `.env` works.
 
 ---
 
 ## 1. Configure the environment
 
-Configuration is environment-driven and **validated at startup** — the process
+Configuration is environment-driven and **validated at startup**, the process
 fails fast on missing/invalid values (`backend/src/config/index.ts`).
 
 ```bash
@@ -80,13 +80,13 @@ sed -i "s/^JWT_SECRET=.*/JWT_SECRET=$(openssl rand -hex 32)/" .env
 | `NODE_ENV` | `development` | Standard Node env |
 | `PORT` | `4000` | API listen port |
 | `MONGODB_URI` | `mongodb://localhost:27017/trace_dev` | Connection string |
-| `JWT_SECRET` | *(generated)* | Token signing key — secret |
+| `JWT_SECRET` | *(generated)* | Token signing key: secret |
 | `JWT_EXPIRES_IN` | `7d` | Access-token lifetime |
 | `ALLOWED_ORIGINS` | `http://localhost:5173` | CORS allowlist |
 | `LOG_LEVEL` | `info` | Logger level |
 | `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX` | `900000` / `10` | Auth rate limit |
 
-> **How `.env` is loaded:** the app code reads only `process.env` (12-factor — in
+> **How `.env` is loaded:** the app code reads only `process.env` (12-factor, in
 > hosted envs the platform injects config). For local convenience the `dev` and
 > `start` npm scripts pass Node's `--env-file-if-exists=.env`, so `npm run dev`
 > just works after you create `.env`. Tests set their own env in
@@ -117,7 +117,7 @@ npm run build && npm start    # node dist/server.js
 
 ---
 
-## 3. Verify — automated tests
+## 3. Verify: automated tests
 
 ```bash
 npm test               # unit + integration + isolation (in-memory Mongo)
@@ -133,7 +133,7 @@ Last verified run: **9 test files / 32 tests passing**; coverage **~89% statemen
 
 ---
 
-## 4. Verify — live API acceptance
+## 4. Verify: live API acceptance
 
 With the server running (`npm run dev`), run the scripted end-to-end smoke test:
 
@@ -145,7 +145,7 @@ BASE_URL=http://localhost:4000/api ./scripts/smoke-api.sh
 It exercises health, auth (register/login/me + duplicate/bad-password/no-token
 errors), capture, timeline + cursor pagination, curation (edit/backdate/
 soft-delete/restore, `createdAt` immutability), **cross-user isolation**, and
-auth **rate limiting** — printing PASS/FAIL per check. Last verified: **42/42
+auth **rate limiting**, printing PASS/FAIL per check. Last verified: **42/42
 passing**. Details and a manual request collection (`backend/api.http`) are in
 [API testing](../04-engineering/api-testing.md).
 
@@ -165,7 +165,7 @@ mongosh "mongodb://localhost:27017/trace_dev" --quiet \
 
 The repo ships a backend [`Dockerfile`](../../backend/Dockerfile) (multi-stage,
 non-root, healthcheck) and a root [`docker-compose.yml`](../../docker-compose.yml)
-that runs the API container against a MongoDB container — mirroring a hosted
+that runs the API container against a MongoDB container, mirroring a hosted
 deploy (managed Mongo + stateless API steered purely by environment).
 
 ```bash
@@ -176,7 +176,7 @@ docker compose down            # add -v to also drop the DB volume
 ```
 
 Compose injects `MONGODB_URI=mongodb://mongo:27017/trace` and the secrets as real
-environment variables — no `.env` file inside the image.
+environment variables, no `.env` file inside the image.
 
 ---
 
@@ -184,11 +184,11 @@ environment variables — no `.env` file inside the image.
 
 | Symptom | Cause / fix |
 |---|---|
-| `Invalid configuration … MONGODB_URI / JWT_SECRET … undefined` at startup | `.env` missing or not loaded. Create `backend/.env` (step 1); the `dev`/`start` scripts load it via `--env-file-if-exists`. |
+| `Invalid configuration ... MONGODB_URI / JWT_SECRET ... undefined` at startup | `.env` missing or not loaded. Create `backend/.env` (step 1); the `dev`/`start` scripts load it via `--env-file-if-exists`. |
 | `npm: command not found` | Open a shell and run `nvm use 22` first. |
 | Server won't bind / `EADDRINUSE :4000` | A previous server is still running: `pkill -f "tsx watch"; pkill -f dist/server.js`, or change `PORT`. |
 | `MongooseServerSelectionError` on boot | `mongod` not running: `sudo systemctl status mongod` (or start the Docker stack). |
-| Tests fail with the same config error | Ensure `backend/vitest.config.ts` exists — it wires `tests/setup.ts` so env is set before `src/*` is imported. |
+| Tests fail with the same config error | Ensure `backend/vitest.config.ts` exists: it wires `tests/setup.ts` so env is set before `src/*` is imported. |
 | `429 RATE_LIMITED` during manual auth calls | Rate limiter tripped (e.g. by the smoke test). Restart the server to reset it. |
 
 ## Definition of Done (local)

@@ -1,13 +1,13 @@
-# Color System — Trace V1
+# Color System: Trace V1
 
-**Status:** Baseline · **Last updated:** 2026-06-19 · **Source:** *Trace — Color
+**Status:** Baseline · **Last updated:** 2026-06-19 · **Source:** *Trace. Color
 System v1 · light + dark* · **Decision of record:**
 [ADR-0006](../adr/0006-design-tokens-and-theming.md)
 
 A quiet, two-theme palette for a keyboard-first life-logging instrument. **Few
-colors, each with a single job.** Dark mode is the lead surface — muted
+colors, each with a single job.** Dark mode is the lead surface, muted
 navy-teal, low-glare, comfortable across hours. The teal accent is rationed: it
-appears only where something matters *right now* — the focus ring, the commit
+appears only where something matters *right now*, the focus ring, the commit
 action, the primary CTA.
 
 ---
@@ -17,8 +17,8 @@ action, the primary CTA.
 | Principle | What it means in practice |
 |---|---|
 | **Restraint** | Two neutrals carry ~95% of every screen. Accent is the exception, never the rule. |
-| **Dark-first** | Dark is *designed, not inverted* — deep navy bases (not black); text never glares. |
-| **Never color alone** | Every role has a structural or typographic partner — a shape, label, weight, or icon. |
+| **Dark-first** | Dark is *designed, not inverted*: deep navy bases (not black); text never glares. |
+| **Never color alone** | Every role has a structural or typographic partner: a shape, label, weight, or icon. |
 
 These map to the interface principles in [ui-ux-spec.md](./ui-ux-spec.md) and to
 Constitution V/NFR-7.4 (accessibility). Color carries meaning, but never *only*
@@ -29,7 +29,7 @@ through color.
 ## Token contract
 
 Semantic roles map **1:1 to CSS custom properties**. Engineering binds components
-to these tokens — never to raw hex. Swapping or tuning a theme is a single change
+to these tokens, never to raw hex. Swapping or tuning a theme is a single change
 at the token layer. Swatch values are **light**, then **dark**.
 
 ### Backgrounds
@@ -53,7 +53,7 @@ at the token layer. Swatch values are **light**, then **dark**.
 
 | Token | Light | Dark | Role |
 |---|---|---|---|
-| `--color-accent-primary` | `#15807a` | `#74cabb` | Commit, focus ring, primary CTA — rationed |
+| `--color-accent-primary` | `#15807a` | `#74cabb` | Commit, focus ring, primary CTA: rationed |
 | `--color-accent-secondary` | `#2f6fce` | `#8aa9e6` | `#tags`, links, interactive hover |
 
 ### Structure
@@ -61,7 +61,7 @@ at the token layer. Swatch values are **light**, then **dark**.
 | Token | Light | Dark | Role |
 |---|---|---|---|
 | `--color-border` | `#dce1e7` | `#313146` | Dividers, input outlines, separators |
-| `--color-day-header` | `#8a94a3` | `#6c7086` | Today / Yesterday / date headers — recedes |
+| `--color-day-header` | `#8a94a3` | `#6c7086` | Today / Yesterday / date headers: recedes |
 | `--color-tag-pill-bg` | `#e6effb` | `#29304a` | Background of inline `#tag` chips |
 
 ### States
@@ -111,7 +111,7 @@ Placeholder & disabled (`text-muted`) is non-essential and held to **≥ 3:1**.
 
 ---
 
-## Never color alone — the structural partners
+## Never color alone: the structural partners
 
 Color is never the sole signal. Each color-coded role ships with a non-color
 partner so the meaning survives for color-blind users, in grayscale, and under
@@ -122,13 +122,13 @@ the structural wireframes:
 | Tags | `accent-secondary` on `tag-pill-bg` | the `#` glyph + pill shape |
 | Delete / destructive | `state-error` | a `⌫` icon **and** a confirm step |
 | Day headers | `day-header` (recedes) | smaller size + letter-spacing (not hue) |
-| Keyboard focus | `focus-ring` | a **3px halo** — perceptible without its color |
+| Keyboard focus | `focus-ring` | a **3px halo**: perceptible without its color |
 | Commit / primary CTA | `accent-primary` | label (`commit`) + position + weight |
 | Draft / connectivity | `state-warning` | banner + explicit **Keep / Discard** controls |
 
 ---
 
-## Applied sample (the “judgment surface”)
+## Applied sample (the "judgment surface")
 
 The wireframes render the same slice of the core screen in **both themes**: a
 focused capture input, a day-grouped timeline with one row in its hover/action
@@ -136,9 +136,9 @@ state, the primary CTA, and the ⌘K overlay. Reading that sample against this
 table:
 
 - **Dark is the lead.** `--color-base` `#15151f` is a deep navy, not black;
-  `--color-text-primary` `#c9d1e4` reads at 10.7:1 — clear without glare.
+  `--color-text-primary` `#c9d1e4` reads at 10.7:1, clear without glare.
 - **Accent is rationed.** Teal (`--color-accent-primary`) appears only on the
-  focus ring, the commit affordance, and the primary CTA — nowhere else.
+  focus ring, the commit affordance, and the primary CTA, nowhere else.
 - **Tags and links** use the secondary accent (`--color-accent-secondary`),
   visually distinct from the rationed primary teal.
 - **Structure recedes.** Borders, day headers, and timestamps sit in the neutral
@@ -146,7 +146,7 @@ table:
 
 ---
 
-## Implementation notes (for feature 004 — theming)
+## Implementation notes (for feature 004: theming)
 
 - Define all tokens as **CSS custom properties** on a theme root; switch themes by
   swapping the property set (e.g. `[data-theme="dark"]`), not by recoloring
@@ -157,6 +157,6 @@ table:
   user's explicit choice.
 - Components reference only semantic tokens (e.g. `var(--color-surface)`); raw hex
   in component styles is a review failure.
-- The full theme switch lands with feature 004; features 001–003 build against the
+- The full theme switch lands with feature 004; features 001-003 build against the
   token names so applying the themes is non-invasive (the wireframes are
-  structural by design — *“color & theming applied in a later step”*).
+  structural by design, *"color & theming applied in a later step"*).

@@ -13,9 +13,9 @@
 > timestamped moment and seeing it on a day-grouped timeline. Search, tags, and
 > export are deferred to later features (002, 003). See `docs/03-project/roadmap.md`.
 
-> **Design reference**: the screens for this feature — the auth gateway, the
+> **Design reference**: the screens for this feature, the auth gateway, the
 > sticky capture bar, the day-grouped timeline, inline edit/backdate/soft-delete,
-> the draft-restore (Keep/Discard) banner, and the mobile bottom-sheet — are
+> the draft-restore (Keep/Discard) banner, and the mobile bottom-sheet, are
 > specified in the [UI/UX spec](../../docs/06-design/ui-ux-spec.md) and the
 > [color system](../../docs/06-design/color-system.md) (dark-first, ADR-0006).
 > The logo is a text wordmark placeholder until a final mark is supplied
@@ -29,7 +29,7 @@
 
 An authenticated user opens Trace, the capture input is already focused, they
 type a moment, press Enter, and it instantly appears at the top of today's
-timeline — automatically timestamped. The cursor returns to the input, ready
+timeline, automatically timestamped. The cursor returns to the input, ready
 for the next moment.
 
 **Why this priority**: This is the entire reason Trace exists. If this loop is
@@ -43,7 +43,7 @@ Reload the page and confirm the entry persisted.
 **Acceptance Scenarios**:
 
 1. **Given** an authenticated user on the core screen, **When** the screen finishes loading, **Then** the capture input is focused and ready for typing with no further interaction.
-2. **Given** the capture input contains text, **When** the user presses Enter, **Then** the system creates an entry stamped with the current time, displays it at the top of the timeline, clears the input, and re-focuses the input — all within 100 ms of perceived latency.
+2. **Given** the capture input contains text, **When** the user presses Enter, **Then** the system creates an entry stamped with the current time, displays it at the top of the timeline, clears the input, and re-focuses the input, all within 100 ms of perceived latency.
 3. **Given** the capture input contains multi-line text, **When** the user presses Shift+Enter, **Then** a newline is inserted and the entry is NOT committed.
 4. **Given** a committed entry, **When** the user reloads the page, **Then** the entry is still present with its original timestamp.
 5. **Given** an empty capture input, **When** the user presses Enter, **Then** no entry is created.
@@ -101,7 +101,7 @@ order, and that scrolling loads older entries incrementally.
 ### User Story 4 - Correct and curate entries (Priority: P3)
 
 A user fixes a typo in an entry, adjusts the time of an entry they logged after
-the fact (backdating), and removes an entry they no longer want — with the
+the fact (backdating), and removes an entry they no longer want, with the
 ability to recover it, since nothing is ever truly destroyed in V1.
 
 **Why this priority**: Real logs accumulate mistakes. Editing, backdating, and

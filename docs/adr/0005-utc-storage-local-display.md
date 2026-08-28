@@ -7,7 +7,7 @@
 
 ## Context
 
-Time is the **primary key** of Trace's data model — `occurredAt` is the main
+Time is the **primary key** of Trace's data model, `occurredAt` is the main
 analysis axis and `createdAt` is the immutable ledger. The timeline groups entries
 by **day**, and users can **backdate** entries. Users may travel across timezones
 or use the app from multiple locations/devices. We must choose a single,
@@ -24,7 +24,7 @@ the client. Timestamps cross the API as ISO-8601 UTC strings.
 
 ### Positive
 
-- Unambiguous, correct ordering and comparison across timezones and DST — the corpus stays analysis-ready (Constitution II).
+- Unambiguous, correct ordering and comparison across timezones and DST, the corpus stays analysis-ready (Constitution II).
 - Consistent behavior across devices for the same user.
 - Day grouping ("Today"/"Yesterday"/date) is computed in the user's local day, matching human expectation (Constitution I).
 
@@ -39,5 +39,5 @@ the client. Timestamps cross the API as ISO-8601 UTC strings.
 
 ## Alternatives considered
 
-- **Store local wall-clock times** — rejected: ambiguous, breaks cross-device consistency and analysis, and mishandles DST.
-- **Store UTC and also display in UTC** — rejected: violates the human/low-friction UI principle; "Today" must mean the user's today.
+- **Store local wall-clock times.** Rejected: ambiguous, breaks cross-device consistency and analysis, and mishandles DST.
+- **Store UTC and also display in UTC.** Rejected: violates the human/low-friction UI principle; "Today" must mean the user's today.

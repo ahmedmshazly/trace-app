@@ -1,4 +1,4 @@
-# Risk Register — Trace
+# Risk Register: Trace
 
 **Status:** Living document · **Last updated:** 2026-06-18
 
@@ -13,7 +13,7 @@ Risks to V1, scored and owned. Reviewed at each stage gate (see
 
 | ID | Risk | L | I | Exposure | Mitigation | Owner |
 |---|---|---|---|---|---|---|
-| R-P1 | **Scope creep into the analysis engine** before a corpus exists — the single biggest product risk. | Med | High | High | Hard scope boundary in SRS + roadmap; V2 items require formal amendment; MoSCoW Musts only for GA. | Product |
+| R-P1 | **Scope creep into the analysis engine** before a corpus exists: the single biggest product risk. | Med | High | High | Hard scope boundary in SRS + roadmap; V2 items require formal amendment; MoSCoW Musts only for GA. | Product |
 | R-P2 | Capture friction creeps up (more chrome, more steps), eroding the core value. | Med | High | High | Constitution I as a gate on every PR; perf budgets (SC-2/3); keyboard-first e2e tests. | Product/Eng |
 | R-P3 | Low adoption because the value compounds slowly (a sparse corpus isn't useful yet). | Med | Med | Med | Make day-1 capture delightful; emphasize export so early data is never wasted. | Product |
 
@@ -21,7 +21,7 @@ Risks to V1, scored and owned. Reviewed at each stage gate (see
 
 | ID | Risk | L | I | Exposure | Mitigation | Owner |
 |---|---|---|---|---|---|---|
-| R-T1 | **Cross-user data leak** (isolation bug) — catastrophic for a privacy product. | Low | High | High | Centralized `userId` scoping; dedicated isolation suite as a release-blocking gate (SC-4); `404` for non-owned resources. | Eng |
+| R-T1 | **Cross-user data leak** (isolation bug): catastrophic for a privacy product. | Low | High | High | Centralized `userId` scoping; dedicated isolation suite as a release-blocking gate (SC-4); `404` for non-owned resources. | Eng |
 | R-T2 | Timeline/search degrades at scale (50k entries/user). | Med | Med | Med | Keyset pagination + compound index; scale benchmarks (NFR-1.3/10.2). | Eng |
 | R-T3 | Optimistic capture diverges from server state on failure (lost/duplicated entries). | Med | Med | Med | Reconcile-on-confirm + retry; never drop draft text; persistence tests (SC-5). | Eng |
 | R-T4 | Timezone/day-boundary bugs in grouping/backdating. | Med | Med | Med | Store UTC, group local (ADR-0005); explicit edge-case tests. | Eng |
@@ -55,7 +55,7 @@ Risks to V1, scored and owned. Reviewed at each stage gate (see
 
 ## Top risks to watch (this stage)
 
-1. **R-T1 / R-P1 / R-P2** — isolation correctness, scope discipline, and capture friction are the three that most threaten the product's identity. Each has a hard, automated or process gate.
+1. **R-T1 / R-P1 / R-P2.** Isolation correctness, scope discipline, and capture friction are the three that most threaten the product's identity. Each has a hard, automated or process gate.
 
 ## Review cadence
 

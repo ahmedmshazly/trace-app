@@ -1,4 +1,4 @@
-# Coding Standards — Trace
+# Coding Standards: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -36,7 +36,7 @@ tooling where possible (ESLint, Prettier, tsc) so reviews focus on substance.
 
 - **Layering is strict** ([architecture](../02-architecture/architecture-overview.md)): routes → middleware → services → models. Routes never touch the DB; services own business logic and the `userId` scope.
 - **Validation at the boundary** with zod; never trust client input.
-- **Isolation is centralized**: build every Entry query with `{ userId }` in the service layer — never scatter it.
+- **Isolation is centralized**: build every Entry query with `{ userId }` in the service layer, never scatter it.
 - **Immutability respected**: never accept or mutate `createdAt`.
 - **Errors**: throw typed/domain errors; the central error handler maps them to the [error envelope](../02-architecture/api-design.md).
 - **No secrets in code**: read config only through the validated config module.

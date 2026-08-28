@@ -1,4 +1,4 @@
-# Deployment — Trace
+# Deployment: Trace
 
 **Status:** Production on Vercel · **Last updated:** 2026-07-16
 
@@ -49,7 +49,7 @@ Artifacts are immutable and promoted unchanged across environments.
 
 ## Configure (per environment)
 
-Provide configuration via the platform's environment/secret mechanism — never the
+Provide configuration via the platform's environment/secret mechanism, never the
 repo. Required: `NODE_ENV=production`, `PORT`, `MONGODB_URI`, `JWT_SECRET`,
 `ALLOWED_ORIGINS`. See the [configuration contract](../04-engineering/environments.md).
 
@@ -97,7 +97,7 @@ runs as a serverless function via [`api/index.js`](../../api/index.js).
 | File | Purpose |
 |---|---|
 | [`vercel.json`](../../vercel.json) | Install/build commands, SPA rewrites, API routing, security headers |
-| [`api/index.js`](../../api/index.js) | Serverless entry — boots Express with a cached MongoDB connection |
+| [`api/index.js`](../../api/index.js) | Serverless entry: boots Express with a cached MongoDB connection |
 | [`.env.example`](../../.env.example) | Required environment variables for hosted deploy |
 
 ### Required environment variables
@@ -114,12 +114,12 @@ Set these in the Vercel project (Settings → Environment Variables):
 | `MAIL_TRANSPORT` | Must be `smtp` in production |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `MAIL_FROM` | Required when `MAIL_TRANSPORT=smtp` |
 
-Preview deployments work without listing every preview URL — `VERCEL_URL` and
+Preview deployments work without listing every preview URL, `VERCEL_URL` and
 `VERCEL_BRANCH_URL` are added to the CORS allowlist automatically.
 
 ### Deploy
 
-Preferred: merge/push to **`main`** — Vercel auto-deploys from GitHub.
+Preferred: merge/push to **`main`**. Vercel auto-deploys from GitHub.
 
 ```bash
 # Local parity with what Vercel runs

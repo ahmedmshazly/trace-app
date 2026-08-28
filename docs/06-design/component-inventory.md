@@ -1,4 +1,4 @@
-# Component Inventory — Trace V1
+# Component Inventory: Trace V1
 
 **Status:** Baseline · **Last updated:** 2026-06-19
 
@@ -32,7 +32,7 @@ design tokens it binds. This is the bridge between
 | `AuthShell` | Login, Register, Reset | 001 | Calm single-column gateway; wordmark + subtitle |
 | `TextField` (email/password) | Auth forms, settings | 001 | `--color-surface`, `--color-border`, focus ring; visible focus mandatory |
 | `PrimaryButton` (CTA) | Sign in, Create account, Export | 001 | `--color-accent-primary` + `--color-text-on-accent`; rationed |
-| `InlineLink` | “Create account”, “Forgot password?” | 001 | `--color-accent-secondary` |
+| `InlineLink` | "Create account", "Forgot password?" | 001 | `--color-accent-secondary` |
 | `ResetSentConfirmation` | Reset flow | 004 | Non-enumerating copy; identical regardless of email existence |
 
 ## Capture + Timeline (core)
@@ -53,7 +53,7 @@ design tokens it binds. This is the bridge between
 | `BackdateControl` | Entry row (time) | 001 | Date+time + presets (`-1h`, `this morning`, `yesterday`); `createdAt` locked 🔒 |
 | `SoftDeleteConfirm` | Entry row (delete) | 001 | Inline confirm; `--color-state-error` + `⌫` + confirm step |
 | `EmptyState` | Core screen (first run) | 001 | "Nothing logged yet..." |
-| `LoadingOlder` | Timeline bottom | 001 | “Loading older moments…” |
+| `LoadingOlder` | Timeline bottom | 001 | "Loading older moments..." |
 
 ## Search & tags (⌘K + panel)
 
@@ -74,7 +74,7 @@ design tokens it binds. This is the bridge between
 |---|---|---|---|
 | `SettingsScreen` | Settings | 003 (export) · 004 (rest) | `← back to timeline`; utility, not showcase |
 | `ExportPanel` | Settings | 003 | Format (MD/JSON), Scope (Everything/Date range/Current filter), size summary |
-| `AppearanceToggle` (Light/Dark) | Settings | 004 | Persists theme; “Dark is first-class” |
+| `AppearanceToggle` (Light/Dark) | Settings | 004 | Persists theme; "Dark is first-class" |
 | `AccountPanel` | Settings | 004 | Email + Change |
 | `DangerZone` | Settings | 004 | Fenced region; `--color-state-error`; typed second confirmation |
 | `ConfirmByTyping` | Danger zone | 004 | Gates delete-all / delete-account |
@@ -95,7 +95,7 @@ design tokens it binds. This is the bridge between
 - **Keyboard parity.** Each interactive component has a keyboard path matching the
   [keyboard map](./ui-ux-spec.md#22-the-keyboard-map).
 - **Reuse the row.** Search results and timeline rows share one `TimelineEntry`
-  treatment — consistency and less code (Constitution VII).
+  treatment, consistency and less code (Constitution VII).
 - **Confirm in place.** Edit, backdate, and delete confirmations are inline, never
   modal (except where mobile uses a bottom sheet).
 - **One Logo source.** The placeholder wordmark renders from a single component so

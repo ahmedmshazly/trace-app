@@ -1,4 +1,4 @@
-# Architecture Overview — Trace
+# Architecture Overview: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18 · **Audience:** engineering
 
@@ -34,7 +34,7 @@ queues, and caches until a requirement demands them (Constitution VII).
 
 ```mermaid
 flowchart LR
-    subgraph Client["Browser — React SPA"]
+    subgraph Client["Browser: React SPA"]
         UI["Capture + Timeline UI"]
         QC["TanStack Query cache<br/>(optimistic UI)"]
     end
@@ -57,11 +57,11 @@ flowchart LR
 ## 4. Logical layers (server)
 
 ```
-routes/        HTTP boundary — validation (zod), status codes, shapes
+routes/        HTTP boundary: validation (zod), status codes, shapes
   ↓
-middleware/    cross-cutting — auth (JWT→userId), requireUser, rate limit, errors
+middleware/    cross-cutting: auth (JWT→userId), requireUser, rate limit, errors
   ↓
-services/      business logic — auth.service, entry.service (own the userId filter)
+services/      business logic: auth.service, entry.service (own the userId filter)
   ↓
 models/        Mongoose schemas + indexes (User, Entry)
   ↓
@@ -69,7 +69,7 @@ MongoDB
 ```
 
 - **Routes** never talk to the database directly; they call services.
-- **Services** own the `userId` scoping — the single, auditable place isolation is enforced (research [R-03](../../specs/001-foundation-and-capture/research.md)).
+- **Services** own the `userId` scoping: the single, auditable place isolation is enforced (research [R-03](../../specs/001-foundation-and-capture/research.md)).
 - **Models** define schema, indexes, and invariants (immutable `createdAt`).
 
 ## 5. Logical layers (client)
@@ -81,14 +81,14 @@ api/           typed client + TanStack Query hooks (server state)
 lib/           auth context, day-grouping, theme
 ```
 
-The client holds **no authority** — every rule it appears to enforce (isolation,
+The client holds **no authority**, every rule it appears to enforce (isolation,
 immutability, validation) is also enforced server-side. The client's job is speed
 and ergonomics (optimistic capture, focus management, day grouping).
 
 ## 6. Key runtime flows
 
 - **Capture (hot path):** Enter → optimistic insert in the client → `POST /entries` → server stamps + persists → reconcile. Perceived latency < 100 ms because the UI does not wait for the round trip ([R-04](../../specs/001-foundation-and-capture/research.md)).
-- **Timeline:** `GET /entries?cursor=…` → keyset pagination on `(occurredAt,_id)` → client groups by local day ([R-05](../../specs/001-foundation-and-capture/research.md), [R-06](../../specs/001-foundation-and-capture/research.md)).
+- **Timeline:** `GET /entries?cursor=...` → keyset pagination on `(occurredAt,_id)` → client groups by local day ([R-05](../../specs/001-foundation-and-capture/research.md), [R-06](../../specs/001-foundation-and-capture/research.md)).
 - **Auth:** register/login → JWT issued → every subsequent request carries the bearer token → middleware resolves `userId`.
 
 Full journeys: [flow diagrams](../diagrams/trace-diagrams.md).

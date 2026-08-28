@@ -1,4 +1,4 @@
-# Trace — web client
+# Trace: web client
 
 A Vite + React single-page app that talks to the Trace backend API and is built
 on the in-repo Trace design system (`window.TRACE_UI`).

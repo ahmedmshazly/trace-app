@@ -1,5 +1,5 @@
-%%  Trace — Authentication Sub-Flow
-%%  Scope: all auth paths — login, registration, and password reset.
+%%  Trace authentication sub-flow
+%%  Scope: all auth paths, login, registration, and password reset.
 %%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
 
 flowchart TD
@@ -35,7 +35,7 @@ flowchart TD
 
     RESENTSENT -->|Yes| RESETLINK["Reset link sent
     Link expires after 1 hour"]
-    RESENTSENT -->|"No — always show same message\n(no enumeration)"| RESETLINK
+    RESENTSENT -->|"No, always show same message\n(no enumeration)"| RESETLINK
 
     RESETLINK -->|User clicks link in email| NEWPWFORM["Set new password
     ─────────────────────────
@@ -65,4 +65,4 @@ flowchart TD
     REGDONE --> APP
 
     %% ── Success terminus ────────────────────────────────────────────────────
-    APP(["Authenticated — Capture + Timeline"])
+    APP(["Authenticated: Capture + Timeline"])

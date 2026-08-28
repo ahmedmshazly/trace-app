@@ -1,7 +1,7 @@
 # Quickstart: Hardening, Settings & Deploy (V1 GA)
 
 How to run and verify this feature locally and validate the GA gates. It assumes
-features 001–003 are implemented and the implementation tasks in `tasks.md` are
+features 001-003 are implemented and the implementation tasks in `tasks.md` are
 complete.
 
 > Until the application code exists, this document is the target state the
@@ -11,12 +11,12 @@ complete.
 
 ## Prerequisites
 
-- Features 001–003 running locally.
+- Features 001-003 running locally.
 - Node.js 22 LTS, MongoDB 7 local, a POSIX shell, `jq`.
 - Email transport configured for dev to **log the reset link** (no external
-  account needed) — see `backend/.env`.
+  account needed): see `backend/.env`.
 
-## 1. Password reset — non-enumerating + session invalidation (US1)
+## 1. Password reset: non-enumerating + session invalidation (US1)
 
 ```bash
 # Identical response for a registered and an unregistered email (no enumeration)
@@ -50,7 +50,7 @@ In the browser: open **Settings → Appearance**, toggle **Light/Dark** → appl
 immediately, persists across reload, and there is **no flash of the wrong theme**
 on load; first run honors the OS color scheme (dark default).
 
-## 3. Danger zone — typed confirmation & deletion (US3)
+## 3. Danger zone: typed confirmation & deletion (US3)
 
 ```bash
 # Delete all entries (typed confirmation echoed in a header)
@@ -60,7 +60,7 @@ curl -s -i -X DELETE "http://localhost:4000/api/entries/all" \
 # Browse Trash (soft-deleted) before permanent delete
 curl -s "http://localhost:4000/api/entries/trash" -H "authorization: Bearer $TOKEN" | jq '.items | length'
 
-# Delete account (irreversible) — session invalidated afterwards
+# Delete account (irreversible); session invalidated afterwards
 curl -s -i -X DELETE "http://localhost:4000/api/account" \
   -H "authorization: Bearer $TOKEN" -H 'X-Confirm: DELETE MY ACCOUNT' | head -n1  # 204
 ```
@@ -84,7 +84,7 @@ for i in $(seq 1 50); do curl -s -o /dev/null -w "%{http_code} " \
 - **Logs**: structured, carry a correlation id, and contain **no entry content or
   secrets** (inspect the backend log).
 - **Config-only deploy**: start in a clean environment using only env vars (DB URI,
-  JWT secret, allowed origins, mail config) — no source edits.
+  JWT secret, allowed origins, mail config), no source edits.
 - **Backup/restore**: follow `docs/05-operations/backup-recovery.md` to snapshot
   and restore; verify the corpus is intact.
 

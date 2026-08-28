@@ -16,8 +16,8 @@ small/single-maintainer team.
 
 ## Decision
 
-We will build Trace on **MERN** — **M**ongoDB, **E**xpress, **R**eact,
-**N**ode.js — with **TypeScript** across both the API and the client. The
+We will build Trace on **MERN**, **M**ongoDB, **E**xpress, **R**eact,
+**N**ode.js, with **TypeScript** across both the API and the client. The
 repository is organized as two packages, `backend/` and `frontend/`, with a strict
 API/UI separation (NFR-8.1).
 
@@ -29,7 +29,7 @@ API/UI separation (NFR-8.1).
 - React + Vite enable the optimistic, low-latency capture UI (Constitution I).
 - MongoDB's document model maps cleanly onto the flat `Entry` schema and keeps the corpus export-friendly (Constitution II).
 - Stateless Express API satisfies the hostable/scalable requirement (NFR-3.4).
-- Large ecosystem, abundant references — low complexity (Constitution VII).
+- Large ecosystem, abundant references, low complexity (Constitution VII).
 
 ### Negative / costs
 
@@ -42,6 +42,6 @@ API/UI separation (NFR-8.1).
 
 ## Alternatives considered
 
-- **PostgreSQL-based stack** — rejected for V1: the owner chose MERN; the document model fits; relational features aren't needed for the flat schema. (Revisit only via a new ADR.)
-- **A CLI-first tool** (originally floated) — rejected: the owner chose a GUI.
-- **Next.js full-stack** — deferred: a clean API/SPA split keeps the contract explicit and the API independently hostable; can revisit if SSR needs emerge.
+- **PostgreSQL-based stack.** Rejected for V1: the owner chose MERN; the document model fits; relational features aren't needed for the flat schema. (Revisit only via a new ADR.)
+- **A CLI-first tool** (originally floated), rejected: the owner chose a GUI.
+- **Next.js full-stack.** Deferred: a clean API/SPA split keeps the contract explicit and the API independently hostable; can revisit if SSR needs emerge.

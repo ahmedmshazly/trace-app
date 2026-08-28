@@ -1,4 +1,4 @@
-# RACI & Roles — Trace
+# RACI & Roles: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -42,10 +42,10 @@ outcome, one per row) · **C**onsulted (gives input) · **I**nformed (kept aware
 
 ## Decision rights
 
-- **Scope of V1** — Product is accountable; changes require an SRS update.
-- **Principles** — changing a Constitution principle requires a Maintainer-approved amendment (semantic version bump).
-- **Architecture of consequence** — Eng is accountable; recorded as an ADR.
-- **Go/no-go to deploy** — Ops is accountable, gated on Eng's quality sign-off.
+- **Scope of V1.** Product is accountable; changes require an SRS update.
+- **Principles.** Changing a Constitution principle requires a Maintainer-approved amendment (semantic version bump).
+- **Architecture of consequence.** Eng is accountable; recorded as an ADR.
+- **Go/no-go to deploy.** Ops is accountable, gated on Eng's quality sign-off.
 
 ## Escalation
 

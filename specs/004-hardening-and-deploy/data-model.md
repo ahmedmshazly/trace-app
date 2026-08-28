@@ -7,7 +7,7 @@ Canonical reference:
 
 ---
 
-## New entity — PasswordResetToken
+## New entity: PasswordResetToken
 
 A short-lived, single-use credential-recovery token. Only the **hash** of the
 token is stored; the raw token travels only in the emailed link.
@@ -33,7 +33,7 @@ token is stored; the raw token travels only in the emailed link.
 
 ---
 
-## User — delta
+## User: delta
 
 The `User` from feature 001 gains mutability and a session-revocation marker.
 
@@ -48,14 +48,14 @@ checked on each request; bumping it revokes all outstanding sessions.
 
 ---
 
-## Entry — deletion semantics (no field change)
+## Entry: deletion semantics (no field change)
 
 - **Delete all entries**: removes all `Entry` documents for the user (including
   `deleted: true`), scoped by `userId`.
 - **Account deletion**: removes the `User`, all their `Entry` documents, and all
   their `PasswordResetToken`s; bumps/invalidates sessions.
 - **Trash surface**: reads `Entry` where `{ userId, deleted: true }` to browse and
-  restore (restore flips `deleted` back — feature 001 behavior).
+  restore (restore flips `deleted` back, feature 001 behavior).
 - This feature introduces the **only** hard-delete paths in V1 (R-006); routine
   entry deletion remains soft (ADR-0004).
 

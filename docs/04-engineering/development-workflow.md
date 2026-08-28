@@ -1,4 +1,4 @@
-# Development Workflow — Trace
+# Development Workflow: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18 · **Audience:** contributors
 
@@ -30,7 +30,7 @@ flowchart LR
 
 ## Step-by-step: building a feature
 
-1. **Confirm the Constitution** governs your intent. If a principle is in the way, the answer is usually to change the approach — amending the Constitution is rare and deliberate.
+1. **Confirm the Constitution** governs your intent. If a principle is in the way, the answer is usually to change the approach, amending the Constitution is rare and deliberate.
 2. **Specify** the feature: prioritized, independently-testable user stories; functional requirements; success criteria; assumptions. No tech, no code in the spec.
 3. **Clarify** if anything is ambiguous (`[NEEDS CLARIFICATION]` must be resolved before planning).
 4. **Plan**: pick the technical approach within the stack; pass the **Constitution Check** gate; produce research (decisions), data-model, and API contracts.
@@ -43,7 +43,7 @@ flowchart LR
 
 The whole stack runs on your machine against a local MongoDB; you promote to a
 host via configuration only (Constitution; [environments](./environments.md)).
-"Local" ≠ "offline" — the client still needs its (local) backend running. See the
+"Local" ≠ "offline", the client still needs its (local) backend running. See the
 feature [quickstart](../../specs/001-foundation-and-capture/quickstart.md).
 
 ## Contribution rules

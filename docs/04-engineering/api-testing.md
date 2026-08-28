@@ -1,12 +1,12 @@
-# API Testing — Trace
+# API Testing: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-20
 
 How the Trace **API** is verified, at two levels:
 
-1. **Automated code tests** — Vitest + Supertest + `mongodb-memory-server`, the
+1. **Automated code tests.** Vitest + Supertest + `mongodb-memory-server`, the
    release-blocking backbone (run in CI on every PR).
-2. **Live API acceptance** — a scripted `curl`/`jq` pass against a running server
+2. **Live API acceptance.** A scripted `curl`/`jq` pass against a running server
    backed by a real MongoDB, for hands-on/manual confidence.
 
 It complements the [testing strategy](./testing-strategy.md) (philosophy, pyramid,
@@ -33,7 +33,7 @@ Layout (`backend/tests/`):
 
 `backend/vitest.config.ts` wires `tests/setup.ts` as a setup file so the test env
 (`NODE_ENV=test`, a test `JWT_SECRET`, etc.) is set **before** any `src/*` module
-is imported — required because config is validated at import time.
+is imported, required because config is validated at import time.
 
 ### Last verified result
 
@@ -46,7 +46,7 @@ is imported — required because config is validated at import time.
    Statements: 216/242   Branches: 94/123   Functions: 58/62   Lines: 215/241
 ```
 
-Coverage is a signal, not a target — gating is on critical-path behavior
+Coverage is a signal, not a target, gating is on critical-path behavior
 (auth, isolation, capture/persistence), all of which is covered.
 
 ---
@@ -91,7 +91,7 @@ authenticated requests.
 
 ---
 
-## Reference — endpoints, errors, examples
+## Reference: endpoints, errors, examples
 
 Base path `/api`. Full contract:
 [`openapi.yaml`](../../specs/001-foundation-and-capture/contracts/openapi.yaml).
@@ -109,7 +109,7 @@ Base path `/api`. Full contract:
 | DELETE | `/api/entries/:id` | bearer | Soft-delete (`204`) |
 | POST | `/api/entries/:id/restore` | bearer | Restore a soft-deleted entry |
 
-### Example — register then capture
+### Example: register then capture
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:4000/api/auth/register \
@@ -138,7 +138,7 @@ curl -s -X POST http://localhost:4000/api/entries \
 All errors use one shape:
 
 ```json
-{ "error": { "code": "VALIDATION_ERROR", "message": "…", "details": [] } }
+{ "error": { "code": "VALIDATION_ERROR", "message": "...", "details": [] } }
 ```
 
 Notable codes: `VALIDATION_ERROR` (422), `UNAUTHORIZED` (401),

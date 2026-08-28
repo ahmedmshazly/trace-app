@@ -13,7 +13,7 @@ and running, and that the implementation tasks in `tasks.md` are complete.
 - Feature 001 running locally (see
   [`specs/001-foundation-and-capture/quickstart.md`](../001-foundation-and-capture/quickstart.md)).
 - Node.js 22 LTS, MongoDB 7 local, a POSIX shell, `jq`.
-- The new indexes applied (text index on `body`, `{ userId, tags }`) — applied at
+- The new indexes applied (text index on `body`, `{ userId, tags }`), applied at
   startup/deploy; for an existing dev corpus, run the tags backfill migration.
 
 ## 1. Capture tagged moments
@@ -93,7 +93,7 @@ cd frontend && npm run test:e2e # ⌘K search, tag filter, tag index (Playwright
 ## Definition of Done for this feature
 
 - [ ] US1 (search) acceptance scenarios pass via automated tests (SC-007).
-- [ ] Search returns < 300 ms at 50k entries/user (SC-001, NFR-1.3) — benchmarked.
+- [ ] Search returns < 300 ms at 50k entries/user (SC-001, NFR-1.3), benchmarked.
 - [ ] Combined filters return exactly the conjunction (SC-004); chips add/remove correctly.
 - [ ] Tag-index counts exactly match non-deleted tagged entries per user (SC-005).
 - [ ] Isolation suite proves no cross-user search/filter/count exposure (SC-006).

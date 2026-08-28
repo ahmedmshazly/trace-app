@@ -1,4 +1,4 @@
-# Restore drill — Trace
+# Restore drill: Trace
 
 **Status:** Procedure · **Last updated:** 2026-07-16
 
@@ -10,17 +10,17 @@ B / C, RPO/RTO observed, pass/fail.
 
 ---
 
-## Path A — Atlas PITR / snapshot → scratch
+## Path A: Atlas PITR / snapshot → scratch
 
 1. In Atlas, restore a snapshot (or PITR timestamp) into a **new** cluster or
-   temporary database — not the live production cluster.
+   temporary database, not the live production cluster.
 2. Point a scratch env (local or Vercel Preview with a scratch `MONGODB_URI`) at
    the restored instance.
 3. Verify: `/api/health`, entry counts, spot-check moments, second-user isolation.
 4. Do **not** cut production `MONGODB_URI` unless this is a real incident restore.
 5. Tear down the scratch cluster when done (cost).
 
-## Path B — S3 mongodump → scratch Atlas
+## Path B: S3 mongodump → scratch Atlas
 
 1. Dry-run list latest object:
    ```bash
@@ -30,13 +30,13 @@ B / C, RPO/RTO observed, pass/fail.
 3. Ensure `RESTORE_MONGODB_URI` ≠ production `MONGODB_URI` (script refuses equality).
 4. Restore:
    ```bash
-   RESTORE_MONGODB_URI='mongodb+srv://…/trace_scratch' \
+   RESTORE_MONGODB_URI='mongodb+srv://.../trace_scratch' \
      ./scripts/backup/restore-from-s3.sh
    ```
 5. Same verification as Path A.
 6. Only on real disaster: re-point Vercel `MONGODB_URI`, redeploy/smoke, communicate.
 
-## Path C — AWS EC2 warm standby (owned Mongo)
+## Path C: AWS EC2 warm standby (owned Mongo)
 
 Standby host: EC2 tagged `Name=trace-mongo-standby` (Docker `mongo:7`).  
 Sync: GitHub Actions → SSM Run Command → [`restore-standby-on-host.sh`](../../scripts/backup/restore-standby-on-host.sh).  
@@ -81,7 +81,7 @@ Same as Preview drill, but Production `MONGODB_URI` + announce. After Atlas reco
 
 - [x] Laptop Compose `down -v` does not affect prod (prod is Atlas).
 - [ ] Path A or Path B restore to scratch succeeds with verified counts.
-- [x] Latest S3 object exists under `trace/YYYY/MM/DD/` (and CRR replica `…-ew1`).
+- [x] Latest S3 object exists under `trace/YYYY/MM/DD/` (and CRR replica `...-ew1`).
 - [x] GHA backup uses OIDC only (no static AWS keys in git).
 - [x] Path C Preview drill: standby restore + app smoke against EC2, then SG closed / Preview URI reverted.
 
@@ -89,4 +89,4 @@ Same as Preview drill, but Production `MONGODB_URI` + announce. After Atlas reco
 
 | Date | Path | Result | Notes |
 |------|------|--------|-------|
-| 2026-07-16 | C | **pass** | EC2 `i-00c3cef5a86c0ed0f` EIP `51.102.93.91`. SSM restore → collections `users,entries,passwordresettokens`. Preview env briefly pointed at standby; Vercel Preview SSO blocked anonymous HTTP, so capture smoke ran via local Express → standby (`/api/health` ok, register+capture 201). Production left on Atlas (`trace-one-swart` health ok). SG 27017 revoked; Mongo rebound to `127.0.0.1`. GHA `workflow_dispatch` returned 403 on this token — scheduled workflow is in repo; first restore proven via AWS SSM CLI. |
+| 2026-07-16 | C | **pass** | EC2 `i-00c3cef5a86c0ed0f` EIP `51.102.93.91`. SSM restore → collections `users,entries,passwordresettokens`. Preview env briefly pointed at standby; Vercel Preview SSO blocked anonymous HTTP, so capture smoke ran via local Express → standby (`/api/health` ok, register+capture 201). Production left on Atlas (`trace-one-swart` health ok). SG 27017 revoked; Mongo rebound to `127.0.0.1`. GHA `workflow_dispatch` returned 403 on this token: scheduled workflow is in repo; first restore proven via AWS SSM CLI. |

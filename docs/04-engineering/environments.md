@@ -1,4 +1,4 @@
-# Environments & Configuration — Trace
+# Environments & Configuration: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -35,7 +35,7 @@ or invalid ([R-10](../../specs/001-foundation-and-capture/research.md)).
 | `NODE_ENV` | yes | `development` / `production` | Standard Node env |
 | `PORT` | yes | `4000` | API listen port |
 | `MONGODB_URI` | yes | `mongodb://localhost:27017/trace_dev` | Connection string (secret in hosted) |
-| `JWT_SECRET` | yes | `<random>` | Token signing key — **secret** |
+| `JWT_SECRET` | yes | `<random>` | Token signing key: **secret** |
 | `JWT_EXPIRES_IN` | no | `24h` | Access-token lifetime |
 | `ALLOWED_ORIGINS` | yes | `http://localhost:5173` | CORS allowlist (comma-separated) |
 | `APP_ORIGIN` | yes in production | `https://trace.example.com` | Public web origin for reset links (not localhost in prod) |
@@ -54,7 +54,7 @@ or invalid ([R-10](../../specs/001-foundation-and-capture/research.md)).
 
 - Each package has a committed **`.env.example`** documenting all variables with safe placeholder values.
 - Real `.env` files are **gitignored** and never committed.
-- Production/staging secrets live in the hosting platform's secret store, injected at runtime — never in the repo or image.
+- Production/staging secrets live in the hosting platform's secret store, injected at runtime, never in the repo or image.
 
 ## Promotion model
 

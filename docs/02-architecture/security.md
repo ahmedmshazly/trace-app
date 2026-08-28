@@ -1,4 +1,4 @@
-# Security Architecture — Trace
+# Security Architecture: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18 · **Owner:** engineering
 
@@ -34,13 +34,13 @@ the reference for how that requirement is met.
 ## Authorization & data isolation *(the central control)*
 
 - Every protected route passes through `requireUser`, which rejects unauthenticated requests.
-- **All Entry queries are constructed with `{ userId: req.userId }` inside the service layer** — a single, auditable choke point (research [R-03](../../specs/001-foundation-and-capture/research.md)).
+- **All Entry queries are constructed with `{ userId: req.userId }` inside the service layer.** A single, auditable choke point (research [R-03](../../specs/001-foundation-and-capture/research.md)).
 - The client is never trusted to scope data; isolation is enforced server-side regardless of client behavior (defense in depth).
 - A dedicated **isolation test suite** asserts that user B can never read/patch/delete user A's entries through any endpoint (SC-4).
 
 ## Transport & headers
 
-- **HTTPS/TLS** for all client–server traffic in production (NFR-4.1); TLS terminated at the edge/reverse proxy.
+- **HTTPS/TLS** for all client-server traffic in production (NFR-4.1); TLS terminated at the edge/reverse proxy.
 - **helmet** sets security headers (HSTS, no-sniff, frame options, etc.).
 - **CORS** restricted to configured `ALLOWED_ORIGINS`.
 
@@ -77,6 +77,6 @@ the reference for how that requirement is met.
 
 ## Known deferrals (tracked, not forgotten)
 
-- Email verification on registration — deferred (V1 assumption).
-- MFA / SSO — future.
-- Field-level encryption of entry bodies — considered for a future version; flagged in the [risk register](../03-project/risk-register.md).
+- Email verification on registration, deferred (V1 assumption).
+- MFA / SSO, future.
+- Field-level encryption of entry bodies, considered for a future version; flagged in the [risk register](../03-project/risk-register.md).

@@ -1,4 +1,4 @@
-# Trace — Product Vision
+# Trace: Product Vision
 
 **Document owner:** Product · **Status:** Approved · **Last updated:** 2026-06-18
 
@@ -7,12 +7,12 @@
 ## The one-sentence vision
 
 **Trace is a frictionless personal timeline where the unit of writing is a
-*moment*, not a line — an effortless, plain-text-portable record of your days
+*moment*, not a line, an effortless, plain-text-portable record of your days
 that you can later mine for patterns.**
 
 ## The core reframe
 
-In a normal text editor, the address of a piece of text is its **line number** —
+In a normal text editor, the address of a piece of text is its **line number**
 spatial and arbitrary (line 47 means nothing). In Trace, the address of every
 entry is its **timestamp**. Time becomes the primary key of your life's record.
 
@@ -23,8 +23,8 @@ is where the patterns hide, not the obviously notable.
 
 ## The governing principle: capture friction must be near zero
 
-Everything Trace will eventually do — pattern discovery, recommendations, "things
-you didn't notice" — is worthless without a **dense, honest, consistent corpus**.
+Everything Trace will eventually do, pattern discovery, recommendations, "things
+you didn't notice", is worthless without a **dense, honest, consistent corpus**.
 And that corpus only grows if logging never feels like a task.
 
 So the product is ruthless about one thing: **capturing a moment must be faster
@@ -48,15 +48,15 @@ trapped, and it stays analysis-ready as plain text.
 
 ## Who it's for (V1)
 
-Individuals — initially technical, detail-oriented people — who want an honest,
+Individuals, initially technical, detail-oriented people, who want an honest,
 high-resolution record of their days and believe that record will be valuable to
 their future selves. Trace is hosted and multi-user: each person has a private,
 isolated corpus. See [`personas.md`](./personas.md).
 
-## What V1 is — in one line
+## What V1 is: in one line
 
 > A dead-simple, effortless, plain-text-portable, timestamped capture loop that
-> quietly accumulates an analysis-ready record of your days — capture, store,
+> quietly accumulates an analysis-ready record of your days: capture, store,
 > browse, search, export. Nothing more.
 
 ## What V1 is deliberately *not*
@@ -78,8 +78,8 @@ implementing them, so a later version can extend rather than restructure. See
 
 ## Prior art we borrow from
 
-Trace stands on an established pattern — **interstitial journaling** (timestamping
-entries inline as you go) — and borrows conventions from `jrnl`, Org-mode
+Trace stands on an established pattern, **interstitial journaling** (timestamping
+entries inline as you go), and borrows conventions from `jrnl`, Org-mode
 timestamps, and Obsidian daily notes, rather than reinventing them.
 
 ## How we measure success

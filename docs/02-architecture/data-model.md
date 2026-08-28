@@ -1,4 +1,4 @@
-# Data Model — Trace (Canonical)
+# Data Model: Trace (Canonical)
 
 **Status:** Baseline · **Authoritative** · **Last updated:** 2026-06-18
 
@@ -15,8 +15,8 @@ The Entry schema is intentionally **flat, user-scoped, time-keyed, and
 tag-indexed** so the corpus is directly consumable by a future analysis layer
 (an algorithm or analysis engine) without preprocessing. Two timestamps carry distinct meaning:
 
-- **`occurredAt`** — when the moment *happened*. The **primary analysis axis**. Editable (backdating).
-- **`createdAt`** — when the entry was *committed*. **Immutable**. The honest ledger of when you actually logged.
+- **`occurredAt`.** When the moment *happened*. The **primary analysis axis**. Editable (backdating).
+- **`createdAt`.** When the entry was *committed*. **Immutable**. The honest ledger of when you actually logged.
 
 ## Entities
 
@@ -40,7 +40,7 @@ tag-indexed** so the corpus is directly consumable by a future analysis layer
 | `_id` | ObjectId | PK | Unique entry identifier |
 | `userId` | ObjectId | required · FK→User · indexed | Owning user; every query filters on this (FR-7.4) |
 | `body` | string | required · non-empty (trimmed) | Markdown-friendly plain text |
-| `occurredAt` | Date (UTC) | required · indexed | When it happened — primary analysis axis; editable |
+| `occurredAt` | Date (UTC) | required · indexed | When it happened: primary analysis axis; editable |
 | `createdAt` | Date (UTC) | required · immutable | Commit instant; set once, never changes |
 | `updatedAt` | Date (UTC) | auto | Refreshes on body/`occurredAt` change |
 | `tags` | string[] | default `[]` · indexed (002) | Parsed from inline `#hashtags` (feature 002) |
@@ -48,9 +48,9 @@ tag-indexed** so the corpus is directly consumable by a future analysis layer
 | `source` | string | default `"manual"` | Reserved for future capture methods (e.g. `"voice"`); unused in V1 |
 
 - **Indexes:**
-  - `{ userId: 1, occurredAt: -1, _id: -1 }` — the timeline (reverse-chrono, day-grouped, cursor-paginated).
-  - `{ userId: 1, tags: 1 }` — tag filtering (added with feature 002).
-  - Text index on `body` (or equivalent search strategy) — full-text search (feature 002).
+  - `{ userId: 1, occurredAt: -1, _id: -1 }`, the timeline (reverse-chrono, day-grouped, cursor-paginated).
+  - `{ userId: 1, tags: 1 }`, tag filtering (added with feature 002).
+  - Text index on `body` (or equivalent search strategy), full-text search (feature 002).
 
 ## Relationships (ERD)
 
@@ -88,7 +88,7 @@ erDiagram
 
 ## Lifecycle
 
-The Entry state machine — `Draft → Committed ↔ SoftDeleted` — is specified in
+The Entry state machine, `Draft → Committed ↔ SoftDeleted`, is specified in
 [`../diagrams/trace-entry-lifecycle.mermaid`](../diagrams/trace-entry-lifecycle.mermaid)
 and embedded in [`../diagrams/trace-diagrams.md`](../diagrams/trace-diagrams.md).
 
@@ -96,8 +96,8 @@ and embedded in [`../diagrams/trace-diagrams.md`](../diagrams/trace-diagrams.md)
 
 A user's corpus is exportable to (NFR-5.1):
 
-- **JSON** — an array of Entry objects with all fields preserved (round-trippable, FR-6.2).
-- **Markdown** — entries under day headers with inline timestamps and tags, e.g.:
+- **JSON.** An array of Entry objects with all fields preserved (round-trippable, FR-6.2).
+- **Markdown.** Entries under day headers with inline timestamps and tags, e.g.:
 
 ```markdown
 ## 2026-06-18

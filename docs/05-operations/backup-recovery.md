@@ -1,4 +1,4 @@
-# Backup & Recovery — Trace
+# Backup & Recovery: Trace
 
 **Status:** Operational overlay · **Last updated:** 2026-07-15
 
@@ -8,8 +8,8 @@ and recovered.
 
 Companion docs:
 
-- [AWS off-box backups](./aws-backup.md) — S3 + OIDC + scripts
-- [Restore drill](./restore-drill.md) — Path A / Path B procedure
+- [AWS off-box backups](./aws-backup.md), S3 + OIDC + scripts
+- [Restore drill](./restore-drill.md). Path A / Path B procedure
 
 ---
 
@@ -17,14 +17,14 @@ Companion docs:
 
 | Objective | Target (V1) | Rationale |
 |---|---|---|
-| **RPO** (max acceptable data loss) | Small — minutes via Atlas PITR where available; ≤ 24h for S3 nightly | "No committed entry is ever lost" (SC-5) beyond a single DB instance. |
+| **RPO** (max acceptable data loss) | Small: minutes via Atlas PITR where available; ≤ 24h for S3 nightly | "No committed entry is ever lost" (SC-5) beyond a single DB instance. |
 | **RTO** (max acceptable downtime to restore) | Hours | V1 showcase is not mission-critical, but restoration must be proven. |
 
 ## What is backed up
 
-- **MongoDB** — the entire datastore (users + entries). This *is* the corpus. V1 has no S3/GridFS blob store for moments.
-- **Configuration/secrets** — Vercel env + AWS SSM; not inside mongodump archives.
-- Application **artifacts** — reproducible from source + CI; not backed up as data.
+- **MongoDB.** The entire datastore (users + entries). This *is* the corpus. V1 has no S3/GridFS blob store for moments.
+- **Configuration/secrets.** Vercel env + AWS SSM; not inside mongodump archives.
+- Application **artifacts**, reproducible from source + CI; not backed up as data.
 
 **Not** prod: local Docker Compose Mongo volumes. `docker compose down -v` wipes **dev only**. Never treat Compose as production recovery.
 
@@ -43,18 +43,18 @@ flowchart TB
 |---|---|---|
 | Hot path | Vercel + Atlas | Live corpus |
 | Provider backup | Atlas Cloud Backup / PITR | Path A |
-| Off-box second copy | S3 `ahmdmshazly-trace-backups` | Path B — survives Atlas-only failure |
+| Off-box second copy | S3 `ahmdmshazly-trace-backups` | Path B: survives Atlas-only failure |
 | Proven | Quarterly restore drill | See [restore-drill.md](./restore-drill.md) |
 
 ## Backup strategy
 
-1. **Atlas** — enable automated backups / PITR on the production cluster (AWS `eu-central-1`). Encryption at rest on.
-2. **S3 nightly** — GitHub Actions OIDC → IAM role `trace-backup-gha` → `mongodump` gzip archive under `trace/YYYY/MM/DD/`. See [aws-backup.md](./aws-backup.md).
-3. **Pre-migration** — mandatory dump/snapshot before schema migrations ([runbook](./runbook.md)).
+1. **Atlas.** Enable automated backups / PITR on the production cluster (AWS `eu-central-1`). Encryption at rest on.
+2. **S3 nightly.** GitHub Actions OIDC → IAM role `trace-backup-gha` → `mongodump` gzip archive under `trace/YYYY/MM/DD/`. See [aws-backup.md](./aws-backup.md).
+3. **Pre-migration.** Mandatory dump/snapshot before schema migrations ([runbook](./runbook.md)).
 
 ## Restore procedures
 
-### Path A — Atlas PITR / snapshot
+### Path A: Atlas PITR / snapshot
 
 1. Declare Sev1 if production is impacted; stop writes if corruption is active.
 2. Restore to a **new** Atlas instance (or scratch DB) at the chosen timestamp.
@@ -62,7 +62,7 @@ flowchart TB
 4. Re-point Vercel `MONGODB_URI`; confirm `/api/health` + capture smoke.
 5. Postmortem.
 
-### Path B — S3 archive
+### Path B: S3 archive
 
 1. `DRY_RUN=1 ./scripts/backup/restore-from-s3.sh` to identify the object.
 2. `mongorestore` into **scratch** URI only (`RESTORE_MONGODB_URI` ≠ prod).

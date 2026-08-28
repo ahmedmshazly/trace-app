@@ -1,4 +1,4 @@
-# CI/CD — Trace
+# CI/CD: Trace
 
 **Status:** Baseline (pipeline to be wired in Stage 4 / feature 004) · **Last updated:** 2026-06-18
 
@@ -36,7 +36,7 @@ flowchart LR
 | Lint + format | ESLint + Prettier | No violations |
 | Typecheck | tsc `--noEmit` | No type errors |
 | Unit | Vitest | All pass |
-| Integration | Vitest + Supertest + `mongodb-memory-server` | All pass — **incl. isolation suite (release-blocking)** |
+| Integration | Vitest + Supertest + `mongodb-memory-server` | All pass: **incl. isolation suite (release-blocking)** |
 | Build | Vite / tsc | Both packages build |
 | E2E | Playwright | Capture loop + auth isolation pass |
 

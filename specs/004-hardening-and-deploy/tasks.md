@@ -6,7 +6,7 @@ description: "Task list for Hardening, Settings & Deploy / V1 GA (004)"
 
 **Input**: Design documents from `/specs/004-hardening-and-deploy/`
 
-**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/openapi.yaml; features 001–003 implemented.
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/openapi.yaml; features 001-003 implemented.
 
 **Tests**: Tests ARE included and are the point of this feature. Trace's
 Constitution (IV. Test-First & Quality Gates) mandates automated tests for the
@@ -42,7 +42,7 @@ implemented, tested, and demoed independently.
 - [ ] T006 [P] Implement the `mailer` abstraction (`backend/src/lib/mailer.ts`) with a dev "log link" transport and a config-selected provider.
 - [ ] T007 Finalize the rate-limit middleware with tuned limits for auth/reset/sensitive routes in `backend/src/middleware/rate-limit.ts`.
 
-**Checkpoint**: Foundation ready — token model, session revocation, mailer, limits.
+**Checkpoint**: Foundation ready, token model, session revocation, mailer, limits.
 
 ---
 
@@ -77,7 +77,7 @@ implemented, tested, and demoed independently.
 
 ### Tests for User Story 2 (write first, must fail)
 
-- [ ] T015 [P] [US2] Integration test: change password (current+new) — new works, old fails (FR-010) in `backend/tests/integration/change-password.test.ts`.
+- [ ] T015 [P] [US2] Integration test: change password (current+new), new works, old fails (FR-010) in `backend/tests/integration/change-password.test.ts`.
 - [ ] T016 [P] [US2] Integration test: change email to unused/valid succeeds; duplicate/invalid rejected non-enumerating (FR-010) in `backend/tests/integration/change-email.test.ts`.
 - [ ] T017 [P] [US2] E2E test: theme toggle applies immediately + persists across reload, no FOUC; OS default honored on first run (FR-011, SC-003) in `frontend/tests/e2e/theme.spec.ts`.
 
@@ -142,7 +142,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T038 [P] Apply the two-theme color tokens across all existing screens (001–003) so dark/light render correctly everywhere (ADR-0006).
+- [ ] T038 [P] Apply the two-theme color tokens across all existing screens (001-003) so dark/light render correctly everywhere (ADR-0006).
 - [ ] T039 [P] Reduced-motion + secure-headers + cookie posture review in `frontend/` and `backend/`.
 - [ ] T040 [P] Update `docs/` (functional-requirements verification for FR-7.5/7.6/7.7, traceability matrix 004 rows, security, runbook, deployment, ci-cd) to match shipped behavior.
 - [ ] T041 Run `quickstart.md` end-to-end as the manual acceptance + GA-readiness script; confirm the Definition of Done.

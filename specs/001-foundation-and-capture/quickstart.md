@@ -12,13 +12,13 @@ the implementation tasks in `tasks.md` are complete.
 ## Prerequisites
 
 - Node.js 22 LTS and npm
-- MongoDB 7 running locally (`mongodb://localhost:27017`) — via local install or Docker
+- MongoDB 7 running locally (`mongodb://localhost:27017`), via local install or Docker
 - A POSIX shell
 
 ## 1. Configure environment
 
 Each package reads configuration from environment variables (no secrets in
-source — Constitution V). Copy the examples and adjust:
+source. Constitution V). Copy the examples and adjust:
 
 ```bash
 cp backend/.env.example backend/.env
@@ -87,7 +87,7 @@ curl -s http://localhost:4000/api/entries -H "authorization: Bearer $TOKEN_B" | 
 ### In the browser (US1 friction check, SC-001/002/003)
 
 1. Open http://localhost:5173 and log in.
-2. Confirm the capture input is **already focused** — no click needed.
+2. Confirm the capture input is **already focused**, no click needed.
 3. Type a moment and press **Enter** → it appears at the top of the timeline instantly; the input clears and re-focuses.
 4. Press **Shift+Enter** → a newline is inserted (no commit).
 5. Reload → the entry is still there.

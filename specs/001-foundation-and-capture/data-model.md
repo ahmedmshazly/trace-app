@@ -16,7 +16,7 @@ An authenticated account holder who owns a private, isolated corpus.
 |---|---|---|---|
 | `_id` | ObjectId | PK | Unique user identifier |
 | `email` | string | required, unique, lowercased | Login identifier |
-| `passwordHash` | string | required | bcrypt salted hash — never plaintext (Constitution V) |
+| `passwordHash` | string | required | bcrypt salted hash: never plaintext (Constitution V) |
 | `createdAt` | Date (UTC) | auto | Account creation instant |
 | `updatedAt` | Date (UTC) | auto | Last account update |
 
@@ -37,14 +37,14 @@ A single timestamped moment, owned by exactly one user.
 | `_id` | ObjectId | PK | Unique entry identifier |
 | `userId` | ObjectId | required, FK → User, indexed | Owning user; every query filters on this |
 | `body` | string | required, non-empty (trimmed) | Markdown-friendly plain text |
-| `occurredAt` | Date (UTC) | required, indexed | When the moment happened — **primary analysis axis**, editable (backdating) |
-| `createdAt` | Date (UTC) | required, immutable | Commit instant — set once, never changes (Constitution II) |
+| `occurredAt` | Date (UTC) | required, indexed | When the moment happened: **primary analysis axis**, editable (backdating) |
+| `createdAt` | Date (UTC) | required, immutable | Commit instant: set once, never changes (Constitution II) |
 | `updatedAt` | Date (UTC) | auto | Refreshes on body or `occurredAt` change |
 | `deleted` | boolean | default `false` | Soft-delete flag; hidden when `true` (no hard delete in V1) |
 | `source` | string | default `"manual"` | Reserved for future capture methods (e.g. `"voice"`); unused in V1 |
 
 **Indexes**:
-- Compound `{ userId: 1, occurredAt: -1, _id: -1 }` — serves the reverse-chronological, day-grouped, cursor-paginated timeline.
+- Compound `{ userId: 1, occurredAt: -1, _id: -1 }`: serves the reverse-chronological, day-grouped, cursor-paginated timeline.
 - (Reserved for feature 002) `{ userId: 1, tags: 1 }` once tags exist.
 
 **Invariants**:

@@ -1,4 +1,4 @@
-# Trace — Frontend (Web Client)
+# Trace: Frontend (Web Client)
 
 The React web client for Trace, built with **Vite** and the Trace design system.
 It talks to the backend API at `/api` (same origin in production on Vercel).
@@ -33,7 +33,7 @@ Start the API separately (`npm run dev:api` from the repo root, or
 ## Architecture notes
 
 - The design system ships as a precompiled global bundle (`ui-bundle.js`) with
-  a single global React — see `src/main.jsx` and `vite.config.js`.
+  a single global React: see `src/main.jsx` and `vite.config.js`.
 - Auth tokens are stored in `localStorage` under `trace.token`.
 - Production builds are served by Vercel from `frontend/dist`; API routes are
   handled by the serverless function at `api/index.js`.

@@ -1,4 +1,4 @@
-# Functional Requirements Register — Trace V1
+# Functional Requirements Register: Trace V1
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -78,5 +78,5 @@ stories, design, and tests is in [`traceability-matrix.md`](./traceability-matri
 
 ---
 
-**Totals:** 30 functional requirements — **13 Must**, **13 Should**, **4 Could**.
+**Totals:** 30 functional requirements, **13 Must**, **13 Should**, **4 Could**.
 The 13 Musts constitute the minimal shippable V1.

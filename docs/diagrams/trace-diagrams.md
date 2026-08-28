@@ -1,4 +1,4 @@
-# Trace — V1 Flow Diagrams
+# Trace: V1 Flow Diagrams
 
 **Product:** Trace · personal life-logging web application  
 **Version:** V1 · multi-user · hosted MERN  
@@ -11,9 +11,9 @@
 
 | Audience | Primary diagrams |
 |---|---|
-| Design (wireframing) | Diagram 1 — User Flow, Diagram 3 — Auth Sub-Flow |
-| Development (implementation) | Diagram 2 — Entry Lifecycle, Diagram 3 — Auth Sub-Flow |
-| Spec validation | All three — cross-check against FR and NFR IDs |
+| Design (wireframing) | Diagram 1: User Flow, Diagram 3, Auth Sub-Flow |
+| Development (implementation) | Diagram 2: Entry Lifecycle, Diagram 3, Auth Sub-Flow |
+| Spec validation | All three: cross-check against FR and NFR IDs |
 
 **Rendering:** every diagram in this file is a fenced Mermaid code block. It renders natively on GitHub, in VS Code with the Mermaid Preview extension, and at [mermaid.live](https://mermaid.live). The standalone `.mermaid` files in this directory can be imported directly into Figma plugins that support Mermaid.
 
@@ -32,12 +32,12 @@
 
 ---
 
-## Diagram 1 — User Flow
+## Diagram 1: User Flow
 
 **What it shows:** every user journey through the app, from first browser request to session end. Use this when designing wireframes to ensure every screen has a path in and a path out, and that the capture loop is visually central.
 
 **Key design decisions encoded here:**
-- The capture loop is the product's heartbeat — it is separate from but always reachable from the core screen.
+- The capture loop is the product's heartbeat; it is separate from but always reachable from the core screen.
 - Search is triggered by ⌘K, keeping the surface keyboard-first (NFR-7.1).
 - Soft-delete always requires confirmation before proceeding.
 - Account deletion is a two-step, irreversible action with a separate confirm screen.
@@ -87,7 +87,7 @@ flowchart TD
     EACT -->|Adjust occurrence time| HOME
     EACT -->|Soft-delete| SDCFM{Confirm<br/>delete?}
 
-    SDCFM -->|"Yes — hidden, recoverable"| HOME
+    SDCFM -->|"Yes, hidden and recoverable"| HOME
     SDCFM -->|Cancel| EACT
 
     %% ── Search & filter ─────────────────────────────────────────────────────
@@ -109,7 +109,7 @@ flowchart TD
     SETT -->|Toggle light / dark theme| SETT
     SETT -->|Delete account + all data| DELCFM{"Permanent delete?<br/>No undo."}
 
-    DELCFM -->|"Yes — all data erased"| END
+    DELCFM -->|"Yes, all data erased"| END
     DELCFM -->|Cancel| SETT
     SETT -->|Log out| END
 
@@ -136,12 +136,12 @@ flowchart TD
 
 ---
 
-## Diagram 2 — Entry Lifecycle
+## Diagram 2: Entry Lifecycle
 
-**What it shows:** the complete state machine for a single Entry document — from the moment a user starts typing through all possible mutations and deletion states. Use this when implementing the backend model and when designing the inline entry interaction patterns in the wireframes.
+**What it shows:** the complete state machine for a single Entry document, from the moment a user starts typing through all possible mutations and deletion states. Use this when implementing the backend model and when designing the inline entry interaction patterns in the wireframes.
 
 **Key design decisions encoded here:**
-- `createdAt` is set exactly once at commit and is never mutable — this is the immutable ledger principle from the spec (FR-2.3).
+- `createdAt` is set exactly once at commit and is never mutable; this is the immutable ledger principle from the spec (FR-2.3).
 - `occurredAt` is separately editable at any time, enabling backdating (FR-1.5).
 - Soft-delete is reversible; there is no hard delete in V1 (FR-2.2, NFR-2.3).
 - Draft text lives only on the client until Enter is pressed; it is recoverable on restart (NFR-2.2).
@@ -152,17 +152,17 @@ stateDiagram-v2
     %% ── Draft ───────────────────────────────────────────────────────────────
     [*] --> Draft : User starts typing
 
-    Draft --> Draft     : Shift+Enter — insert newline
-    Draft --> Committed : Enter — createdAt set (immutable)
-    Draft --> [*]       : Discard — draft text recoverable on restart
+    Draft --> Draft     : Shift+Enter inserts a newline
+    Draft --> Committed : Enter, createdAt set (immutable)
+    Draft --> [*]       : Discard, draft text recoverable on restart
 
     %% ── Committed ───────────────────────────────────────────────────────────
-    Committed --> Committed   : Edit body text — updatedAt refreshed
-    Committed --> Committed   : Adjust occurredAt — backdate event
-    Committed --> SoftDeleted : Soft-delete — deleted=true · hidden from timeline
+    Committed --> Committed   : Edit body text, updatedAt refreshed
+    Committed --> Committed   : Adjust occurredAt, backdate event
+    Committed --> SoftDeleted : Soft-delete, deleted=true · hidden from timeline
 
     %% ── SoftDeleted ─────────────────────────────────────────────────────────
-    SoftDeleted --> Committed : Restore — deleted=false · re-appears in timeline
+    SoftDeleted --> Committed : Restore, deleted=false · re-appears in timeline
 
     %% ── Annotations ─────────────────────────────────────────────────────────
     note right of Draft
@@ -173,7 +173,7 @@ stateDiagram-v2
 
     note right of Committed
         createdAt is set once on commit and never changes.
-        occurredAt is the primary analysis axis — editable.
+        occurredAt is the primary analysis axis, editable.
         updatedAt refreshes whenever body or occurredAt changes.
         body is Markdown-friendly plain text.
         tags are parsed from inline #hashtags.
@@ -191,20 +191,20 @@ stateDiagram-v2
 
 | State | `deleted` | `createdAt` | `occurredAt` | `updatedAt` |
 |---|---|---|---|---|
-| Draft | — (not in DB) | — | — | — |
+| Draft | not in DB | — | — | — |
 | Committed | `false` | Set once, immutable | Editable | Refreshed on edit |
 | SoftDeleted | `true` | Unchanged | Unchanged | Set at soft-delete |
 
 ---
 
-## Diagram 3 — Authentication Sub-Flow
+## Diagram 3: Authentication Sub-Flow
 
-**What it shows:** the detailed paths through the authentication system — login, registration, and password reset — including all error branches. Use this when designing the auth screens in the wireframes and when implementing the auth endpoints.
+**What it shows:** the detailed paths through the authentication system, login, registration, and password reset, including all error branches. Use this when designing the auth screens in the wireframes and when implementing the auth endpoints.
 
 **Key design decisions encoded here:**
 - Password reset email response is the same regardless of whether the email is registered, preventing account enumeration attacks (NFR-4.4).
 - Rate limiting on login attempts is noted on the error node (NFR-4.5).
-- Registration immediately issues a JWT — no separate email verification step in V1.
+- Registration immediately issues a JWT, no separate email verification step in V1.
 - Old sessions are invalidated when a password is reset.
 
 ```mermaid
@@ -236,7 +236,7 @@ flowchart TD
     RESETREQ --> RESENTSENT{Email<br/>recognised?}
 
     RESENTSENT -->|Yes| RESETLINK["Reset link sent<br/>Link expires after 1 hour"]
-    RESENTSENT -->|"No — same response shown<br/>(prevents enumeration)"| RESETLINK
+    RESENTSENT -->|"No, same response shown<br/>(prevents enumeration)"| RESETLINK
 
     RESETLINK -->|User clicks link in email| NEWPWFORM["Set new password<br/>─────────────────────────<br/>New password + Confirm"]
 
@@ -259,7 +259,7 @@ flowchart TD
     REGDONE --> APP
 
     %% ── Success terminus ────────────────────────────────────────────────────
-    APP(["Authenticated — Capture + Timeline"])
+    APP(["Authenticated: Capture + Timeline"])
 ```
 
 **Spec coverage check**
@@ -272,7 +272,7 @@ flowchart TD
 | FR-7.5 Credential recovery | `LOGINFORM → RESETREQ → RESETLINK → NEWPWFORM` |
 | NFR-4.1 HTTPS/TLS | Implied; enforced at infrastructure level |
 | NFR-4.2 Salted password hash | Implied; enforced at implementation level |
-| NFR-4.4 No account enumeration | `RESENTSENT` — same response regardless |
+| NFR-4.4 No account enumeration | `RESENTSENT`: same response regardless |
 | NFR-4.5 Rate limiting | `LOGINERR` node label |
 
 ---

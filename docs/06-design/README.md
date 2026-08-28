@@ -1,9 +1,9 @@
-# Trace — Design
+# Trace: Design
 
 **Status:** Baseline · **Last updated:** 2026-06-19
 
-The design layer turns the product principles (Constitution I — *Capture Friction
-Is Sacred*; NFR-7 — *Usability*) into a concrete, buildable interface. These are
+The design layer turns the product principles (Constitution I, *Capture Friction
+Is Sacred*; NFR-7, *Usability*) into a concrete, buildable interface. These are
 the **V1 wireframes locked to layout + flow** plus the **two-theme color system**.
 They are the canonical front-end design reference: feature specs describe *what*
 and *why*; this layer describes *how it looks and behaves* so engineering and
@@ -33,7 +33,7 @@ owned by the feature that ships it:
 
 | Screen / surface | Feature | Spec |
 |---|---|---|
-| Auth — login, register, reset confirmation | 001 (gateway) · 004 (reset flow) | [001](../../specs/001-foundation-and-capture/), [004](../../specs/004-hardening-and-deploy/) |
+| Auth: login, register, reset confirmation | 001 (gateway) · 004 (reset flow) | [001](../../specs/001-foundation-and-capture/), [004](../../specs/004-hardening-and-deploy/) |
 | Capture + Timeline (sticky bar), curation, mobile | 001 | [001](../../specs/001-foundation-and-capture/) |
 | ⌘K command palette / search · Tag index panel | 002 | [002](../../specs/002-search-and-tags/) |
 | Settings & Export | 003 (export) · 004 (theme, account, danger zone) | [003](../../specs/003-export-portability/), [004](../../specs/004-hardening-and-deploy/) |
@@ -41,11 +41,11 @@ owned by the feature that ships it:
 
 ## Source materials
 
-- **Wireframes** — *Trace — V1 wireframes* (low-fidelity, grayscale, structural;
+- **Wireframes.** *Trace, V1 wireframes* (low-fidelity, grayscale, structural;
   these frames lock layout + flow). Color & theming are applied as a later step,
   captured in [color-system.md](./color-system.md).
-- **Color system** — *Trace — Color System v1 · light + dark*.
-- **Flow diagrams** — [`docs/diagrams/trace-diagrams.md`](../diagrams/trace-diagrams.md)
+- **Color system.** *Trace. Color System v1 · light + dark*.
+- **Flow diagrams.** [`docs/diagrams/trace-diagrams.md`](../diagrams/trace-diagrams.md)
   (user flow, entry lifecycle, auth sub-flow) are the upstream behavioral source
   these wireframes realize.
 

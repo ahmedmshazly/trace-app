@@ -1,4 +1,4 @@
-%%  Trace — V1 User Flow
+%%  Trace V1 user flow
 %%  Scope: every user journey from browser open to session end.
 %%  Read with: mermaid.live · VS Code Mermaid Preview · GitHub markdown
 
@@ -50,7 +50,7 @@ flowchart TD
     EACT -->|Adjust occurrence time| HOME
     EACT -->|Soft-delete| SDCFM{Confirm\ndelete?}
 
-    SDCFM -->|"Yes — hidden, recoverable"| HOME
+    SDCFM -->|"Yes, hidden and recoverable"| HOME
     SDCFM -->|Cancel| EACT
 
     %% ── Search & filter ─────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ flowchart TD
     SETT -->|Delete account + all data| DELCFM{"Permanent delete?
     No undo."}
 
-    DELCFM -->|"Yes — all data erased"| END
+    DELCFM -->|"Yes, all data erased"| END
     DELCFM -->|Cancel| SETT
     SETT -->|Log out| END
 

@@ -18,9 +18,9 @@ color that:
   contrast ratios per pairing),
 - enforces **"never color alone"** (each role has a structural/typographic
   partner),
-- lets features 001–003 build before the theme toggle (004) ships, without
+- lets features 001-003 build before the theme toggle (004) ships, without
   rework,
-- stays simple (Constitution VII) — no theming framework, no per-component color
+- stays simple (Constitution VII), no theming framework, no per-component color
   logic.
 
 ## Decision
@@ -33,7 +33,7 @@ with **two designed themes (dark default, light opt-in)**:
    [color-system.md](../06-design/color-system.md). Tokens map **1:1** to CSS
    custom properties.
 2. Themes are property sets on a theme root (e.g. `[data-theme="dark"]` /
-   `[data-theme="light"]`). Switching theme swaps the property set — components
+   `[data-theme="light"]`). Switching theme swaps the property set, components
    are never recolored.
 3. **Components bind only to semantic tokens** (`var(--color-...)`); raw hex in a
    component style is a review failure.
@@ -51,9 +51,9 @@ with **two designed themes (dark default, light opt-in)**:
 - Dark mode is genuinely designed and low-glare; theme swap is a single-layer
   change.
 - Contrast is verifiable and gated, satisfying NFR-7.4 across both themes.
-- Features 001–003 build against token names; applying themes in 004 is
+- Features 001-003 build against token names; applying themes in 004 is
   non-invasive.
-- No theming dependency added — just CSS custom properties (Constitution VII).
+- No theming dependency added, just CSS custom properties (Constitution VII).
 
 ### Negative / costs
 
@@ -64,17 +64,17 @@ with **two designed themes (dark default, light opt-in)**:
 
 - The theme toggle UI and persistence land with feature 004; the token contract
   exists from the first frontend commit.
-- A future high-contrast or additional theme is additive — another property set,
+- A future high-contrast or additional theme is additive, another property set,
   same component code.
 
 ## Alternatives considered
 
-- **Invert light into dark programmatically** — rejected: produces glaring,
+- **Invert light into dark programmatically.** Rejected: produces glaring,
   off-brand dark surfaces; dark must be designed (the lead surface).
-- **A CSS-in-JS theming library / UI framework theme** — rejected: adds a
+- **A CSS-in-JS theming library / UI framework theme.** Rejected: adds a
   dependency and complexity for what plain CSS custom properties already solve
   (Constitution VII).
-- **Hard-coded colors per component** — rejected: not themeable, not auditable for
+- **Hard-coded colors per component.** Rejected: not themeable, not auditable for
   contrast, and duplicative.
-- **Light-only V1, dark later** — rejected: contradicts the product's "dark is
+- **Light-only V1, dark later.** Rejected: contradicts the product's "dark is
   first-class" intent and would force rework.

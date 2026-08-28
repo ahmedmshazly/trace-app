@@ -1,4 +1,4 @@
-# Trace — Personas
+# Trace: Personas
 
 **Status:** Draft · **Last updated:** 2026-06-18
 
@@ -8,7 +8,7 @@ scope into V1.
 
 ---
 
-## Primary — "The Self-Quantifier" (technical, detail-oriented)
+## Primary: "The Self-Quantifier" (technical, detail-oriented)
 
 | | |
 |---|---|
@@ -22,7 +22,7 @@ scope into V1.
 This persona maps directly to the V1 governing principle: **capture friction must
 be near zero**.
 
-## Secondary — "The Reflective Journaler"
+## Secondary: "The Reflective Journaler"
 
 | | |
 |---|---|
@@ -32,16 +32,16 @@ be near zero**.
 | **Trace wins by** | Calm design, day-grouped timeline, recoverable deletion, export. |
 | **V1 note** | Served by the same core loop; informs design tone, not extra features. |
 
-## Future — "The Pattern Seeker" (V2+)
+## Future: "The Pattern Seeker" (V2+)
 
 | | |
 |---|---|
 | **Profile** | An existing Trace user with months of corpus who now wants insight: trends, correlations, "things I didn't notice." |
 | **Goal** | Turn the accumulated record into understanding and recommendations. |
-| **Needs** | The analysis/insight engine, visualizations — all **out of scope for V1**. |
+| **Needs** | The analysis/insight engine, visualizations: all **out of scope for V1**. |
 | **Why we name them now** | This persona is the reason the corpus must be clean and analysis-ready from day one (Constitution II). We build *for* them by getting the data right, not by building their features early. |
 
-## Operator — "The Deployer" (internal)
+## Operator: "The Deployer" (internal)
 
 | | |
 |---|---|
@@ -54,6 +54,6 @@ be near zero**.
 
 ## Anti-persona (who Trace is *not* for in V1)
 
-- **Teams wanting shared/collaborative logs** — V1 is strictly isolated single-user accounts; collaboration is out of scope.
-- **Users needing offline-first mobile capture** — V1 requires a reachable backend; offline sync is deferred.
-- **Users wanting a structured habit/metrics tracker** — Trace is free-text moments first; structure is derived later, not imposed at capture.
+- **Teams wanting shared/collaborative logs.** V1 is strictly isolated single-user accounts; collaboration is out of scope.
+- **Users needing offline-first mobile capture.** V1 requires a reachable backend; offline sync is deferred.
+- **Users wanting a structured habit/metrics tracker.** Trace is free-text moments first; structure is derived later, not imposed at capture.

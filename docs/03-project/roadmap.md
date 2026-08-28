@@ -1,4 +1,4 @@
-# Roadmap — Trace
+# Roadmap: Trace
 
 **Status:** Baseline · **Last updated:** 2026-06-18
 
@@ -24,22 +24,22 @@ flowchart LR
 
 ---
 
-## Stage 0 — Foundations & documentation *(current)*
+## Stage 0: Foundations & documentation *(current)*
 
 **Goal:** a fully specified, governed project ready to build.
 
 - Flow diagrams, enterprise documentation, SRS baseline.
-- Constitution ratified; **all V1 features (001–004) fully
+- Constitution ratified; **all V1 features (001-004) fully
   specified** (spec + plan + research + data-model + contracts + tasks).
 - **Design layer** (`docs/06-design/`): V1 wireframes captured as a UI/UX spec, the
   dark-first two-theme color system + design tokens (ADR-0006), and a component
   inventory.
 
-**Exit criteria:** docs reviewed; Constitution v1.0.0; `specs/001`–`specs/004`
+**Exit criteria:** docs reviewed; Constitution v1.0.0; `specs/001`-`specs/004`
 spec+plan+tasks complete; design layer baselined.
 **Status:** ▣ in progress (this PR).
 
-## Stage 1 — Feature 001: Foundation & Core Capture Loop *(the MVP)*
+## Stage 1 · Feature 001: Foundation & Core Capture Loop *(the MVP)*
 
 **Goal:** register, sign in (isolated), capture timestamped moments that persist,
 browse the day-grouped timeline, curate entries.
@@ -53,7 +53,7 @@ proven; entries survive reload/restart; CI green. See
 [`specs/001-foundation-and-capture/`](../../specs/001-foundation-and-capture/).
 **Delivers:** SC-1..SC-5. **Status:** ▢ next.
 
-## Stage 2 — Feature 002: Search & Tags
+## Stage 2 · Feature 002: Search & Tags
 
 **Goal:** make the corpus retrievable at depth.
 
@@ -62,10 +62,10 @@ proven; entries survive reload/restart; CI green. See
 - Indexes: `{userId, tags}`, text/search strategy on `body`.
 
 **Exit criteria:** search < 300 ms at 50k entries (NFR-1.3); filters combine (FR-4.4).
-**Delivers:** SC-6 (search half). **Status:** ▢ specified — spec+plan+tasks ready
+**Delivers:** SC-6 (search half). **Status:** ▢ specified, spec+plan+tasks ready
 ([`specs/002`](../../specs/002-search-and-tags/)).
 
-## Stage 3 — Feature 003: Export & Portability
+## Stage 3 · Feature 003: Export & Portability
 
 **Goal:** make data ownership real.
 
@@ -73,10 +73,10 @@ proven; entries survive reload/restart; CI green. See
 - Round-trippable JSON; (import FR-6.4 optional).
 
 **Exit criteria:** full corpus exports to MD+JSON; round-trip verified (NFR-5.1/5.2).
-**Delivers:** SC-7. **Status:** ▢ specified — spec+plan+tasks ready
+**Delivers:** SC-7. **Status:** ▢ specified, spec+plan+tasks ready
 ([`specs/003`](../../specs/003-export-portability/)).
 
-## Stage 4 — Feature 004: Hardening & Deploy (V1 GA)
+## Stage 4 · Feature 004: Hardening & Deploy (V1 GA)
 
 **Goal:** production-ready, operable, secure.
 
@@ -85,15 +85,15 @@ proven; entries survive reload/restart; CI green. See
 - CI/CD pipeline, deployment, runbooks, backups, health/observability wired.
 
 **Exit criteria:** all release-blocking NFRs met; deployable via config; runbooks exist.
-**Delivers:** V1 General Availability. **Status:** ▢ specified — spec+plan+tasks ready
+**Delivers:** V1 General Availability. **Status:** ▢ specified, spec+plan+tasks ready
 ([`specs/004`](../../specs/004-hardening-and-deploy/)).
 
-## V2+ — Analysis & insights *(separate initiative)*
+## V2+: Analysis & insights *(separate initiative)*
 
 The reason the corpus must be clean from day one. Out of scope for V1; begins only
 after a real corpus exists. Candidates: pattern detection, dashboards,
 recommendations, voice capture, integrations, offline/sync. Each will get its own
-spec, plan, and — where architecturally significant — ADRs.
+spec, plan, and, where architecturally significant. ADRs.
 
 ---
 

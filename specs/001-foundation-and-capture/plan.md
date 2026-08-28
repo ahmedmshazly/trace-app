@@ -12,7 +12,7 @@ day-grouped timeline. The slice includes email/password authentication with
 strict per-user data isolation, the focused-on-load capture input, automatic
 timestamping with an immutable `createdAt`, the reverse-chronological day-grouped
 timeline with incremental loading, and recoverable entry editing/backdating/
-soft-delete. Search, tags, and export are deferred to features 002–003.
+soft-delete. Search, tags, and export are deferred to features 002-003.
 
 The technical approach is a conventional two-tier web app: a stateless
 Express/Node REST API backed by MongoDB (Mongoose), and a React (Vite) SPA
@@ -82,11 +82,11 @@ No violations. Complexity Tracking section below is intentionally empty.
 specs/001-foundation-and-capture/
 ├── plan.md              # This file
 ├── spec.md              # Feature specification
-├── research.md          # Phase 0 — decisions & rationale
-├── data-model.md        # Phase 1 — entities & schema
-├── quickstart.md        # Phase 1 — local run & verification
+├── research.md          # Phase 0: decisions & rationale
+├── data-model.md        # Phase 1: entities & schema
+├── quickstart.md        # Phase 1: local run & verification
 ├── contracts/
-│   └── openapi.yaml     # Phase 1 — REST API contract
+│   └── openapi.yaml     # Phase 1: REST API contract
 └── tasks.md             # Phase 2: task breakdown
 ```
 
