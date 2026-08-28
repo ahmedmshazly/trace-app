@@ -7,9 +7,9 @@ import { Schema, model, type Types, type HydratedDocument } from 'mongoose';
 export interface Entry {
   userId: Types.ObjectId;
   body: string;
-  /** When the moment happened — the primary analysis axis; editable (backdating). */
+  /** When the moment happened. The primary analysis axis; editable (backdating). */
   occurredAt: Date;
-  /** Commit instant — set once on creation, never mutated (Constitution II). */
+  /** Commit instant, set once on creation and never mutated (Constitution II). */
   createdAt: Date;
   updatedAt: Date;
   /** Soft-delete flag; hidden when true. No hard delete in V1 (ADR-0004). */

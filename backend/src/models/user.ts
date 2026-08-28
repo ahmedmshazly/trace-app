@@ -3,7 +3,7 @@ import { Schema, model, type Types, type HydratedDocument } from 'mongoose';
 /** Persisted shape of a User (an account holder who owns a private corpus). */
 export interface User {
   email: string;
-  /** bcrypt salted hash — never plaintext, never serialized (Constitution V). */
+  /** bcrypt salted hash. Never plaintext, never serialized (Constitution V). */
   passwordHash: string;
   /**
    * Bumped on password reset (and similar revoke events). Embedded in JWTs as

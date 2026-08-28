@@ -133,7 +133,7 @@ export async function createEntry(userId: string, input: CreateEntryInput): Prom
 /**
  * Lists the user's entries newest-first by occurredAt, keyset-paginated on
  * (occurredAt, _id) (R-06). Excludes soft-deleted entries unless includeDeleted.
- * Every query is scoped by userId — the single place isolation is enforced (R-03).
+ * Every query is scoped by userId. That is the single place isolation is enforced (R-03).
  */
 export async function listEntries(userId: string, options: ListOptions = {}): Promise<EntryPage> {
   const limit = Math.min(Math.max(options.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
@@ -169,7 +169,7 @@ function addAnd(filter: EntryFilter, clause: EntryFilter): void {
 
 /**
  * Builds the scoped query for a user, applying optional search (`q`) and `tag`
- * filters. userId scoping is always applied — the single place per-user isolation
+ * filters. userId scoping is always applied, the single place per-user isolation
  * is enforced (R-03).
  */
 function buildListFilter(userId: string, options: ListOptions): EntryFilter {
@@ -267,7 +267,7 @@ export async function deleteAllEntries(userId: string): Promise<number> {
 
 /**
  * Loads an entry the user owns, or throws NotFound. Used as the ownership gate
- * for all mutations — a foreign or non-existent id is indistinguishable (404),
+ * for all mutations: a foreign or non-existent id is indistinguishable (404),
  * so we never reveal that another user's resource exists (isolation, FR-040).
  */
 async function findOwnedOrThrow(userId: string, id: string): Promise<EntryDocument> {

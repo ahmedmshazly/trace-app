@@ -3,7 +3,7 @@ import { z } from 'zod';
 /**
  * Single, validated configuration surface (Constitution V/VI; research R-10).
  * All environment access flows through here. The process fails fast at startup
- * if required configuration is missing or invalid — no silent insecure defaults.
+ * if required configuration is missing or invalid. No silent insecure defaults.
  */
 const EnvSchema = z
   .object({
@@ -52,7 +52,7 @@ const EnvSchema = z
 
     if (env.NODE_ENV !== 'production') return;
 
-    // Production must deliver reset links — log transport is a silent dead end.
+    // Production must deliver reset links; log transport is a silent dead end.
     if (env.MAIL_TRANSPORT !== 'smtp') {
       ctx.addIssue({
         code: 'custom',
@@ -120,7 +120,7 @@ function buildConfig(source: NodeJS.ProcessEnv): AppConfig {
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0);
 
-  // On Vercel, preview and production URLs are injected at runtime — allow them
+  // On Vercel, preview and production URLs are injected at runtime, so allow them
   // automatically so CORS works without listing every deployment URL.
   for (const key of ['VERCEL_URL', 'VERCEL_BRANCH_URL'] as const) {
     const host = source[key];

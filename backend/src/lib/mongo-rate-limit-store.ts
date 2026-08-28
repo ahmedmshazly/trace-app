@@ -49,7 +49,7 @@ export class MongoRateLimitStore implements Store {
     );
 
     if (!updated) {
-      // Window flipped between read and write — start a fresh bucket.
+      // Window flipped between read and write, so start a fresh bucket.
       const resetAt = new Date(now + this.windowMs);
       await RateLimitBucketModel.findOneAndUpdate(
         { key: fullKey },

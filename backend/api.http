@@ -1,4 +1,4 @@
-### Trace API — manual request collection (feature 001)
+### Trace API, manual request collection (feature 001)
 # Works with the VS Code "REST Client" extension or JetBrains HTTP client.
 # Run the requests top-to-bottom: register captures @token for the rest.
 
@@ -53,11 +53,11 @@ content-type: application/json
 GET {{baseUrl}}/entries
 authorization: Bearer {{token}}
 
-### Timeline — first page of 1 (use nextCursor for the next page)
+### Timeline: first page of 1 (use nextCursor for the next page)
 GET {{baseUrl}}/entries?limit=1
 authorization: Bearer {{token}}
 
-### Timeline — include soft-deleted
+### Timeline, including soft-deleted
 GET {{baseUrl}}/entries?includeDeleted=true
 authorization: Bearer {{token}}
 

@@ -180,7 +180,7 @@ export async function verifyUserPassword(userId: string, password: string): Prom
 
 /**
  * Permanently deletes the account and everything it owns (entries + reset
- * tokens). Irreversible — exposed only behind password step-up + client confirm.
+ * tokens). Irreversible, so it is exposed only behind password step-up + client confirm.
  */
 export async function deleteAccount(userId: string): Promise<void> {
   await EntryModel.deleteMany({ userId });

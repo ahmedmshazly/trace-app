@@ -1,4 +1,4 @@
-# Trace backend — production image.
+# Trace backend production image.
 # Build once, run anywhere; configuration is injected via environment at runtime
 # (12-factor). The same artifact runs locally (compose) and in hosted envs.
 

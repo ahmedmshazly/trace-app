@@ -2,7 +2,7 @@ import { randomBytes, createHash } from 'node:crypto';
 
 /**
  * Password-reset tokens: a high-entropy random value is handed to the user
- * (over a side channel — email in production), while only its SHA-256 hash is
+ * (over a side channel, email in production), while only its SHA-256 hash is
  * persisted. Verification re-hashes the presented token and matches the hash.
  */
 export function generateResetToken(): { raw: string; hash: string } {

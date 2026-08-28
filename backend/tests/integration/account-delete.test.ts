@@ -21,7 +21,7 @@ async function seed(token: string, count: number): Promise<void> {
 }
 
 describe('danger zone: bulk delete + account deletion', () => {
-  it('hard-deletes all of the user’s entries when password is correct', async () => {
+  it("hard-deletes all of the user's entries when password is correct", async () => {
     const password = 'correct horse battery';
     const { token } = await registerUser(app, { password });
     await seed(token, 3);
@@ -71,7 +71,7 @@ describe('danger zone: bulk delete + account deletion', () => {
     expect(create.status).toBe(401);
   });
 
-  it('only deletes the requesting user’s data (isolation)', async () => {
+  it("only deletes the requesting user's data (isolation)", async () => {
     const password = 'correct horse battery';
     const a = await registerUser(app, { password });
     const b = await registerUser(app, { password });

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 
 /**
- * Password hashing (Constitution V — salted hashes only; ADR-0003).
+ * Password hashing (Constitution V: salted hashes only; ADR-0003).
  * Uses the bcrypt algorithm via `bcryptjs` (pure JS) so builds need no native
  * toolchain in any environment. Cost 12 is a sensible adaptive default.
  */

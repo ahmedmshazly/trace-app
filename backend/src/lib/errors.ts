@@ -54,7 +54,7 @@ export class EmailInUseError extends AppError {
 }
 
 /**
- * Used for "not found OR not owned by the caller" — we never reveal that a
+ * Used for "not found OR not owned by the caller". We never reveal that a
  * resource the caller does not own exists (isolation nuance, api-design.md).
  */
 export class NotFoundError extends AppError {

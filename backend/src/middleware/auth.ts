@@ -6,7 +6,7 @@ import { readSessionCookie } from '../lib/session-cookie';
 
 /**
  * Resolves the bearer token or httpOnly session cookie to `req.userId` when
- * present. It does NOT reject unauthenticated requests — `requireUser` does
+ * present. It does NOT reject unauthenticated requests; `requireUser` does
  * that. Bearer wins when both are present.
  *
  * After signature verification, the user's current `sessionEpoch` is checked so

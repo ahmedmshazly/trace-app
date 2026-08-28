@@ -13,7 +13,7 @@ function sharedUri(): string {
   try {
     return readFileSync(URI_FILE, 'utf8').trim();
   } catch {
-    throw new Error('Test Mongo URI missing — ensure vitest globalSetup started MongoMemoryServer');
+    throw new Error('Test Mongo URI missing: ensure vitest globalSetup started MongoMemoryServer');
   }
 }
 
@@ -32,7 +32,7 @@ export async function startTestDb(): Promise<void> {
 }
 
 /**
- * Connection lifecycle is owned by globalSetup — per-file teardown must not
+ * Connection lifecycle is owned by globalSetup, so per-file teardown must not
  * disconnect, or later files would race a dead connection.
  */
 export async function stopTestDb(): Promise<void> {

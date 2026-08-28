@@ -37,7 +37,7 @@ describe('auth: password reset (forgot / reset)', () => {
     expect(typeof reset.body.token).toBe('string');
     expect(reset.body.user.email).toBe('reset@example.com');
 
-    // Prior session invalidated (sessionEpoch bump — FR-003 / SC-002).
+    // Prior session invalidated (sessionEpoch bump, FR-003 / SC-002).
     const stale = await request(app)
       .get('/api/auth/me')
       .set('authorization', `Bearer ${priorToken}`);
