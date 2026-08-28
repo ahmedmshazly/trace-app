@@ -1,5 +1,5 @@
 /* ============================================================
-   Trace — base reset & primitives
+   Trace base reset & primitives
    Minimal, opinionated reset that wires the brand defaults:
    dark navy base, slab body type, calm focus halo.
    ============================================================ */
@@ -42,7 +42,7 @@ a {
 }
 a:hover { text-decoration: underline; }
 
-/* The signature 3px focus halo — perceptible without relying on hue */
+/* The signature 3px focus halo, perceptible without relying on hue */
 :where(a, button, input, textarea, select, [tabindex]):focus-visible {
   outline: var(--border-focus) solid var(--color-focus-ring);
   outline-offset: 2px;

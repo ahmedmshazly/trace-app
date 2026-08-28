@@ -2,7 +2,7 @@ import React from "react";
 import { ICONS } from "../../assets/icons/icons.js";
 
 /**
- * Icon — Trace's own 24px line-icon set.
+ * Trace's own 24px line-icon set.
  * 2px stroke, round caps/joins, stroke inherits `currentColor`;
  * a few icons carry a rationed teal accent dot.
  */

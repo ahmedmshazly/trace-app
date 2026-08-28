@@ -1,7 +1,7 @@
 /* ============================================================
-   Trace — Webfonts
+   Trace webfonts
    Tinos (transitional serif) carries the wordmark & display;
-   Roboto Slab carries the interface & entry bodies — a literary,
+   Roboto Slab carries the interface & entry bodies, a literary,
    plain-text feel that fits a writing instrument. A monospace
    stack handles timestamps and keyboard glyphs.
 
@@ -13,7 +13,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Slab:wght@300;400;500;600;700&display=swap');
 
-/* Self-hosted monospace — timestamps, keyboard glyphs, code */
+/* Self-hosted monospace: timestamps, keyboard glyphs, code */
 @font-face {
   font-family: "DejaVu Sans Mono";
   src: url("../fonts/DejaVuSansMono.ttf") format("truetype");

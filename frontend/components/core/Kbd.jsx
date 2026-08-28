@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Kbd — a keyboard glyph/hint chip. Trace surfaces shortcuts as
+ * A keyboard glyph/hint chip. Trace surfaces shortcuts as
  * first-class copy (⏎ commit · ⌘K search). Use inline in hints.
  * muted: render as faint inline text (no chip) for affordance rows.
  */

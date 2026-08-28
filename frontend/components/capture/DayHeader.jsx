@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * DayHeader — recedes via size + letter-spacing (not hue). Relative
+ * Recedes via size + letter-spacing, not hue. Relative
  * labels (Today / Yesterday) then dates. The body, not the header,
  * is the loudest element on the timeline.
  */

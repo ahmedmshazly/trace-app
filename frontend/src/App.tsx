@@ -25,7 +25,7 @@ function BootSplash() {
         fontSize: 'var(--text-micro)',
       }}
     >
-      restoring your session…
+      restoring your session...
     </div>
   );
 }

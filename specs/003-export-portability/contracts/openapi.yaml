@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Trace API — Export & Portability (delta)
+  title: Trace API, Export & Portability (delta)
   version: 0.3.0
   description: >
     API delta for feature 003 (Export & Portability). Adds streaming corpus export

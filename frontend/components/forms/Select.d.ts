@@ -3,7 +3,7 @@ import * as React from "react";
 type Option = string | { value: string; label: React.ReactNode };
 
 /**
- * Native-backed dropdown styled to match TextField — keeps full keyboard
+ * Native-backed dropdown styled to match TextField, keeping full keyboard
  * a11y + type-ahead while wearing Trace's surface, border and focus halo.
  */
 export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "value" | "onChange" | "style"> {

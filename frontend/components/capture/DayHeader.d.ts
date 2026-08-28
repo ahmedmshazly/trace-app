@@ -1,6 +1,6 @@
 import * as React from "react";
 
-/** Day group header — recedes via size + uppercase letter-spacing, not hue. */
+/** Day group header. Recedes via size + uppercase letter-spacing, not hue. */
 export interface DayHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /** "Today" · "Yesterday" · a date like "Mon · Jun 16". */
   label: string;

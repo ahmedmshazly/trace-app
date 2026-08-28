@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Trace web client — a Vite + React SPA wired to the Trace backend API, built on the Trace design system.",
+  "description": "Trace web client, a Vite + React SPA wired to the Trace backend API, built on the Trace design system.",
   "scripts": {
     "postinstall": "node scripts/sync-vendor.mjs",
     "sync-vendor": "node scripts/sync-vendor.mjs",

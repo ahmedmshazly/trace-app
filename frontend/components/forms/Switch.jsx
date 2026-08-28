@@ -1,10 +1,10 @@
 import React from "react";
 
 /**
- * Switch — an instant on/off toggle for settings (e.g. "Anchor to GPS",
+ * An instant on/off toggle for settings (e.g. "Anchor to GPS",
  * notifications). Use for state that applies immediately; use a
  * SegmentedToggle when there are named modes. The teal accent fills the
- * track only when on — rationed, meaning "active right now".
+ * track only when on, rationed to mean "active right now".
  */
 export function Switch({
   checked = false,

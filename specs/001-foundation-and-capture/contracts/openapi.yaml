@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Trace API — Foundation & Core Capture Loop
+  title: Trace API, Foundation & Core Capture Loop
   version: 0.1.0
   description: >
     REST contract for the V1 MVP slice of Trace: authentication, the capture

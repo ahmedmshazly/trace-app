@@ -2,7 +2,7 @@ import * as React from "react";
 
 /**
  * Transient, self-dismissing notice that slides up from the bottom.
- * Pairs an icon with the message — never color alone.
+ * Pairs an icon with the message, never color alone.
  */
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   tone?: "success" | "info" | "warning" | "error";

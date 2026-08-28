@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Trace API — Hardening, Settings & Deploy (delta)
+  title: Trace API, Hardening, Settings & Deploy (delta)
   version: 0.4.0
   description: >
     API delta for feature 004 (V1 GA). Adds password reset (request + complete),
@@ -40,7 +40,7 @@ paths:
         "202":
           description: >
             Accepted. The response is identical whether or not the email is
-            registered (no account enumeration — NFR-4.4).
+            registered (no account enumeration, NFR-4.4).
           content:
             application/json:
               schema:

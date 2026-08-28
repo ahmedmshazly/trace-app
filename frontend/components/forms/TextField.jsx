@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * TextField — auth & settings input. Visible focus is mandatory
+ * Auth & settings input. Visible focus is mandatory
  * (keyboard-first). Supports label, hint, error, and multiline.
  */
 export function TextField({

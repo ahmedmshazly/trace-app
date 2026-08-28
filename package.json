@@ -2,7 +2,7 @@
   "name": "trace",
   "private": true,
   "version": "0.1.0",
-  "description": "Trace — a timestamped record of your moments. Monorepo runner for the Express API (backend/) and the React web client (frontend/).",
+  "description": "Trace, a timestamped record of your moments. Monorepo runner for the Express API (backend/) and the React web client (frontend/).",
   "engines": {
     "node": ">=22"
   },

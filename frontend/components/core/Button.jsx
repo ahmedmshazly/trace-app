@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * Button — the action primitive. The teal accent is rationed:
+ * The action primitive. The teal accent is rationed:
  * use `primary` only for the one commit/CTA on a surface.
  * variants: primary | secondary | ghost | danger
  * sizes: sm | md | lg

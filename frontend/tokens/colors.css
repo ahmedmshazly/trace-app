@@ -1,9 +1,9 @@
 /* ============================================================
-   Trace — Color tokens
+   Trace color tokens
    A quiet, two-theme palette for a keyboard-first life-logging
    instrument. Few colors, each with a single job. Dark is the
    lead surface (designed, not inverted); the teal accent is
-   rationed — it appears only where something matters right now.
+   rationed: it appears only where something matters right now.
    Source: docs/06-design/color-system.md (ADR-0006).
    Dark is the default theme; light is opt-in via [data-theme].
    ============================================================ */
@@ -27,7 +27,7 @@
 
   /* Structure */
   --color-border:       #313146;  /* dividers, input outlines, separators */
-  --color-day-header:   #6c7086;  /* Today / Yesterday / date headers — recedes */
+  --color-day-header:   #6c7086;  /* Today / Yesterday / date headers, recedes */
   --color-tag-pill-bg:  #29304a;  /* background of inline #tag chips */
 
   /* States */

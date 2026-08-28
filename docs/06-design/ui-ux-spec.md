@@ -148,8 +148,8 @@ scrolls beneath it, always visible.
 - Placeholder: *“What just happened?”* · caret ready on load.
 - Field status: `anchored · Today <time>` · affordances `⏎ commit` · `⇧⏎ newline`.
 - `⌘K search` hint top-right.
-- Empty state: *“Nothing logged yet. Your first moment starts in the field above —
-  just start typing.”*
+- Empty state: *"Nothing logged yet. Your first moment starts in the field above.
+  Just start typing."*
 
 ### State 2 — Capture, typing (multi-line)
 - The field **grows to fit** multi-line text. `Enter` commits; `Shift`+`Enter`
@@ -209,7 +209,7 @@ timeline's entry treatment. Arrow keys move the selection; `Enter` jumps to the
 entry in context; `Esc` (or click/tap outside) dismisses. **Owned by feature 002.**
 
 ### State 1 — Empty query
-- Input *“Search moments…”* focused on open.
+- Input *"Search moments..."* focused on open.
 - With no query: **recent searches** + **jump-to-tag** shortcuts (e.g. `#work 128`,
   `#health 54`, `#idea 37`, `#read 22`) as fast entry points.
 - Footer hint: `↑↓ navigate · ⏎ open · esc close`.

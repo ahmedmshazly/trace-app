@@ -182,7 +182,7 @@ function LoginScreen({ onMode }: { onMode: (m: string) => void }) {
         </div>
       </div>
       <Button variant="primary" type="submit" fullWidth iconRight="capture" disabled={busy}>
-        {busy ? 'Logging in…' : 'Log in'}
+        {busy ? 'Logging in...' : 'Log in'}
       </Button>
     </form>
   );
@@ -232,11 +232,11 @@ function RegisterScreen({ onMode: _onMode }: { onMode: (m: string) => void }) {
         value={pw}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setPw(e.target.value)}
         hint={pw.length === 0 ? 'Stored hashed. We never see it.' : undefined}
-        error={pw.length > 0 && !strong ? 'A little longer — 8 characters minimum.' : undefined}
+        error={pw.length > 0 && !strong ? 'A little longer: 8 characters minimum.' : undefined}
       />
       {strong && <StatusNote tone="success">strong enough</StatusNote>}
       <Button variant="primary" type="submit" fullWidth disabled={busy || !strong}>
-        {busy ? 'Creating account…' : 'Create account'}
+        {busy ? 'Creating account...' : 'Create account'}
       </Button>
       <p
         style={{
@@ -247,7 +247,7 @@ function RegisterScreen({ onMode: _onMode }: { onMode: (m: string) => void }) {
           lineHeight: 'var(--leading-normal)',
         }}
       >
-        Private by construction — strict per-user isolation, no content telemetry.
+        Private by construction: strict per-user isolation, no content telemetry.
       </p>
     </form>
   );
@@ -323,7 +323,7 @@ function ResetScreen({ onMode, onUseToken }: { onMode: (m: string) => void; onUs
         onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <Button variant="primary" type="submit" fullWidth icon="export" disabled={busy}>
-        {busy ? 'Sending…' : 'Send reset link'}
+        {busy ? 'Sending...' : 'Send reset link'}
       </Button>
       <div style={{ textAlign: 'center', fontSize: 'var(--text-meta)' }}>
         <ModeLink onClick={() => onMode('login')}>← back to log in</ModeLink>
@@ -365,10 +365,10 @@ function SetPasswordScreen({ token, onMode }: { token: string | null; onMode: (m
         placeholder="at least 8 characters"
         value={pw}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setPw(e.target.value)}
-        error={pw.length > 0 && !strong ? 'A little longer — 8 characters minimum.' : undefined}
+        error={pw.length > 0 && !strong ? 'A little longer: 8 characters minimum.' : undefined}
       />
       <Button variant="primary" type="submit" fullWidth disabled={busy || !strong}>
-        {busy ? 'Saving…' : 'Reset password & sign in'}
+        {busy ? 'Saving...' : 'Reset password & sign in'}
       </Button>
       <div style={{ textAlign: 'center', fontSize: 'var(--text-meta)' }}>
         <ModeLink onClick={() => onMode('login')}>← back to log in</ModeLink>

@@ -1,16 +1,16 @@
 # Trace
 
-> A frictionless personal timeline where the unit of writing is a **moment**, not
-> a line — an effortless, plain-text-portable record of your days that you can
-> later mine for patterns.
+> A frictionless personal timeline where the unit of writing is a **moment**,
+> not a line. An effortless, plain-text-portable record of your days that you
+> can later mine for patterns.
 
 Trace is a personal, timestamped life-logging web application, delivered as a
 **hosted, multi-user MERN** app. Every entry is automatically anchored to *when*
 it happened; time is the primary key of your record. The governing principle is
 simple and ruthless: **capture friction must be near zero.**
 
-**Status:** In development — V1 fully specified & governed; the **backend
-(feature 001)** is implemented and tested; the **frontend web client** is
+**Status:** In development. V1 is fully specified and governed, the **backend
+(feature 001)** is implemented and tested, and the **frontend web client** is
 implemented and deployable to Vercel.
 
 ---
@@ -20,15 +20,15 @@ implemented and deployable to Vercel.
 This repository contains the governed foundation, the V1 **UI/UX design layer**
 (wireframes + dark-first color system), a Spec-Driven Development setup
 in which **all four V1
-features (001–004) are fully specified, planned, and tasked**, and the
+features (001-004) are fully specified, planned, and tasked**, and the
 **implemented backend** for feature 001 (stateless Express/MongoDB API with
 per-user isolation, the capture loop, the day-ordered timeline, and curation).
 The frontend (`frontend/`) is built next against these specs.
 
 ```
 .
-├── backend/         Implemented API (feature 001) — Express · Mongoose · TypeScript
-├── frontend/        React web client (Vite) — wired to the API, Vercel-ready
+├── backend/         Implemented API (feature 001): Express · Mongoose · TypeScript
+├── frontend/        React web client (Vite), wired to the API, Vercel-ready
 ├── api/             Vercel serverless entry (rewrites /api/* to Express)
 ├── vercel.json      Production deployment config (static client + serverless API)
 ├── specs/           Feature specs (Spec-Driven Development)
@@ -49,7 +49,7 @@ The frontend (`frontend/`) is built next against these specs.
 
 ## Start here
 
-| If you want… | Go to |
+| If you want | Go to |
 |---|---|
 | The big picture | [docs/00-overview/vision.md](docs/00-overview/vision.md) |
 | The full doc map | [docs/README.md](docs/README.md) |
@@ -61,7 +61,7 @@ The frontend (`frontend/`) is built next against these specs.
 | The UI/UX design & color system | [docs/06-design/](docs/06-design/README.md) |
 | The flow diagrams | [docs/diagrams/trace-diagrams.md](docs/diagrams/trace-diagrams.md) |
 
-## How we work — Spec-Driven Development
+## How we work: Spec-Driven Development
 
 Every Trace feature flows:
 
@@ -72,7 +72,7 @@ No code without a spec; no spec without the Constitution. See
 
 ## Tech stack (V1)
 
-**MERN + TypeScript** — MongoDB · Express · React (Vite) · Node.js. Stateless JWT
+**MERN + TypeScript.** MongoDB · Express · React (Vite) · Node.js. Stateless JWT
 API, strict per-user data isolation, local-first development promoted to a host by
 configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
 [docs/02-architecture/tech-stack.md](docs/02-architecture/tech-stack.md).
@@ -85,13 +85,13 @@ configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
 
 ## Principles (the short version)
 
-1. **Capture friction is sacred** — logging is effortless or it's broken.
-2. **The corpus is the product** — you own it; export anytime.
-3. **Spec-Driven Development** — specs precede code, always.
-4. **Test-first & quality gates** — critical paths are proven, CI gates merges.
-5. **Security & privacy by default** — strict per-user isolation; no content telemetry.
-6. **Observability & operability** — runnable, recoverable, debuggable.
-7. **Simplicity & YAGNI** — build the smallest thing that satisfies the spec.
+1. **Capture friction is sacred.** Logging is effortless or it's broken.
+2. **The corpus is the product.** You own it, and you can export it anytime.
+3. **Spec-Driven Development.** Specs precede code, always.
+4. **Test-first & quality gates.** Critical paths are proven, and CI gates merges.
+5. **Security & privacy by default.** Strict per-user isolation, no content telemetry.
+6. **Observability & operability.** Runnable, recoverable, debuggable.
+7. **Simplicity & YAGNI.** Build the smallest thing that satisfies the spec.
 
 Full text: [the Constitution](docs/constitution.md).
 
@@ -111,10 +111,10 @@ same origin (`/api/*`).
 1. Import the repo in [Vercel](https://vercel.com/new).
 2. Leave **Framework Preset** as *Other* (configured via `vercel.json`).
 3. Add environment variables from [`.env.example`](.env.example):
-   - `MONGODB_URI` — your Atlas connection string
-   - `JWT_SECRET` — generate with `openssl rand -hex 32`
-   - `ALLOWED_ORIGINS` — `https://trace.ahmdmshazly.me` (optionally keep `*.vercel.app` aliases)
-   - `APP_ORIGIN` — `https://trace.ahmdmshazly.me`
+   - `MONGODB_URI`: your Atlas connection string
+   - `JWT_SECRET`: generate with `openssl rand -hex 32`
+   - `ALLOWED_ORIGINS`: `https://trace.ahmdmshazly.me` (optionally keep `*.vercel.app` aliases)
+   - `APP_ORIGIN`: `https://trace.ahmdmshazly.me`
    - `NODE_ENV=production`
 4. Push to `main` (GitHub → Vercel) or `vercel --prod`.
 

@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * SegmentedToggle — a 2-3 option segmented control. Used for the
+ * A 2-3 option segmented control. Used for the
  * Appearance Light/Dark switch and export format/scope choices.
  * "Dark is first-class, not an afterthought."
  */

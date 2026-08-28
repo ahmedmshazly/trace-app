@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * StatusNote — a tiny inline status line (icon + label) for commit
+ * A tiny inline status line (icon + label) for commit
  * confirmation, connectivity, and helper hints. tone: neutral |
  * success | warning | error | info | accent.
  */

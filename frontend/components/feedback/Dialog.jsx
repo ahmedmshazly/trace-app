@@ -3,7 +3,7 @@ import { IconButton } from "../core/IconButton.jsx";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * Dialog — a focused modal sheet lifted off a dimmed scrim. Used for
+ * A focused modal sheet lifted off a dimmed scrim. Used for
  * confirmations and the danger-zone "type to confirm" flows. Quiet by
  * default; `tone="danger"` arms the destructive treatment. Esc and a
  * scrim click both dismiss (unless dismissible={false}).

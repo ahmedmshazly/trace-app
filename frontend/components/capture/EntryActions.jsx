@@ -2,7 +2,7 @@ import React from "react";
 import { IconButton } from "../core/IconButton.jsx";
 
 /**
- * EntryActions — the hover/focus action cluster on a timeline row:
+ * The hover/focus action cluster on a timeline row:
  * ✎ edit · ◷ time · ⌫ delete. On mobile this becomes a bottom sheet.
  */
 export function EntryActions({ onEdit, onAdjustTime, onDelete, visible = true, style }) {

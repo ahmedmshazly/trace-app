@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * IconButton — square, label-only-by-aria control for row actions,
+ * Square, label-only-by-aria control for row actions,
  * toolbars and the app bar. tone: default | accent | danger.
  */
 export function IconButton({

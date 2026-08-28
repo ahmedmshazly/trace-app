@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Select — a native-backed dropdown styled to match TextField. Keeps the
+ * A native-backed dropdown styled to match TextField. Keeps the
  * keyboard-first contract (native <select> = full a11y + type-ahead) while
  * wearing Trace's surface, border and focus halo. Supports label, hint,
  * error and a placeholder. Pass options as strings or { value, label }.

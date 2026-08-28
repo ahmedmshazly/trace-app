@@ -1,4 +1,4 @@
-# Trace — local "production-like" stack: the API container + a real MongoDB.
+# Trace local "production-like" stack: the API container + a real MongoDB.
 #
 # This mirrors a hosted deployment (managed Mongo + stateless API steered purely
 # by environment) on your machine.
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     volumes:
       - trace-mongo-data:/data/db
-    # Not published by default — only the API needs it. Uncomment to inspect with
+    # Not published by default; only the API needs it. Uncomment to inspect with
     # a local mongosh:
     # ports:
     #   - "27017:27017"

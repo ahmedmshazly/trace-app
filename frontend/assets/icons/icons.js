@@ -1,4 +1,4 @@
-// Trace icon registry — generated from the brand SVG set (24px line, 2px round).
+// Trace icon registry, generated from the brand SVG set (24px line, 2px round).
 // Colors normalized to theme tokens: stroke=currentColor, accent dot=var(--color-accent-primary).
 export const ICONS = {
   "archive": {

@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Trace API — Search & Tags (delta)
+  title: Trace API, Search & Tags (delta)
   version: 0.2.0
   description: >
     API delta for feature 002 (Search & Tags). Extends the feature 001 contract
@@ -67,7 +67,7 @@ paths:
   /tags:
     get:
       tags: [Tags]
-      summary: Tag index — every tag in the user's corpus with its entry count
+      summary: Tag index, every tag in the user's corpus with its entry count
       parameters:
         - in: query
           name: sort

@@ -4,8 +4,8 @@
 # refuses if it equals MONGODB_URI (prod).
 #
 # Modes:
-#   DRY_RUN=1  — list the chosen object and exit (default when unset? no — set DRY_RUN=1)
-#   Without DRY_RUN — mongorestore --drop into RESTORE_MONGODB_URI
+#   DRY_RUN=1  list the chosen object and exit (not the default; you must set DRY_RUN=1)
+#   Without DRY_RUN, mongorestore --drop into RESTORE_MONGODB_URI
 set -euo pipefail
 
 BUCKET="${TRACE_BACKUP_BUCKET:-ahmdmshazly-trace-backups}"
@@ -17,7 +17,7 @@ DRY_RUN="${DRY_RUN:-0}"
 OBJECT_KEY="${TRACE_BACKUP_OBJECT_KEY:-}"
 
 if [[ -z "$OBJECT_KEY" ]]; then
-  echo "listing s3://${BUCKET}/${PREFIX}/ …"
+  echo "listing s3://${BUCKET}/${PREFIX}/ ..."
   OBJECT_KEY="$(aws s3api list-objects-v2 \
     --bucket "$BUCKET" \
     --prefix "${PREFIX}/" \
@@ -34,7 +34,7 @@ echo "selected s3://${BUCKET}/${OBJECT_KEY}"
 
 if [[ "$DRY_RUN" == "1" ]]; then
   aws s3api head-object --bucket "$BUCKET" --key "$OBJECT_KEY" --region "$REGION"
-  echo "DRY_RUN=1 — not restoring"
+  echo "DRY_RUN=1, not restoring"
   exit 0
 fi
 
@@ -42,7 +42,7 @@ RESTORE_URI="${RESTORE_MONGODB_URI:?RESTORE_MONGODB_URI is required (scratch clu
 PROD_URI="${MONGODB_URI:-}"
 
 if [[ -n "$PROD_URI" && "$RESTORE_URI" == "$PROD_URI" ]]; then
-  echo "error: REFUSING — RESTORE_MONGODB_URI equals MONGODB_URI (would overwrite prod)" >&2
+  echo "error: REFUSING, RESTORE_MONGODB_URI equals MONGODB_URI (would overwrite prod)" >&2
   exit 1
 fi
 

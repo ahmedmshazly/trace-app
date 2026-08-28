@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Logo — the Trace lockup: the "anchored-moment" mark (a vertical
+ * The Trace lockup: the "anchored-moment" mark (a vertical
  * timeline line with a dot = a moment anchored in time) + the
  * lowercase "trace" wordmark in the serif. Single source of truth
  * so the final mark is a one-place swap.

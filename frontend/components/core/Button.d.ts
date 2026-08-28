@@ -2,7 +2,7 @@ import * as React from "react";
 import type { IconName } from "../media/Icon";
 
 /**
- * Action button. Teal `primary` is rationed — one commit/CTA per surface.
+ * Action button. Teal `primary` is rationed to one commit/CTA per surface.
  */
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "danger";

@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * TagPill — an inline #tag chip parsed from an entry body. Never
+ * An inline #tag chip parsed from an entry body. Never
  * color alone: the `#` glyph + pill shape carry the meaning too.
  * Optionally shows a count (used in the tag index / ⌘K jump list).
  */

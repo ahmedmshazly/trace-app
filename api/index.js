@@ -3,7 +3,7 @@
 const { createApp } = require('../backend/dist/app');
 const { connectDb } = require('../backend/dist/lib/db');
 
-/** Cached boot promise — reused across warm serverless invocations. */
+/** Cached boot promise, reused across warm serverless invocations. */
 let bootPromise = null;
 
 function getApp() {

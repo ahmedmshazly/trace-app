@@ -6,7 +6,7 @@
 // then dynamically import the app so every screen module evaluates only after
 // `window.React`, `window.ReactDOM`, and `window.TRACE_UI` exist.
 //
-// React is served same-origin from /vendor (copied from node_modules — never a CDN).
+// React is served same-origin from /vendor (copied from node_modules, never a CDN).
 
 const REACT_UMD = '/vendor/react.production.min.js';
 const REACT_DOM_UMD = '/vendor/react-dom.production.min.js';

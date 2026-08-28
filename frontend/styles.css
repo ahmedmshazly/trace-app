@@ -1,5 +1,5 @@
 /* ============================================================
-   Trace Design System — global entry point
+   Trace Design System global entry point
    Consumers link THIS one file. It is a manifest of @imports
    only; every token, font and base reset lives in the files
    below. Dark is the default theme (data-theme="light" opts in).

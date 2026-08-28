@@ -2,10 +2,10 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * Checkbox — a square multi-select control (export scopes, filter toggles,
+ * A square multi-select control (export scopes, filter toggles,
  * "remember me"). Pairs a clear box with an optional label + description.
  * Supports an `indeterminate` state for "select all" parents. The teal
- * fill appears only when checked — meaning "included".
+ * fill appears only when checked, meaning "included".
  */
 export function Checkbox({
   checked = false,

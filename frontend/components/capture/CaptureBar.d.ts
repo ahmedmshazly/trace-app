@@ -1,7 +1,7 @@
 import * as React from "react";
 
 /**
- * The sticky capture input — focused on load, grows multi-line, no toolbar.
+ * The sticky capture input: focused on load, grows multi-line, no toolbar.
  * Enter commits (non-empty); Shift+Enter newlines.
  */
 export interface CaptureBarProps extends React.HTMLAttributes<HTMLDivElement> {

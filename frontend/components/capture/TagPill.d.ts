@@ -1,6 +1,6 @@
 import * as React from "react";
 
-/** Inline #tag chip — `#` glyph + pill shape (never color alone). `count` shows frequency. */
+/** Inline #tag chip: `#` glyph + pill shape (never color alone). `count` shows frequency. */
 export interface TagPillProps extends React.HTMLAttributes<HTMLElement> {
   /** Tag text, with or without a leading `#`. */
   label: string;

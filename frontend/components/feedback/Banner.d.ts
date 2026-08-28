@@ -3,7 +3,7 @@ import type { IconName } from "../media/Icon";
 
 /**
  * Inline non-modal notice with an optional action pair (e.g. draft restore Keep/Discard).
- * Pairs an icon with the message — never color alone.
+ * Pairs an icon with the message, never color alone.
  */
 export interface BannerProps extends React.HTMLAttributes<HTMLDivElement> {
   tone?: "info" | "success" | "warning" | "error";

@@ -52,7 +52,7 @@ design tokens it binds. This is the bridge between
 | `EntryInlineEditor` | Entry row (edit) | 001 | In place, not modal; `Enter` save / `Esc` cancel; dims siblings |
 | `BackdateControl` | Entry row (time) | 001 | Date+time + presets (`-1h`, `this morning`, `yesterday`); `createdAt` locked 🔒 |
 | `SoftDeleteConfirm` | Entry row (delete) | 001 | Inline confirm; `--color-state-error` + `⌫` + confirm step |
-| `EmptyState` | Core screen (first run) | 001 | “Nothing logged yet…” |
+| `EmptyState` | Core screen (first run) | 001 | "Nothing logged yet..." |
 | `LoadingOlder` | Timeline bottom | 001 | “Loading older moments…” |
 
 ## Search & tags (⌘K + panel)

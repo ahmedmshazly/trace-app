@@ -2,9 +2,9 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * Toast — a transient, self-dismissing notice that slides up from the
+ * A transient, self-dismissing notice that slides up from the
  * bottom. Quiet confirmations ("Entry committed"), never modal. Pairs
- * an icon with the message — never color alone. Use <ToastViewport> to
+ * an icon with the message, never color alone. Use <ToastViewport> to
  * stack several; a single Toast also renders fine on its own.
  * tone: success | info | warning | error
  */
@@ -101,7 +101,7 @@ export function Toast({ tone = "info", title, action, onDismiss, children, style
 }
 
 /**
- * ToastViewport — fixed bottom-center stack for several Toasts.
+ * ToastViewport is the fixed bottom-center stack for several Toasts.
  */
 export function ToastViewport({ position = "bottom", children, style }) {
   const vertical = position === "top" ? { top: "24px" } : { bottom: "24px" };

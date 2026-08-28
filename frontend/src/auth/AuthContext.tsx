@@ -27,7 +27,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  // Always probe /auth/me on boot — the httpOnly cookie is not readable from JS.
+  // Always probe /auth/me on boot: the httpOnly cookie is not readable from JS.
   const [status, setStatus] = useState<'loading' | 'anonymous' | 'authenticated'>('loading');
 
   const signOutLocal = useCallback(() => {

@@ -184,7 +184,7 @@ function Hero({ onStart, onLogin }) {
             fontFamily: 'var(--font-body)', fontSize: 'var(--text-lg)', lineHeight: 'var(--leading-normal)',
             color: 'var(--color-text-secondary)', margin: '22px 0 0', maxWidth: 460, textWrap: 'pretty',
           }}>
-            Type what just happened and press enter. It anchors to now — the timestamp standing where a line number would. Your record grows, one moment at a time.
+            Type what just happened and press enter. It anchors to now, the timestamp standing where a line number would. Your record grows, one moment at a time.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 32, flexWrap: 'wrap' }}>
             <Button variant="primary" size="lg" onClick={onStart}>Start your trace</Button>
@@ -278,7 +278,7 @@ function Reframe() {
               )}
             </span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-meta)', color: 'var(--color-text-secondary)' }}>
-              {morphed ? 'today — anchored by time' : 'untitled.txt — 6 lines'}
+              {morphed ? 'today, anchored by time' : 'untitled.txt, 6 lines'}
             </span>
           </div>
 
@@ -303,7 +303,7 @@ function Reframe() {
           fontFamily: 'var(--font-body)', fontSize: 'var(--text-lg)', lineHeight: 'var(--leading-normal)',
           color: 'var(--color-text-secondary)', margin: '22px 0 0', maxWidth: 600, textWrap: 'pretty',
         }}>
-          The same six lines. The only thing that changed is the margin — from a line number to the moment it happened.
+          The same six lines. The only thing that changed is the margin, from a line number to the moment it happened.
         </p>
       </div>
     </section>
@@ -342,7 +342,7 @@ function Accumulate() {
 
         <p style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontFamily: 'var(--font-body)', fontSize: 'var(--text-meta)', lineHeight: 'var(--leading-normal)', color: 'var(--color-text-muted)', margin: '20px 0 0', maxWidth: 600 }}>
           <span style={{ color: 'var(--color-text-secondary)', flex: '0 0 auto', marginTop: 1 }}><Icon name="export" size={16} /></span>
-          <span>Yours to keep. Export the whole corpus to Markdown or JSON anytime — never trapped, never analysed by anyone but you.</span>
+          <span>Yours to keep. Export the whole corpus to Markdown or JSON anytime. Never trapped, never analysed by anyone but you.</span>
         </p>
       </div>
     </section>

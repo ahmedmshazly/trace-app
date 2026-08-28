@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Smoke e2e with API mocked — verifies the SPA boots (vendored React + DS),
+ * Smoke e2e with the API mocked. Verifies the SPA boots (vendored React + DS),
  * restores an anonymous session via /auth/me, and can complete a register →
  * capture happy path (httpOnly cookie session; no localStorage token).
  */

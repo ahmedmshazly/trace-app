@@ -21,7 +21,7 @@ mongodump --uri="$URI" --archive="$ARCHIVE" --gzip
 
 BYTES="$(wc -c <"$ARCHIVE" | tr -d ' ')"
 if [[ "$BYTES" -lt 64 ]]; then
-  echo "error: archive too small (${BYTES} bytes) — refusing upload" >&2
+  echo "error: archive too small (${BYTES} bytes), refusing upload" >&2
   exit 1
 fi
 

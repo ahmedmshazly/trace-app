@@ -2,7 +2,7 @@ import React from "react";
 import { EntryActions } from "./EntryActions.jsx";
 
 /**
- * TimelineEntry — one row of the record (also reused for search
+ * One row of the record, also reused for search
  * results). The body is the loudest element; the timestamp recedes.
  * Inline #tags are emphasized in the secondary accent. Actions
  * reveal on hover/focus. `state`: default | new (just committed) | dim.

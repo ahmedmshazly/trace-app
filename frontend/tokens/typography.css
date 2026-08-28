@@ -1,8 +1,8 @@
 /* ============================================================
-   Trace — Typography tokens
+   Trace typography tokens
    Tinos (transitional serif) for the wordmark, display & day
-   headers — quiet, literary, timeless. Roboto Slab for the
-   interface and entry bodies — a plain-text, ledger-like voice.
+   headers: quiet, literary, timeless. Roboto Slab for the
+   interface and entry bodies, a plain-text, ledger-like voice.
    A monospace stack for timestamps and keyboard glyphs.
    "Recede the structure, surface the moment": body is the
    loudest element; headers/timestamps recede via size + spacing.
@@ -18,7 +18,7 @@
   --font-body: var(--font-slab);
   --font-display: var(--font-serif);
 
-  /* Type scale (px) — product scale, larger than the structural wireframe board */
+  /* Type scale (px). Product scale, larger than the structural wireframe board */
   --text-micro:   11px;  /* keyboard hints, fine print */
   --text-meta:    13px;  /* timestamps, labels, status */
   --text-sm:      14px;
@@ -42,7 +42,7 @@
   --leading-normal:  1.55;  /* entry bodies / reading */
   --leading-meta:    1.2;   /* timestamps, labels */
 
-  /* Letter spacing — day headers recede via tracking, not hue */
+  /* Letter spacing: day headers recede via tracking, not hue */
   --tracking-tight:   -0.01em;
   --tracking-normal:  0;
   --tracking-wide:    0.04em;

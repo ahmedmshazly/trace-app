@@ -98,7 +98,7 @@ function writeDraft(value: string): void {
   }
 }
 
-// ── Command palette (⌘K) — server-side search across the whole record ──
+// ── Command palette (⌘K): server-side search across the whole record ──
 function CommandPalette({
   tags,
   initialTag,
@@ -199,7 +199,7 @@ function CommandPalette({
             ref={inputRef}
             value={q}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setQ(e.target.value)}
-            placeholder="Search moments…"
+            placeholder="Search moments..."
             className="cp-input"
             aria-label="Search moments"
             style={{
@@ -248,7 +248,7 @@ function CommandPalette({
           )}
           {showResults && searching && results.length === 0 && (
             <div style={{ padding: '20px', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 'var(--text-meta)' }}>
-              Searching…
+              Searching...
             </div>
           )}
         </div>
@@ -265,7 +265,7 @@ function CommandPalette({
   );
 }
 
-// ── Tag index slide-in — counts computed from loaded entries ──────────
+// ── Tag index slide-in; counts computed from loaded entries ──────────
 function TagIndexPanel({
   tags,
   onClose,
@@ -303,7 +303,7 @@ function TagIndexPanel({
         <div style={{ overflowY: 'auto', padding: '6px 8px' }}>
           {sorted.length === 0 && (
             <div style={{ padding: '20px 12px', color: 'var(--color-text-muted)', fontSize: 'var(--text-meta)' }}>
-              No #tags yet. Add one inside a moment, like “coffee #morning”.
+              No #tags yet. Add one inside a moment, like "coffee #morning".
             </div>
           )}
           {sorted.map((t) => (
@@ -367,7 +367,7 @@ function ConfirmDialog({ title, description, phrase, confirmLabel, busy, onCance
         <Fragment>
           <Button variant="ghost" size="sm" onClick={onCancel} disabled={busy}>Cancel</Button>
           <Button variant="danger" size="sm" icon="warn" onClick={() => onConfirm(password)} disabled={!armed || busy}>
-            {busy ? 'Working…' : confirmLabel}
+            {busy ? 'Working...' : confirmLabel}
           </Button>
         </Fragment>
       }
@@ -424,7 +424,7 @@ function SettingsScreen({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-micro)', color: 'var(--color-text-muted)' }}>your whole record · {fmt.toLowerCase()}</span>
           <Button variant="primary" icon="export" onClick={() => onExport(fmt)} disabled={exportBusy}>
-            {exportBusy ? 'Exporting…' : 'Export'}
+            {exportBusy ? 'Exporting...' : 'Export'}
           </Button>
         </div>
       </Section>
@@ -590,7 +590,7 @@ function TimelineRow({
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
           <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
           <Button variant="primary" size="sm" icon="check" onClick={save} disabled={busy}>
-            {busy ? 'Saving…' : 'Save'}
+            {busy ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </div>
@@ -640,7 +640,7 @@ function EmptyState({ onStarter }: { onStarter: (text: string) => void }) {
         Nothing logged yet.
       </h1>
       <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-lg)', lineHeight: 'var(--leading-normal)', color: 'var(--color-text-secondary)', margin: '0 auto', maxWidth: 440 }}>
-        Your first moment starts in the field above — just start typing.
+        Your first moment starts in the field above. Just start typing.
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '8px 18px', margin: '26px 0 30px' }}>
         {HINTS.map((h) => (
@@ -710,7 +710,7 @@ export function AppScreen() {
   const tempId = useRef(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Clock format preference — applied synchronously so every timestamp in this
+  // Clock format preference, applied synchronously so every timestamp in this
   // render uses it (timeLabel reads a module-level flag).
   setHour12(prefs.clock24 ? false : true);
 
@@ -719,7 +719,7 @@ export function AppScreen() {
     writePrefs(next);
   }, []);
 
-  // Theme — apply + persist.
+  // Theme: apply + persist.
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     try { localStorage.setItem(THEME_KEY, theme); } catch { /* ignore */ }
@@ -799,7 +799,7 @@ export function AppScreen() {
     }
   }, [nextCursor, loadingMore, showToast]);
 
-  // Capture — optimistic append, then reconcile with the server's entry.
+  // Capture: optimistic append, then reconcile with the server's entry.
   const commit = useCallback(
     async (text) => {
       const body = String(text || '').trim();
@@ -866,7 +866,7 @@ export function AppScreen() {
         setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? { ...saved } : e))));
       } catch (err: any) {
         if (prevEntry) setEntries((prev) => sortEntries(prev.map((e) => (e.id === id ? prevEntry : e))));
-        showToast({ tone: 'error', title: 'Couldn’t change the time', message: err.message });
+        showToast({ tone: 'error', title: "Couldn't change the time", message: err.message });
       }
     },
     [entries, showToast],
@@ -909,7 +909,7 @@ export function AppScreen() {
     [entries, showToast],
   );
 
-  // Export — the server builds the full file (every entry, no pagination) and
+  // Export. The server builds the full file (every entry, no pagination) and
   // streams it back as a download.
   const handleExport = useCallback(
     async (fmt) => {
@@ -936,7 +936,7 @@ export function AppScreen() {
     [showToast],
   );
 
-  // Danger zone — hard, irreversible deletes (typed confirm + password step-up).
+  // Danger zone: hard, irreversible deletes (typed confirm + password step-up).
   const handleDeleteAll = useCallback(async (password: string) => {
     setDangerBusy(true);
     try {
@@ -1049,7 +1049,7 @@ export function AppScreen() {
 
             {loading && (
               <div style={{ textAlign: 'center', padding: '48px 0', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-micro)', color: 'var(--color-text-muted)' }}>
-                Loading your timeline…
+                Loading your timeline...
               </div>
             )}
 
@@ -1080,7 +1080,7 @@ export function AppScreen() {
                 {nextCursor && (
                   <div style={{ textAlign: 'center', padding: '20px 0' }}>
                     <Button variant="ghost" size="sm" onClick={loadMore} disabled={loadingMore}>
-                      {loadingMore ? 'Loading…' : 'Load older moments'}
+                      {loadingMore ? 'Loading...' : 'Load older moments'}
                     </Button>
                   </div>
                 )}

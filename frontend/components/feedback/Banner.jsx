@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "../media/Icon.jsx";
 
 /**
- * Banner — an inline, non-modal notice with an optional action pair.
+ * An inline, non-modal notice with an optional action pair.
  * Used for draft restore (warning) and other in-context messages.
  * Never color alone: each tone pairs an icon with its message.
  * tone: info | success | warning | error

@@ -2,7 +2,7 @@ import React from "react";
 import { Kbd } from "../core/Kbd.jsx";
 
 /**
- * CaptureBar — the heartbeat. A sticky, focused-on-load input that
+ * The heartbeat. A sticky, focused-on-load input that
  * grows to fit multi-line text. No toolbar, no buttons: the keyboard
  * is the whole interface. Shows an anchored/draft status + affordances.
  */

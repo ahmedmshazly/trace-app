@@ -1,5 +1,5 @@
 /* ============================================================
-   Trace — Spacing, radii, borders, elevation & motion
+   Trace spacing, radii, borders, elevation & motion
    A calm, 4px-based rhythm. Surfaces are quiet: hairline
    borders carry most structure; shadows are restrained and
    used mainly to lift overlays (⌘K, dropdowns) off the page.
@@ -21,7 +21,7 @@
   --space-20: 80px;
 
   /* Layout */
-  --layout-max:        720px;  /* the reading column — timeline + capture */
+  --layout-max:        720px;  /* the reading column: timeline + capture */
   --layout-gutter:     24px;
   --capture-bar-h:     auto;   /* @kind other */
   --tap-target-min:    44px;   /* mobile hit target floor */
@@ -41,7 +41,7 @@
   --border-focus:       3px;   /* the focus halo */
   --border-hairline:    1px solid var(--color-border);
 
-  /* Elevation — restrained; lifts overlays off the page */
+  /* Elevation, restrained; lifts overlays off the page */
   --shadow-none:     none;
   --shadow-sm:       0 1px 2px rgba(0, 0, 0, 0.18);
   --shadow-md:       0 4px 14px rgba(0, 0, 0, 0.22);
@@ -49,7 +49,7 @@
   --shadow-focus:    0 0 0 var(--border-focus) var(--color-accent-soft);
   --shadow-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 
-  /* Motion — subtle; honors prefers-reduced-motion */
+  /* Motion, subtle; honors prefers-reduced-motion */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);   /* @kind other */
   --ease-out:      cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
   --ease-in:       cubic-bezier(0.4, 0, 1, 1);    /* @kind other */

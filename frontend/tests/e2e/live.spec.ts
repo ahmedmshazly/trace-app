@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Live API smoke — runs when E2E_LIVE=1 against a real backend on :4000
+ * Live API smoke. Runs when E2E_LIVE=1 against a real backend on :4000
  * (proxied by Vite preview). Validates register → capture against Express.
  */
 test.describe('Trace live API smoke', () => {

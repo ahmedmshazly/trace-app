@@ -4,7 +4,7 @@ import type { Root } from 'react-dom/client';
 import type { ReactNode } from 'react';
 
 /** Minimal surface of the Trace design-system global bundle. */
-// Components are intentionally `any` — the precompiled DS bundle is untyped;
+// Components are intentionally `any`; the precompiled DS bundle is untyped,
 // screens still type their own state and API DTOs (audit FR-005).
 export type DsComponent = (props: any) => ReactNode;
 
