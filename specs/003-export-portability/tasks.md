@@ -33,7 +33,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**CRITICAL**: No user story work can begin until this phase is complete.
 
 - [ ] T003 Implement the streaming JSON serializer (envelope + incremental `entries` array) in `backend/src/lib/serialize-json.ts`.
 - [ ] T004 [P] Implement the Markdown serializer (local day headers, `HH:MM` lines, inline tags, safe body emission) in `backend/src/lib/serialize-markdown.ts` per data-model.md.
@@ -44,7 +44,7 @@ implemented, tested, and demoed independently.
 
 ---
 
-## Phase 3: User Story 1 - Export the whole corpus (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Export the whole corpus (Priority: P1) MVP
 
 **Goal**: Stream the entire corpus as JSON and Markdown; exclude soft-deleted; bounded memory.
 
@@ -63,7 +63,7 @@ implemented, tested, and demoed independently.
 - [ ] T012 [US1] Implement `GET /export` (format=json|md, full scope) with streaming response, `Content-Disposition` filename, and content type in `backend/src/routes/export.routes.ts`.
 - [ ] T013 [P] [US1] Frontend `ExportPanel` (format toggle, Export action, download handling) within `SettingsScreen` in `frontend/src/components/ExportPanel.tsx` and `frontend/src/api/export.ts`.
 
-**Checkpoint**: 🎯 Stage-3 MVP, the user can export the entire corpus to MD + JSON.
+**Checkpoint**: Stage-3 MVP, the user can export the entire corpus to MD + JSON.
 
 ---
 

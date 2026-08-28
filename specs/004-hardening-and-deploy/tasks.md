@@ -35,7 +35,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**CRITICAL**: No user story work can begin until this phase is complete.
 
 - [ ] T004 Implement the `PasswordResetToken` model with TTL + `tokenHash` index in `backend/src/models/password-reset-token.ts`.
 - [ ] T005 Add `sessionEpoch` (or `tokenVersion`) to the `User` model and embed/verify it in the JWT middleware so sessions can be revoked (R-003) in `backend/src/models/user.ts` and `backend/src/middleware/auth.ts`.
@@ -46,7 +46,7 @@ implemented, tested, and demoed independently.
 
 ---
 
-## Phase 3: User Story 1 - Recover access to my account (Priority: P1) 🎯 GA-critical
+## Phase 3: User Story 1 - Recover access to my account (Priority: P1) GA-critical
 
 **Goal**: Non-enumerating, single-use, expiring password reset that invalidates prior sessions.
 
@@ -116,7 +116,7 @@ implemented, tested, and demoed independently.
 
 ---
 
-## Phase 6: User Story 4 - Operate Trace safely in production (Priority: P1) 🎯 GA-gate
+## Phase 6: User Story 4 - Operate Trace safely in production (Priority: P1) GA-gate
 
 **Goal**: Config-only HTTPS deploy, health + content-free structured logs, rate limits, web-vuln defense, CI gates, a11y + perf validation, rehearsed backup/restore.
 
@@ -136,7 +136,7 @@ implemented, tested, and demoed independently.
 - [ ] T036 [US4] Implement the CI pipeline (lint, type-check, unit, integration, isolation, e2e, a11y, perf; red blocks merge) per `docs/04-engineering/ci-cd.md`.
 - [ ] T037 [US4] Rehearse and document backup/restore per `docs/05-operations/backup-recovery.md` (recovers User + Entry + PasswordResetToken intact) (FR-044, SC-007).
 
-**Checkpoint**: 🎯 V1 GA gates satisfied.
+**Checkpoint**: V1 GA gates satisfied.
 
 ---
 

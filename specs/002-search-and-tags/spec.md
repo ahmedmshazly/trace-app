@@ -22,7 +22,7 @@ a ⌘K command palette, inline #tag parsing, filter by tag and date range
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Find a moment by full-text search (Priority: P1) 🎯 MVP
+### User Story 1 - Find a moment by full-text search (Priority: P1) MVP
 
 An authenticated user presses `⌘K` from anywhere, types a few words they remember,
 and sees matching moments instantly, the matched terms emphasized, the most

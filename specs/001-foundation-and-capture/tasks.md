@@ -41,7 +41,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**CRITICAL**: No user story work can begin until this phase is complete.
 
 - [x] T006 Implement validated config module `backend/src/config/index.ts` (zod-parse env, fail-fast) per research R-10.
 - [x] T007 [P] Implement structured logger `backend/src/lib/logger.ts` (never logs entry content or secrets. Constitution VI).
@@ -83,7 +83,7 @@ implemented, tested, and demoed independently.
 
 ---
 
-## Phase 4: User Story 1 - Capture a moment with zero friction (Priority: P1) 🎯 MVP
+## Phase 4: User Story 1 - Capture a moment with zero friction (Priority: P1) MVP
 
 **Goal**: The capture loop, focused-on-load input, Enter to commit, instant timeline insert, immutable `createdAt`.
 
@@ -103,7 +103,7 @@ implemented, tested, and demoed independently.
 - [ ] T029 [P] [US1] Frontend `TimelineEntry` component + capture page wiring in `frontend/src/pages/Capture.tsx` and `frontend/src/components/TimelineEntry.tsx`.
 - [ ] T030 [US1] TanStack Query create-entry mutation with optimistic update in `frontend/src/api/entries.ts`.
 
-**Checkpoint**: 🎯 MVP, a user can register, sign in, and capture moments that persist. Deployable.
+**Checkpoint**: MVP, a user can register, sign in, and capture moments that persist. Deployable.
 
 ---
 

@@ -25,7 +25,7 @@
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Capture a moment with zero friction (Priority: P1) 🎯 MVP
+### User Story 1 - Capture a moment with zero friction (Priority: P1) MVP
 
 An authenticated user opens Trace, the capture input is already focused, they
 type a moment, press Enter, and it instantly appears at the top of today's

@@ -34,7 +34,7 @@ implemented, tested, and demoed independently.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**CRITICAL**: No user story work can begin until this phase is complete.
 
 - [ ] T004 Implement the pure `#tag` parser/normalizer in `backend/src/lib/tags.ts` per data-model.md (Unicode `[\p{L}\p{N}_]`, lowercased, de-duped, punctuation/in-word rules).
 - [ ] T005 [P] Unit tests for `tags.ts` covering all rule rows in data-model.md (case, dupes, punctuation, in-word `#`, Unicode, bare `#`) in `backend/tests/unit/tags.test.ts` (write first, must fail).
@@ -46,7 +46,7 @@ implemented, tested, and demoed independently.
 
 ---
 
-## Phase 3: User Story 1 - Find a moment by full-text search (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Find a moment by full-text search (Priority: P1) MVP
 
 **Goal**: `⌘K` full-text search over the user's bodies, relevance-ranked, keyboard-driven.
 
@@ -67,7 +67,7 @@ implemented, tested, and demoed independently.
 - [ ] T016 [P] [US1] Frontend `CommandPalette` overlay (focused input, dimmed backdrop, debounced query, keyboard nav, empty-query recents/jump-to-tag) in `frontend/src/components/CommandPalette.tsx`.
 - [ ] T017 [P] [US1] Frontend `SearchResultRow` (reuses `TimelineEntry` treatment; inline match emphasis) + search query hook in `frontend/src/components/SearchResultRow.tsx` and `frontend/src/api/search.ts`.
 
-**Checkpoint**: 🎯 Stage-2 MVP, a user can find any moment instantly via `⌘K`.
+**Checkpoint**: Stage-2 MVP, a user can find any moment instantly via `⌘K`.
 
 ---
 

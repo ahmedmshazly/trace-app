@@ -22,7 +22,7 @@ and JSON, scope an export to everything / a date range / the current filter, and
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Export the whole corpus (Priority: P1) 🎯 MVP
+### User Story 1 - Export the whole corpus (Priority: P1) MVP
 
 A user opens Settings, chooses a format (Markdown or JSON), and exports their
 entire corpus to a single downloaded file they fully own and can read or process

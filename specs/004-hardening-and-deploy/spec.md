@@ -27,7 +27,7 @@ backups, and runbooks."
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Recover access to my account (Priority: P1) 🎯 GA-critical
+### User Story 1 - Recover access to my account (Priority: P1) GA-critical
 
 A user who has forgotten their password requests a reset from the login screen,
 receives a reset link by email, sets a new password, and signs in, and the flow
@@ -102,7 +102,7 @@ confirm the account and its corpus are removed and the session ends.
 
 ---
 
-### User Story 4 - Operate Trace safely in production (Priority: P1) 🎯 GA-gate
+### User Story 4 - Operate Trace safely in production (Priority: P1) GA-gate
 
 As the operator/maintainer, I can deploy Trace from configuration alone, observe
 its health, defend it against abuse, recover it from backup, and trust that it
