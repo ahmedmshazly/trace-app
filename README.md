@@ -1,131 +1,116 @@
 # Trace
 
-> A frictionless personal timeline where the unit of writing is a **moment**,
-> not a line. An effortless, plain-text-portable record of your days that you
-> can later mine for patterns.
+A personal timeline where the unit of writing is a moment, not a line. You type
+what just happened, press Enter, and it gets pinned to the time it happened.
 
-Trace is a personal, timestamped life-logging web application, delivered as a
-**hosted, multi-user MERN** app. Every entry is automatically anchored to *when*
-it happened; time is the primary key of your record. The governing principle is
-simple and ruthless: **capture friction must be near zero.**
+**Live:** [trace.ahmdmshazly.me](https://trace.ahmdmshazly.me)
 
-**Status:** In development. V1 is fully specified and governed, the **backend
-(feature 001)** is implemented and tested, and the **frontend web client** is
-implemented and deployable to Vercel.
+![Trace landing page](docs/assets/landing.png)
 
----
+## Why I built it
 
-## What's here
+Journaling apps ask you to sit down and write. I wanted something closer to a
+logbook, you open it, write one line and close it. The rule I held the whole
+project to was that capturing a moment has to cost almost nothing. Everything
+else (search, tags, export) comes after that.
 
-This repository contains the governed foundation, the V1 **UI/UX design layer**
-(wireframes + dark-first color system), a Spec-Driven Development setup
-in which **all four V1
-features (001-004) are fully specified, planned, and tasked**, and the
-**implemented backend** for feature 001 (stateless Express/MongoDB API with
-per-user isolation, the capture loop, the day-ordered timeline, and curation).
-The frontend (`frontend/`) is built next against these specs.
+The second rule is that the data belongs to the user. Entries are stored flat and
+time-keyed, and you can export everything as Markdown or JSON at any time.
+
+## What it does
+
+- **Capture.** Type and press Enter. The entry is saved with the current time.
+  Shift+Enter adds a new line, and `#tags` are picked up inline.
+- **Timeline.** Entries are grouped by day, newest first, and use keyset
+  pagination so long histories stay fast.
+- **Curation.** Edit an entry, backdate it, or delete it with undo. Deleted
+  entries are kept, so you can restore them.
+- **Search.** ⌘K searches your whole record on the server, and there is a tag
+  index to jump between topics.
+- **Export.** Download everything as Markdown or JSON.
+- **Accounts.** Sign up, log in, reset a forgotten password by email, or delete
+  your account with all its data. Light and dark themes are there as well.
+
+## How it's built
+
+| Layer | Choice |
+|---|---|
+| Client | React 18 + TypeScript, built with Vite |
+| API | Express 4 + TypeScript (strict), zod validation at the edges |
+| Data | MongoDB Atlas via Mongoose |
+| Hosting | Vercel: the client as static files, the API as a serverless function on the same origin |
+| Tests | Vitest, Supertest and mongodb-memory-server for the API; Playwright end to end |
+| CI | GitHub Actions: lint, typecheck, tests and build for both packages |
+
+A few things I spent real time on:
+
+- **Per-user isolation.** Every entry query is scoped to the signed-in user in the
+  service layer, and a separate isolation test suite tries to read and change
+  another user's data and expects to fail.
+- **Sessions that can actually be revoked.** Sessions live in httpOnly cookies.
+  Each user has a session epoch, so resetting a password or deleting an account
+  invalidates every token issued before it.
+- **Rate limiting that works on serverless.** Auth endpoints are rate limited
+  with a MongoDB-backed store, because an in-memory counter resets on every cold
+  start and doesn't hold across instances.
+- **Two timestamps.** `createdAt` records when you wrote an entry and never
+  changes. `occurredAt` records when the thing happened, and you can edit it. All
+  times are stored in UTC and shown in local time.
+- **Backups I have tested.** A GitHub Actions job dumps the database to S3 every
+  six hours using OIDC, so there are no long-lived AWS keys. The bucket
+  replicates to a second region, and I ran a full restore onto a standby EC2
+  host to make sure the dumps are usable.
+- **Small dependency surface.** React is served from the same origin instead of
+  a CDN, behind a Content Security Policy, with helmet on the API and passwords
+  hashed with bcrypt.
+
+## How I worked
+
+I wrote the specs before the code. The project has a short
+[constitution](docs/constitution.md) with the principles every decision gets
+checked against, and each feature has its own folder under [`specs/`](specs/)
+with a spec, a plan, a data model, an OpenAPI contract and a task list.
+
+The [`docs/`](docs/) folder covers requirements, architecture (C4 diagrams
+included), project planning, engineering practice, operations runbooks and the
+design system. Decisions that are hard to undo later are written up as
+[architecture decision records](docs/adr/).
+
+## Project layout
 
 ```
 .
-├── backend/         Implemented API (feature 001): Express · Mongoose · TypeScript
-├── frontend/        React web client (Vite), wired to the API, Vercel-ready
-├── api/             Vercel serverless entry (rewrites /api/* to Express)
-├── vercel.json      Production deployment config (static client + serverless API)
-├── specs/           Feature specs (Spec-Driven Development)
-│   ├── 001-foundation-and-capture/   spec · plan · research · data-model · contracts · tasks
-│   ├── 002-search-and-tags/          ⌘K search, inline #tags, filters, tag index
-│   ├── 003-export-portability/       Markdown/JSON export, scope, round-trip import
-│   └── 004-hardening-and-deploy/     reset, settings, theme, danger zone, GA gates
-├── docs/            Enterprise documentation (start at docs/README.md)
-│   ├── constitution.md   <- the project's supreme governing document
-│   ├── 00-overview · 01-requirements · 02-architecture
-│   ├── 03-project  · 04-engineering  · 05-operations
-│   ├── 06-design/   UI/UX spec · color system (dark-first) · component inventory
-│   ├── adr/         Architecture Decision Records
-│   └── diagrams/    Mermaid flow & lifecycle diagrams
-├── .github/workflows/  CI (lint · format · typecheck · test · build)
-└── README.md        (this file)
+├── frontend/   React client and the Trace design system
+├── backend/    Express API, models, services and tests
+├── api/        Vercel serverless entry for the API
+├── specs/      Feature specs, plans, contracts and tasks (001-004)
+├── docs/       Requirements, architecture, operations, design, ADRs
+├── scripts/    Backup and restore scripts
+└── .github/    CI and backup workflows
 ```
 
-## Start here
+## Running it locally
 
-| If you want | Go to |
-|---|---|
-| The big picture | [docs/00-overview/vision.md](docs/00-overview/vision.md) |
-| The full doc map | [docs/README.md](docs/README.md) |
-| What V1 must do | [docs/01-requirements/srs.md](docs/01-requirements/srs.md) |
-| How it's built | [docs/02-architecture/architecture-overview.md](docs/02-architecture/architecture-overview.md) |
-| The governing rules | [docs/constitution.md](docs/constitution.md) |
-| The first feature | [specs/001-foundation-and-capture/](specs/001-foundation-and-capture/) |
-| The implemented API | [backend/README.md](backend/README.md) |
-| The UI/UX design & color system | [docs/06-design/](docs/06-design/README.md) |
-| The flow diagrams | [docs/diagrams/trace-diagrams.md](docs/diagrams/trace-diagrams.md) |
-
-## How we work: Spec-Driven Development
-
-Every Trace feature flows:
-
-**Constitution → Specify → Clarify → Plan → Tasks → Implement**
-
-No code without a spec; no spec without the Constitution. See
-[docs/04-engineering/development-workflow.md](docs/04-engineering/development-workflow.md).
-
-## Tech stack (V1)
-
-**MERN + TypeScript.** MongoDB · Express · React (Vite) · Node.js. Stateless JWT
-API, strict per-user data isolation, local-first development promoted to a host by
-configuration. Rationale: [ADR-0002](docs/adr/0002-mern-stack.md),
-[docs/02-architecture/tech-stack.md](docs/02-architecture/tech-stack.md).
-
-## Roadmap (stage-based)
-
-`Stage 0 Foundations ✓` → `001 Foundation & Capture (backend ✓ · frontend ✓)` →
-`002 Search & Tags` → `003 Export` → `004 Hardening & Deploy (V1 GA)` →
-`V2+ Analysis engine`. See [docs/03-project/roadmap.md](docs/03-project/roadmap.md).
-
-## Principles (the short version)
-
-1. **Capture friction is sacred.** Logging is effortless or it's broken.
-2. **The corpus is the product.** You own it, and you can export it anytime.
-3. **Spec-Driven Development.** Specs precede code, always.
-4. **Test-first & quality gates.** Critical paths are proven, and CI gates merges.
-5. **Security & privacy by default.** Strict per-user isolation, no content telemetry.
-6. **Observability & operability.** Runnable, recoverable, debuggable.
-7. **Simplicity & YAGNI.** Build the smallest thing that satisfies the spec.
-
-Full text: [the Constitution](docs/constitution.md).
-
-## Deploy to Vercel
-
-Trace ships with a production-ready Vercel configuration: the React client is
-served as static assets and the Express API runs as a serverless function on the
-same origin (`/api/*`).
-
-### Prerequisites
-
-- A [MongoDB Atlas](https://www.mongodb.com/atlas) cluster (or other managed MongoDB reachable from Vercel).
-- A Vercel account linked to this repository.
-
-### One-time setup
-
-1. Import the repo in [Vercel](https://vercel.com/new).
-2. Leave **Framework Preset** as *Other* (configured via `vercel.json`).
-3. Add environment variables from [`.env.example`](.env.example):
-   - `MONGODB_URI`: your Atlas connection string
-   - `JWT_SECRET`: generate with `openssl rand -hex 32`
-   - `ALLOWED_ORIGINS`: `https://trace.ahmdmshazly.me` (optionally keep `*.vercel.app` aliases)
-   - `APP_ORIGIN`: `https://trace.ahmdmshazly.me`
-   - `NODE_ENV=production`
-4. Push to `main` (GitHub → Vercel) or `vercel --prod`.
-
-Off-box durability (Atlas PITR + nightly S3 via OIDC): see
-[docs/05-operations/aws-backup.md](docs/05-operations/aws-backup.md).
-
-### Verify after deploy
+You need Node 22 and a MongoDB instance (Docker works: `docker compose up -d`).
 
 ```bash
-curl -s https://trace.ahmdmshazly.me/api/health
+npm install            # root tooling
+npm run install:all    # backend and frontend dependencies
+cp backend/.env.example backend/.env   # then set JWT_SECRET
+npm run dev            # API on :4000, web app on :5173
 ```
 
-See [docs/05-operations/deployment.md](docs/05-operations/deployment.md) for
-the full release procedure, rollback, and post-deploy checklist.
+Tests:
+
+```bash
+cd backend && npm test        # unit, integration and isolation suites
+cd frontend && npm run test:e2e
+```
+
+## Deploying
+
+The repo deploys to Vercel as is. Set `MONGODB_URI`, `JWT_SECRET`,
+`ALLOWED_ORIGINS`, `APP_ORIGIN` and `NODE_ENV=production` in the project
+settings, then push to `main`. The full procedure, with rollback and the
+post-deploy checklist, is in
+[docs/05-operations/deployment.md](docs/05-operations/deployment.md).
